@@ -1,0 +1,72 @@
+<!-- 
+  File: sekolah.html
+  Versi: v1.1.1
+  Dibuat: 11 Januari 2026
+  Oleh: Saepudin & Copilot
+  Deskripsi: Halaman CRUD sekolah dengan gaya dashboard
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Sekolah</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="sekolah.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Manajemen Sekolah</h1>
+    <a href="dashboard.html" class="btn-logout">⬅️ Dashboard</a>
+  </header>
+
+  <main>
+    <div id="notif" class="notif hidden"></div>
+
+    <section class="form-card">
+      <h2>Tambah / Edit Sekolah</h2>
+      <form id="school-form">
+        <input type="hidden" id="edit_id" />
+
+        <label for="name">Nama Sekolah</label>
+        <input type="text" id="name" required />
+
+        <label for="address">Alamat</label>
+        <textarea id="address" required></textarea>
+
+        <label class="checkbox">
+          <input type="checkbox" id="is_active" />
+          Jadikan sekolah aktif
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">💾 Simpan</button>
+          <button type="reset" onclick="resetForm()">Batal</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="table-card">
+      <h2>Daftar Sekolah</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Alamat</th>
+            <th>Aktif</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="school-table"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Sistem Absensi v1.1.1 &mdash; Dibuat oleh Saepudin & Copilot
+  </footer>
+
+  <script type="module" src="sekolah.js"></script>
+</body>
+</html>

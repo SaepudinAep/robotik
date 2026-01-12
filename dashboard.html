@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Robotik</title>
+  <!-- Font & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-text">
+      <h1>Dashboard Robotik</h1>
+      <p>Semester Genap 2026/2027</p>
+    </div>
+    <button class="logout">Logout</button>
+  </header>
+
+  <!-- Stats Grid -->
+  <section class="stats-grid">
+    <div class="stat-card sekolah"><h2>Sekolah</h2><p></p></div>
+    <div class="stat-card kelas"><h2>Kelas</h2><p></p></div>
+    <div class="stat-card siswa"><h2>Siswa</h2><p></p></div>
+  </section>
+
+  <!-- Navigasi Cepat -->
+  <section class="nav-grid">
+    <div class="nav-card">Sekolah</div>
+    <div class="nav-card">Private</div>
+    <div class="nav-card">Registrasi Sekolah</div>
+    <div class="nav-card">Registrasi Private</div>
+    <div class="nav-card">Profil Sekolah</div>
+    <div class="nav-card">Profil Kelas</div>
+  </section>
+
+  <!-- Konten Dinamis -->
+  <section id="content-root"></section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot
+  </footer>
+
+  <!-- Koneksi ke file JS -->
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

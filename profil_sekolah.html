@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Sekolah</title>
+  <!-- Font & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-text">
+      <h1>Profil Sekolah</h1>
+      <p>Manajemen Data Sekolah</p>
+    </div>
+    <nav class="nav-actions">
+      <a href="dashboard.html" class="btn-nav">Dashboard</a>
+      <a href="profil_tahun.html" class="btn-nav">Tahun</a>
+    </nav>
+  </header>
+
+  <!-- Form Input -->
+  <section class="form-section">
+    <h2>Tambah / Edit Sekolah</h2>
+    <form id="school-form">
+      <label for="school_name">Nama Sekolah</label>
+      <input type="text" id="school_name" name="school_name" required>
+
+      <label for="school_address">Alamat Sekolah</label>
+      <textarea id="school_address" name="school_address" required></textarea>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Simpan</button>
+        <button type="reset" class="btn-secondary">Batal</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Daftar Sekolah -->
+  <section class="list-section">
+    <h2>Daftar Sekolah</h2>
+    <table class="school-table">
+      <thead>
+        <tr>
+          <th>Nama Sekolah</th>
+          <th>Alamat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="school-list">
+        <!-- Data sekolah akan diisi oleh JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Modal Konfirmasi Hapus -->
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <p>Apakah Anda yakin ingin menghapus sekolah ini?</p>
+      <div class="modal-actions">
+        <button id="confirm-delete" class="btn-danger">Ya</button>
+        <button id="cancel-delete" class="btn-secondary">Tidak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot
+  </footer>
+
+  <!-- Koneksi ke file JS -->
+  <script type="module" src="profil_sekolah.js"></script>
+</body>
+</html>

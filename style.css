@@ -1,0 +1,402 @@
+/* Versi: v1.1.2 - Styling Konsisten Login & Dashboard */
+
+/* Variabel Brand Scratch */
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --text: #333;
+  --white: #fff;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+/* Reset */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--scratch-yellow);
+  color: var(--text);
+}
+
+/* ================= Login Page ================= */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-container h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-heading);
+  color: var(--scratch-blue);
+}
+
+.login-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.login-container input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--scratch-orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.login-container button:hover { background: #e69500; }
+
+.login-container .footer {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ================= Dashboard Page ================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--scratch-blue);
+  color: var(--white);
+  padding: 1rem;
+}
+.header h1 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+.header p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+.logout {
+  background: var(--scratch-orange);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  font-family: var(--font-heading);
+}
+.stat-card h2 { margin: 0; font-size: 1.2rem; }
+.stat-card p { font-size: 1.5rem; margin: 0.5rem 0 0; }
+
+/* Navigasi Cepat */
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+.nav-card {
+  background: var(--scratch-blue);
+  color: var(--white);
+  text-align: center;
+  padding: 1rem;
+  border-radius: var(--radius);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.nav-card:hover { background: var(--scratch-orange); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--scratch-blue);
+  color: var(--white);
+  font-size: 0.9rem;
+}
+
+/* Responsif Mobile */
+@media (max-width: 600px) {
+  .header { flex-direction: column; text-align: center; }
+  .logout { margin-top: 0.5rem; }
+}
+
+/* Profil Sekolah Page */
+
+/* Navigasi di Header */
+.nav-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-nav {
+  background: var(--scratch-blue);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-nav:hover {
+  background: var(--scratch-orange);
+}
+
+.form-section, .list-section {
+  padding: 1rem;
+}
+
+.form-section h2, .list-section h2 {
+  font-family: var(--font-heading);
+  color: var(--scratch-blue);
+}
+
+#school-form {
+  display: grid;
+  gap: 1rem;
+  background: var(--white);
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+#school_form input[type="text"],
+#school_form textarea {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background: var(--scratch-orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-secondary {
+  background: #ccc;
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.btn-danger {
+  background: #c62828;
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* Tabel Daftar Sekolah */
+.school-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.school-table th, .school-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.school-table th {
+  background: var(--scratch-yellow);
+  font-family: var(--font-heading);
+}
+
+/* Modal Konfirmasi */
+.modal {
+  display: none; /* dihandle JS */
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* ==== page profil kelas======
+/* Header Navigasi */
+.nav-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-nav {
+  background: var(--scratch-orange); /* kontras dengan header biru */
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-nav:hover {
+  background: #e69500;
+}
+
+/* Form Profil Kelas */
+.form-section {
+  padding: 1rem;
+}
+
+#class-form {
+  display: grid;
+  gap: 1rem;
+  background: var(--white);
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+#class-form input[type="text"],
+#class-form select {
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background: var(--scratch-orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #ccc;
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background: #c62828;
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* Tabel Daftar Kelas */
+.class-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.class-table th, .class-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.class-table th {
+  background: var(--scratch-yellow);
+  font-family: var(--font-heading);
+}
+
+/* Modal Konfirmasi */
+.modal {
+  display: none; /* dihandle JS */
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
