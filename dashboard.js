@@ -3,12 +3,36 @@ import { supabaseUrl, supabaseKey } from './config.js';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Ambil elemen dari HTML
+// Elemen HTML
 const sekolahCountEl = document.querySelector('.stat-card.sekolah p');
 const kelasCountEl   = document.querySelector('.stat-card.kelas p');
 const siswaCountEl   = document.querySelector('.stat-card.siswa p');
 const logoutBtn      = document.querySelector('.logout');
 const navCards       = document.querySelectorAll('.nav-card');
+const semesterLabelEl = document.getElementById('semester-label');
+
+// Fungsi tentukan semester & tahun ajaran aktif
+function getActiveSemesterLabel() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 1-12
+  const year = now.getFullYear();
+
+  let semesterName, academicYear;
+
+  if (month >= 7 && month <= 12) {
+    semesterName = "Semester 1";
+    academicYear = `${year}/${year+1}`;
+  } else {
+    semesterName = "Semester 2";
+    academicYear = `${year-1}/${year}`;
+  }
+
+  // simpan ke localStorage untuk dipakai di page lain
+  localStorage.setItem("activeAcademicYear", academicYear);
+  localStorage.setItem("activeSemester", semesterName);
+
+  return `${semesterName} ${academicYear}`;
+}
 
 // Fungsi ambil jumlah data dari tabel
 async function getCount(table) {
@@ -32,6 +56,9 @@ async function loadDashboard() {
     return;
   }
 
+  // tampilkan label semester
+  semesterLabelEl.textContent = getActiveSemesterLabel();
+
   try {
     const sekolahCount = await getCount('schools');
     sekolahCountEl.textContent = sekolahCount;
@@ -39,7 +66,7 @@ async function loadDashboard() {
     const kelasCount = await getCount('classes');
     kelasCountEl.textContent = kelasCount;
 
-    const siswaCount = await getCount('students'); // pastikan nama tabel siswa = students
+    const siswaCount = await getCount('students');
     siswaCountEl.textContent = siswaCount;
   } catch (e) {
     console.error('Gagal memuat data dashboard:', e);
@@ -60,7 +87,7 @@ navCards.forEach((card) => {
     const routes = {
       'Sekolah': 'absensi_sekolah.html',
       'Private': 'absensi_private.html',
-      'Registrasi Sekolah': 'registrasi_sekolah.html',
+      'Registrasi Siswa': 'registrasi_sekolah.html',
       'Registrasi Private': 'registrasi_private.html',
       'Profil Sekolah': 'profil_sekolah.html',
       'Profil Kelas': 'profil_kelas.html'
