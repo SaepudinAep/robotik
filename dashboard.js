@@ -1,4 +1,12 @@
-// dashboard.js
+Berikut ini versi baru dan disederhanakan dari file:
+
+> Versi: dashboard.js v1.2  
+> Fokus: Menampilkan jumlah total sekolah dan kelas tanpa filter user
+
+---
+
+`js
+// dashboard.js v1.2
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { supabaseUrl, supabaseKey } from './config.js';
 
@@ -12,15 +20,14 @@ const siswaCountEl   = document.querySelector('.stat-card.siswa p');
 const logoutBtn      = document.querySelector('.logout');
 const navCards       = document.querySelectorAll('.nav-card');
 
-// Fungsi ambil jumlah data dari tabel
-async function getCount(table, userId) {
+// Fungsi ambil jumlah data dari tabel (tanpa filter user)
+async function getCount(table) {
   const { count, error } = await supabase
     .from(table)
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId);
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
-    console.error(error);
+    console.error(Gagal mengambil jumlah dari tabel ${table}:, error);
     return 0;
   }
   return count ?? 0;
@@ -28,29 +35,24 @@ async function getCount(table, userId) {
 
 // Fungsi utama dashboard
 async function loadDashboard() {
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!user) {
-    alert('Silakan login terlebih dahulu');
+  if (!session) {
     window.location.href = 'index.html';
     return;
   }
 
   try {
-    // Hitung jumlah sekolah
-    const sekolahCount = await getCount('sekolah', user.id);
+    const sekolahCount = await getCount('sekolah');
     sekolahCountEl.textContent = sekolahCount;
 
-    // Hitung jumlah kelas
-    const kelasCount = await getCount('kelas', user.id);
+    const kelasCount = await getCount('kelas');
     kelasCountEl.textContent = kelasCount;
 
-    // Hitung jumlah siswa
-    const siswaCount = await getCount('siswa', user.id);
+    const siswaCount = await getCount('siswa');
     siswaCountEl.textContent = siswaCount;
   } catch (e) {
-    console.error(e);
-    alert('Gagal memuat data dashboard');
+    console.error('Gagal memuat data dashboard:', e);
   }
 }
 
@@ -60,35 +62,32 @@ logoutBtn?.addEventListener('click', async () => {
   window.location.href = 'index.html';
 });
 
-// Direct dari nav-card
+// Navigasi dari kartu dashboard
 navCards.forEach((card) => {
   card.addEventListener('click', () => {
     const text = card.textContent.trim();
 
-    switch (text) {
-      case 'Sekolah':
-        window.location.href = 'absensi_sekolah.html';
-        break;
-      case 'Private':
-        window.location.href = 'absensi_private.html';
-        break;
-      case 'Registrasi Sekolah':
-        window.location.href = 'registrasi_sekolah.html';
-        break;
-      case 'Registrasi Private':
-        window.location.href = 'registrasi_private.html';
-        break;
-      case 'Profil Sekolah':
-        window.location.href = 'profil_sekolah.html';
-        break;
-      case 'Profil Kelas':
-        window.location.href = 'profil_kelas.html';
-        break;
-      default:
-        console.warn('Menu tidak dikenali:', text);
+    const routes = {
+      'Sekolah': 'absensi_sekolah.html',
+      'Private': 'absensi_private.html',
+      'Registrasi Sekolah': 'registrasi_sekolah.html',
+      'Registrasi Private': 'registrasi_private.html',
+      'Profil Sekolah': 'profil_sekolah.html',
+      'Profil Kelas': 'profil_kelas.html'
+    };
+
+    if (routes[text]) {
+      window.location.href = routes[text];
+    } else {
+      console.warn('Menu tidak dikenali:', text);
     }
   });
 });
 
 // Jalankan saat halaman siap
 document.addEventListener('DOMContentLoaded', loadDashboard);
+`
+
+---
+
+Kalau kamu ingin lanjut ke versi dashboard.js v1.3 yang menampilkan nama user login di pojok kanan atas atau menambahkan grafik statistik, tinggal beri aba-aba saja.
