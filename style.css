@@ -592,3 +592,130 @@ body {
 .btn-nav:hover {
   background: #e69500;
 }
+
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+/* ============= Halaman Absensi */
+.absensi-page {
+  background: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: #4d97ff; /* Scratch Blue */
+  color: #ffffff;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header h1 {
+  font-family: 'Fredoka One', cursive;
+  margin: 0;
+}
+.header p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Tombol logout */
+.logout {
+  background: #cccccc;
+  color: #333333;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.logout:hover {
+  background: #b5b5b5;
+}
+
+/* Grid Card Kelas: matrix 3 kolom */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 kolom horizontal */
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Card dasar */
+.card-grid .card {
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1rem;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Variasi warna 4 card berulang */
+.card-grid .card:nth-child(4n+1) {
+  background: #4d97ff; /* biru Scratch */
+  color: #ffffff;
+}
+.card-grid .card:nth-child(4n+2) {
+  background: #ffab19; /* oranye Scratch */
+  color: #ffffff;
+}
+.card-grid .card:nth-child(4n+3) {
+  background: #a8e6cf; /* hijau mint soft */
+  color: #333333;
+
+}
+.card-grid .card:nth-child(4n+4) {
+  background: #fff3d6; /* kuning soft */
+  color: #333333;
+}
+
+/* Judul card */
+.card-grid .card h3 {
+  font-family: 'Fredoka One', cursive;
+  margin: 0 0 0.5rem;
+}
+
+/* Tombol di dalam card */
+.card-grid .card .btn-primary {
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.card-grid .card:nth-child(4n+1) .btn-primary {
+  color: #4d97ff;
+}
+.card-grid .card:nth-child(4n+2) .btn-primary {
+  color: #ffab19;
+}
+.card-grid .card:nth-child(4n+3) .btn-primary {
+  color: #379683; /* hijau lebih tua untuk kontras */
+}
+.card-grid .card:nth-child(4n+4) .btn-primary {
+  color: #d68c00; /* kontras dengan kuning */
+}
+.card-grid .card .btn-primary:hover {
+  opacity: 0.9;
+}
+/* Footer */
+.footer {
+  background: #4d97ff;
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+}

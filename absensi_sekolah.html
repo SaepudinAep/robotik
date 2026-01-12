@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Siswa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="absensi-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-text">
+      <h1>Absensi Siswa</h1>
+      <p id="semester-label"></p> <!-- label semester & tahun ajaran -->
+    </div>
+    <button class="logout btn-secondary">Logout</button>
+  </header>
+
+  <!-- Grid Card Kelas -->
+  <section class="card-grid" id="class-card-grid">
+    <!-- Card kelas akan diisi oleh JS -->
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot
+  </footer>
+
+  <!-- Koneksi ke file JS -->
+  <script type="module" src="absensi_sekolah.js"></script>
+</body>
+</html>
