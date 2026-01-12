@@ -1,11 +1,3 @@
-Berikut ini versi baru dan disederhanakan dari file:
-
-> Versi: dashboard.js v1.2  
-> Fokus: Menampilkan jumlah total sekolah dan kelas tanpa filter user
-
----
-
-`js
 // dashboard.js v1.2
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { supabaseUrl, supabaseKey } from './config.js';
@@ -27,7 +19,7 @@ async function getCount(table) {
     .select('*', { count: 'exact', head: true });
 
   if (error) {
-    console.error(Gagal mengambil jumlah dari tabel ${table}:, error);
+    console.error(`Gagal mengambil jumlah dari tabel ${table}:`, error);
     return 0;
   }
   return count ?? 0;
@@ -86,8 +78,3 @@ navCards.forEach((card) => {
 
 // Jalankan saat halaman siap
 document.addEventListener('DOMContentLoaded', loadDashboard);
-`
-
----
-
-Kalau kamu ingin lanjut ke versi dashboard.js v1.3 yang menampilkan nama user login di pojok kanan atas atau menambahkan grafik statistik, tinggal beri aba-aba saja.
