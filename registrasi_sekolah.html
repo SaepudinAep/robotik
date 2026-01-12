@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrasi Siswa Sekolah</title>
+  <!-- Font & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-text">
+      <h1>Registrasi Siswa Sekolah</h1>
+      <p>Manajemen Data Siswa</p>
+    </div>
+  </header>
+
+  <!-- Filter Section -->
+  <section class="filter-section">
+    <label for="school_id">Sekolah</label>
+    <select id="school_id" name="school_id" required></select>
+
+    <label for="class_id">Kelas Robotik</label>
+    <select id="class_id" name="class_id" required></select>
+  </section>
+
+  <!-- Form Tabel Input Siswa -->
+  <section class="form-section">
+    <h2>Input Data Siswa</h2>
+    <table id="student-input-table">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Kelas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" name="student_name" required></td>
+          <td><input type="text" name="student_class" required></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="form-actions">
+      <button id="add-row" class="btn-secondary">Tambah Baris</button>
+     <button id="import-btn" class="btn-primary">Import XLS/CSV</button>
+      <button id="save-students" class="btn-primary">Simpan</button>
+
+    </div>
+
+    
+
+    <div id="alert-feedback"></div>
+  </section>
+
+  <!-- Tabel Daftar Siswa -->
+  <section class="list-section">
+    <h2>Daftar Siswa</h2>
+    <table id="student-list" class="class-table">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Kelas</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data siswa akan diisi oleh JS -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <nav>
+      <a href="dashboard.html" class="btn-nav">Dashboard</a>
+    </nav>
+    <p>Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot</p>
+  </footer>
+  
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module" src="registrasi_siswa.js"></script>
+</body>
+</html>

@@ -301,6 +301,26 @@ body {
   background: #e69500;
 }
 
+.year-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#add-year-btn {
+  background: var(--scratch-blue);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#add-year-btn:hover {
+  background: #3b7edc;
+}
+
 /* Form Profil Kelas */
 .form-section {
   padding: 1rem;
@@ -399,4 +419,176 @@ body {
   display: flex;
   justify-content: center;
   gap: 1rem;
+}
+
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  background: #f9f9f9;
+  color: var(--text);
+}
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  background: #f9f9f9;
+  color: var(--text);
+}
+
+/* Header */
+.header {
+  background: var(--scratch-blue);
+  color: var(--white);
+  padding: 1rem;
+  text-align: center;
+}
+.header h1 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+.header p {
+  margin: 0;
+}
+
+/* Filter Section */
+.filter-section {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+.filter-section label {
+  font-weight: 600;
+}
+.filter-section select {
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid #ccc;
+}
+
+/* Form Input Siswa */
+.form-section {
+  padding: 1rem;
+}
+#student-input-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+#student-input-table th, #student-input-table td {
+  border: 1px solid #eee;
+  padding: 0.5rem;
+}
+#student-input-table th {
+  background: var(--scratch-yellow);
+  font-family: var(--font-heading);
+}
+#student-input-table input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid #ccc;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.btn-primary {
+  background: var(--scratch-orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-secondary {
+  background: #ccc;
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* Import Section */
+.import-section {
+  margin-top: 1rem;
+}
+#import-btn {
+  background: var(--scratch-blue);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+#import-btn:hover {
+  background: #3b7edc;
+}
+
+/* Tabel Daftar Siswa */
+.class-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.class-table th, .class-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.class-table th {
+  background: var(--scratch-yellow);
+  font-family: var(--font-heading);
+}
+
+/* Footer */
+.footer {
+  background: var(--scratch-blue);
+  color: var(--white);
+  text-align: center;
+  padding: 1rem;
+}
+.footer nav {
+  margin-bottom: 0.5rem;
+}
+.btn-nav {
+  background: var(--scratch-orange);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+.btn-nav:hover {
+  background: #e69500;
 }

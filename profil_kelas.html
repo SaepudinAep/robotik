@@ -31,7 +31,10 @@
         <select id="school_id" name="school_id" required></select>
 
         <label for="academic_year">Tahun Ajaran</label>
-        <select id="academic_year" name="academic_year" required></select>
+        <div class="year-wrapper">
+          <select id="academic_year" name="academic_year" required></select>
+          <button type="button" id="add-year-btn" class="btn-secondary"> + </button>
+        </div>
 
         <label for="semester">Semester</label>
         <select id="semester" name="semester" required></select>
@@ -92,6 +95,5 @@
 
   <!-- Koneksi ke file JS -->
   <script type="module" src="profil_kelas.js"></script>
-  <script type="module" src="auth_guard.js"></script>
 </body>
 </html>

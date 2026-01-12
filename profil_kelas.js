@@ -1,5 +1,6 @@
 import { supabase } from './config.js';
 
+// DOM Elements
 const form = document.getElementById('class-form');
 const listEl = document.getElementById('class-list');
 const schoolSelect = document.getElementById('school_id');
@@ -8,12 +9,14 @@ const semesterSelect = document.getElementById('semester');
 const classInput = document.getElementById('class_name');
 const levelSelect = document.getElementById('level');
 const scheduleInput = document.getElementById('schedule');
+const addYearBtn = document.getElementById('add-year-btn');
 
 const deleteModal = document.getElementById('delete-modal');
 const confirmDeleteBtn = document.getElementById('confirm-delete');
 const cancelDeleteBtn = document.getElementById('cancel-delete');
 let deleteTargetId = null;
 
+// Load sekolah
 async function loadSchools() {
   const { data } = await supabase.from('schools').select('id, name').order('name');
   schoolSelect.innerHTML = data?.length
@@ -21,18 +24,44 @@ async function loadSchools() {
     : '<option value="">Belum ada sekolah</option>';
 }
 
+// Load tahun ajaran berdasarkan sekolah
 async function loadAcademicYears(schoolId) {
   const { data } = await supabase
     .from('academic_years')
     .select('id, year')
     .eq('school_id', schoolId)
-    .order('year');
+    .order('year', { ascending: true });
 
   yearSelect.innerHTML = data?.length
     ? ['<option value="">-- Pilih Tahun Ajaran --</option>', ...data.map(y => `<option value="${y.id}">${y.year}</option>`)].join('')
     : '<option value="">Belum ada tahun ajaran</option>';
 }
 
+// Tambah tahun ajaran baru
+addYearBtn.addEventListener('click', async () => {
+  const schoolId = schoolSelect.value;
+  if (!schoolId) return alert('Pilih sekolah terlebih dahulu');
+
+  const tahun = prompt('Masukkan tahun ajaran baru (misal: 2026/2027)');
+  if (!tahun) return;
+
+  const { error } = await supabase.from('academic_years').insert([{ year: tahun, school_id: schoolId }]);
+  if (error) {
+    alert('❌ Gagal menambahkan tahun ajaran: ' + error.message);
+  } else {
+    alert('✅ Tahun ajaran berhasil ditambahkan');
+    await loadAcademicYears(schoolId);
+    const { data: updated } = await supabase
+      .from('academic_years')
+      .select('id')
+      .eq('year', tahun)
+      .eq('school_id', schoolId)
+      .single();
+    if (updated) yearSelect.value = updated.id;
+  }
+});
+
+// Load semester statis
 function loadSemesterDropdown() {
   semesterSelect.innerHTML = `
     <option value="">-- Pilih Semester --</option>
@@ -41,14 +70,17 @@ function loadSemesterDropdown() {
   `;
 }
 
+// Load level statis
 function loadLevels() {
   levelSelect.innerHTML = `
     <option value="">-- Pilih Level --</option>
     <option value="Kiddy">Kiddy</option>
     <option value="Beginner">Beginner</option>
+
   `;
 }
 
+// Tampilkan daftar kelas
 async function loadClassesTable() {
   const { data } = await supabase
     .from('classes')
@@ -73,6 +105,7 @@ async function loadClassesTable() {
     : '<tr><td colspan="7">Belum ada kelas</td></tr>';
 }
 
+// Submit form tambah/edit kelas
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = classInput.value.trim();
@@ -100,9 +133,11 @@ form.addEventListener('submit', async (e) => {
   }
 
   form.reset();
+  yearSelect.innerHTML = '<option value="">-- Pilih Tahun Ajaran --</option>';
   loadClassesTable();
 });
 
+// Edit kelas
 window.editClass = async (id) => {
   const { data } = await supabase.from('classes').select('*').eq('id', id).single();
   form.school_id.value = data.school_id;
@@ -115,6 +150,7 @@ window.editClass = async (id) => {
   form.dataset.editId = id;
 };
 
+// Hapus kelas
 window.deleteClass = (id) => {
   deleteTargetId = id;
   deleteModal.style.display = 'block';
@@ -134,12 +170,14 @@ cancelDeleteBtn.addEventListener('click', () => {
   deleteModal.style.display = 'none';
 });
 
+// Saat sekolah dipilih, load tahun ajaran
 schoolSelect.addEventListener('change', async (e) => {
   const schoolId = e.target.value;
   if (!schoolId) return;
   await loadAcademicYears(schoolId);
 });
 
+// Inisialisasi halaman
 loadSchools();
 loadLevels();
 loadSemesterDropdown();
