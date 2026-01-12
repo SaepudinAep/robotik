@@ -1,8 +1,6 @@
-// dashboard.js v1.2
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { supabaseUrl, supabaseKey } from './config.js';
 
-// Inisialisasi Supabase
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Ambil elemen dari HTML
@@ -12,7 +10,7 @@ const siswaCountEl   = document.querySelector('.stat-card.siswa p');
 const logoutBtn      = document.querySelector('.logout');
 const navCards       = document.querySelectorAll('.nav-card');
 
-// Fungsi ambil jumlah data dari tabel (tanpa filter user)
+// Fungsi ambil jumlah data dari tabel
 async function getCount(table) {
   const { count, error } = await supabase
     .from(table)
@@ -35,13 +33,13 @@ async function loadDashboard() {
   }
 
   try {
-    const sekolahCount = await getCount('sekolah');
+    const sekolahCount = await getCount('schools');
     sekolahCountEl.textContent = sekolahCount;
 
-    const kelasCount = await getCount('kelas');
+    const kelasCount = await getCount('classes');
     kelasCountEl.textContent = kelasCount;
 
-    const siswaCount = await getCount('siswa');
+    const siswaCount = await getCount('students'); // pastikan nama tabel siswa = students
     siswaCountEl.textContent = siswaCount;
   } catch (e) {
     console.error('Gagal memuat data dashboard:', e);
@@ -76,5 +74,4 @@ navCards.forEach((card) => {
   });
 });
 
-// Jalankan saat halaman siap
 document.addEventListener('DOMContentLoaded', loadDashboard);
