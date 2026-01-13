@@ -1,46 +1,67 @@
-// v1.0 - absensi_sekolah.js (versi baru)
-// --------------------------------------
-// Koneksi Supabase
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { supabaseUrl, supabaseKey } from './config.js';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Ambil elemen container untuk card kelas
-const container = document.getElementById("class-container");
+// Elemen HTML
+const semesterLabelEl = document.getElementById('semester-label');
+const classCardGrid = document.getElementById('class-card-grid');
+const logoutBtn = document.querySelector('.logout');
 
-// Fungsi ambil data kelas dari Supabase
-async function loadClasses() {
-  const { data: classes, error } = await supabase
-    .from("classes")
-    .select("id, name, jadwal, school_name");
+// Ambil semester & tahun ajaran dari localStorage
+const activeAcademicYear = localStorage.getItem("activeAcademicYear"); // contoh: "2025/2026"
+const activeSemester = localStorage.getItem("activeSemester");         // contoh: "Semester 2"
 
-  if (error) {
-    console.error("Gagal ambil data kelas:", error.message);
-    return;
-  }
+// Tampilkan label semester
+semesterLabelEl.textContent = `${activeSemester} ${activeAcademicYear}`;
 
-  // Render card kelas
-  classes.forEach(cls => {
-    const card = document.createElement("div");
-    card.className = "class-card";
-    card.textContent = `${cls.name} - ${cls.school_name}`;
+// Fungsi ambil kelas sesuai semester & tahun ajaran
+async function loadActiveClasses() {
+  try {
+    const { data, error } = await supabase
+      .from('classes')
+      .select(`
+        id,
+        name,
+        jadwal,
+        semester,
+        schools(name),
+        academic_years(year)
+      `)
+      .eq('semester', activeSemester)
+      .eq('academic_years.year', activeAcademicYear);
 
-    // Event klik card
-    card.addEventListener("click", () => {
-      // Simpan data ke localStorage
-      localStorage.setItem("activeClassId", cls.id);
-      localStorage.setItem("activeClassName", cls.name);
-      localStorage.setItem("activeSchoolName", cls.school_name);
-      localStorage.setItem("activeClassJadwal", cls.jadwal);
+    if (error) {
+      console.error('Gagal mengambil data kelas:', error);
+      return;
+    }
 
-      // Redirect ke halaman absensi kelas
-      window.location.href = "absensi_kelas.html";
+    console.log('Data classes:', data); // debug
+
+    classCardGrid.innerHTML = '';
+    data.forEach(cls => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h2>${cls.name}</h2>
+        <p>${cls.schools?.name ?? '-'}</p>
+      `;
+      card.addEventListener('click', () => {
+        localStorage.setItem("activeClassId", cls.id);
+        window.location.href = 'absensi_kelas.html';
+      });
+      classCardGrid.appendChild(card);
     });
-
-    container.appendChild(card);
-  });
+  } catch (e) {
+    console.error('Error loadActiveClasses:', e);
+  }
 }
 
-// Jalankan fungsi saat halaman dimuat
-document.addEventListener("DOMContentLoaded", loadClasses);
+// Logout
+logoutBtn?.addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  window.location.href = 'index.html';
+});
+
+// Init
+document.addEventListener('DOMContentLoaded', loadActiveClasses);
