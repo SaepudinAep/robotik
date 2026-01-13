@@ -1,0 +1,119 @@
+<!-- Versi: v1.3.9 -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi + Materi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="absensi-page">
+
+  <!-- Header -->
+  <header class="header-info">
+    <h1 id="page-title">Absensi Robotik</h1>
+    <div class="class-meta">
+      <p id="school-name"><strong>-</strong></p>
+      <p id="semester-year">Semester - — Tahun Ajaran -</p>
+      <p id="class-schedule">Kelas - | Jadwal: -</p>
+    </div>
+    <button id="logout-btn" class="logout">Logout</button>
+  </header>
+
+  <!-- Form Tambah Materi -->
+  <section class="materi-section">
+    <button id="add-materi" class="btn-add" type="button">+ Tambah Materi</button>
+    <form id="materi-form" style="display:none;">
+      <div class="form-group">
+        <span class="icon">📅</span>
+        <input type="date" id="materi-date" required>
+      </div>
+      <div class="form-group">
+        <span class="icon">📖</span>
+        <input type="text" id="materi-title" placeholder="Judul materi" required>
+      </div>
+      <div class="form-group">
+        <span class="icon">👩‍🏫</span>
+        <input type="text" id="materi-guru" placeholder="Guru">
+      </div>
+      <div class="form-group">
+        <span class="icon">🧑‍🤝‍🧑</span>
+        <input type="text" id="materi-asisten" placeholder="Asisten">
+      </div>
+      <button type="submit" class="btn-save">Simpan Materi</button>
+    </form>
+  </section>
+
+  <!-- Tabel Absensi -->
+  <section class="absensi-section">
+    <h2>Tabel Absensi</h2>
+    <div class="table-wrapper">
+      <table id="absensi-table">
+        <thead>
+          <tr id="absensi-head">
+            <th>No.</th>
+            <th>Nama Siswa</th>
+            <th>Kelas</th>
+            <!-- kolom absensi per tanggal akan ditambahkan via JS -->
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr id="totals-row">
+            <td colspan="3" style="text-align:center;">Total</td>
+            <!-- kolom total per tanggal -->
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <button id="save-absensi" class="btn-save-absensi" style="display:none;">Simpan Absensi</button>
+    <div id="summary" class="summary-info">Jumlah Bulan ini: 0 dari 0 siswa</div>
+  </section>
+
+  <!-- Card Materi -->
+  <section class="materi-cards" id="materi-card-grid"></section>
+
+  <!-- Popup Edit Materi -->
+  <div id="popup-materi" class="popup" style="display:none;">
+    <div class="popup-content">
+      <h2>Edit Materi</h2>
+      <form id="popup-form">
+        <div class="form-group">
+          <span class="icon">📅</span>
+          <input type="date" id="edit-date">
+        </div>
+        <div class="form-group">
+          <span class="icon">📖</span>
+          <input type="text" id="edit-title" placeholder="Judul materi">
+        </div>
+        <div class="form-group">
+          <span class="icon">👩‍🏫</span>
+          <input type="text" id="edit-guru" placeholder="Guru">
+        </div>
+        <div class="form-group">
+          <span class="icon">🧑‍🤝‍🧑</span>
+          <input type="text" id="edit-asisten" placeholder="Asisten">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save">✔</button>
+          <button type="button" class="btn-secondary" id="cancel-popup">✖</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" style="display:none;">✔ Absensi tersimpan</div>
+
+  <!-- Footer -->
+  <footer class="footer">
+  <a href="dashboard.html" class="btn-nav">Dashboard</a>
+  <a href="absensi_sekolah.html" class="btn-nav">Kelas</a>
+    <p>Sistem Absensi v1.3.9 — Dibuat oleh Saepudin & Copilot</p>
+  </footer>
+
+  <!-- Script -->
+  <script type="module" src="absensi_kelas.js"></script>
+</body>
+</html>

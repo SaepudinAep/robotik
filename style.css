@@ -112,7 +112,7 @@ body {
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   gap: 1rem;
   padding: 1rem;
 }
@@ -711,11 +711,379 @@ body {
 .card-grid .card .btn-primary:hover {
   opacity: 0.9;
 }
+/* Footer konsisten */
+.footer {
+  background: #4d97ff; /* Scratch Blue */
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.nav-footer {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-nav {
+  background: #ffab19; /* Scratch Orange */
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+.btn-nav:hover {
+  background: #e69500;
+}
+/* Tombol Logout */
+.logout {
+  background: #ff4d4d;   /* merah lembut, tegas untuk logout */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.logout:hover {
+  background: #cc0000;   /* merah lebih gelap saat hover */
+}
+
+
+/* ==========Page Absensi Siswa========= */
+/* Reset & Font */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+
+/* Header Informasi Kelas */
+.header-info {
+  background: #ffffff;
+  padding: 1rem;
+  border-bottom: 2px solid #4d97ff;
+}
+.header-info h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 24px;
+  color: #4d97ff;
+  margin: 0 0 0.5rem;
+}
+.class-meta p {
+  font-size: 16px;
+  margin: 0.2rem 0;
+}
+.logout {
+  float: right;
+  background: #ff4d4d;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.logout:hover { background: #cc0000; }
+
+/* Button + (Tambah Materi) */
+.btn-add {
+  background: #ffab19;
+  color: #ffffff;
+  font-family: 'Fredoka One', cursive;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.btn-add:hover { opacity: 0.9; }
+
+/* Form Input Materi */
+#materi-form {
+  margin-top: 1rem;
+  background: #fff3d6;
+  padding: 1rem;
+  border-radius: 8px;
+}
+#materi-form label {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+#materi-form input {
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.btn-save {
+  background: #4CAF50;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.8rem;
+  cursor: pointer;
+}
+.btn-save:hover { background: #388E3C; }
+
+/* Tabel Absensi */
+.absensi-section { margin: 1rem; }
+.absensi-section h2 {
+  font-family: 'Fredoka One', cursive;
+  color: #4d97ff;
+}
+
+/* Semua header tabel */
+#absensi-table thead th {
+  font-size: 16px; /* default, bisa diganti */
+  font-family: 'Fredoka One', cursive;
+}
+
+/* Khusus header kolom tanggal */
+#absensi-table thead th[data-date] {
+  font-size: 14px; /* lebih kecil dari default */
+  color: #4d97ff;  /* opsional: warna brand */
+  text-align: center;
+}
+
+.table-wrapper {
+  overflow-x: auto; /* full scroll horizontal */
+}
+/* Batasi lebar kolom Nama & Kelas */
+/* =====Kolom No =======*/
+#absensi-table th:nth-child(1),
+#absensi-table td:nth-child(1) {
+  width: 40px;       /* lebar tetap Nama */
+  max-width: 40px;
+  text-align: center;
+  white-space: nowrap; /* cegah teks turun ke bawah */
+  overflow: hidden;
+  text-overflow: ellipsis; /* kalau kepanjangan, jadi ... */
+}
+
+/* =====Kolom Nama =======*/
+#absensi-table th:nth-child(2),
+#absensi-table td:nth-child(2) {
+  width: 100px;        
+  max-width: 100px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* =====Kolom Kelas=======*/
+#absensi-table th:nth-child(3),
+#absensi-table td:nth-child(3) {
+  width: 60px;        /* lebar tetap Kelas */
+  max-width: 60px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Khusus kolom tanggal */
+/* =====Kolom Input Absensi=======*/
+#absensi-table th[data-date],
+#absensi-table td[data-date] {
+  width: 70px;        /* lebar tetap untuk semua kolom tanggal */
+  max-width: 70px;
+  text-align: center; /* isi rata tengah */
+  white-space: nowrap; /* cegah teks turun ke bawah */
+}
+
+/* Row striping warna pastel lembut */
+#absensi-table tbody tr:nth-child(odd) {
+  background: #fffdf5; /* kuning pastel */
+}
+#absensi-table tbody tr:nth-child(even) {
+  background: #f5fbff; /* biru pastel */
+}
+#absensi-table tbody tr:hover {
+  background: #f0f0f0;
+  transition: background 0.3s ease;
+}
+
+/* Status warna */
+.status.hadir { color: #4CAF50; font-weight: bold; }
+.status.tidak { color: #F44336; font-weight: bold; }
+.status.none  { color: #9E9E9E; }
+
+/* Label "Jumlah Siswa" rata kanan */
+#absensi-table tfoot tr#totals-row td.label-cell {
+  text-align: right;
+  font-weight: bold;
+}
+
+/* Angka hasil kehadiran rata tengah */
+#absensi-table tfoot tr#totals-row td.count-cell {
+  text-align: center;
+  font-weight: bold;
+}
+
+
+/* Button Simpan Absensi style baru */
+.btn-save-absensi {
+  background: #4d97ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  padding: 0.6rem 1.4rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  font-family: 'Fredoka One', cursive;
+  font-size: 16px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+.btn-save-absensi:hover {
+  background: #3a7bd5;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transform: scale(1.05);
+}
+
+/* Summary jumlah hadir */
+.summary-info {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #4d97ff;
+}
+
+/* Matrix Card Materi (lebih kecil & ringkas) */
+.materi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* lebar minimum card */
+  gap: 0.6rem;   /* jarak antar card */
+  margin: 0.8rem;
+}
+
+.materi-cards .card {
+  background: #fff3d6;
+  border-radius: 6px;   /* sudut lebih kecil */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1); /* bayangan tipis */
+  padding: 0.3rem;      /* ruang dalam card */
+  min-height: 30px;     /* tinggi minimum card */
+  max-height: 50px;    /* tinggi maksimum card */
+}
+
+.materi-cards h3 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 12px;      /* lebih kecil dari 13px */
+  margin: 0 0 0.2rem;
+}
+
+.materi-cards p {
+  font-size: 12px;       /* lebih kecil */
+  color: #333;          /* warna teks */
+  text-align: left;   /* rata tengah */
+}
+
+/* Popup background */
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: flex-start; /* kiri */
+  align-items: flex-start; /* atas */
+}
+
+/* Popup box */
+.popup-content {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 85%;
+  max-width: 320px;
+  margin: 1rem;
+}
+
+/* Title */
+.popup-content h2 {
+  font-family: 'Fredoka One', cursive;
+  color: #4d97ff;
+  margin-top: 0;
+  font-size: 18px;
+}
+
+/* Form group with icon */
+.form-group {
+  display: flex;
+  align-items: center;
+  margin: 0.6rem 0;
+}
+.form-group .icon {
+  font-size: 18px;
+  margin-right: 0.5rem;
+}
+.form-group input {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Actions */
+.form-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+.btn-save {
+  background: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.btn-save:hover { background: #388E3C; }
+.btn-secondary {
+  background: #F44336;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: #c62828; }
+/* Toast Notifikasi */
+.toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #4CAF50;
+  color: #ffffff;
+  padding: 0.8rem 1.2rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-weight: 600;
+}
+.toast.error { background: #F44336; }
+
 /* Footer */
 .footer {
   background: #4d97ff;
   color: #ffffff;
   text-align: center;
   padding: 1rem;
-  margin-top: auto;
+  margin-top: 2rem;
 }
+.nav-footer { margin-bottom: 0.5rem; }
+.btn-nav {
+  background: #ffab19;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  margin: 0 0.3rem;
+}
+.btn-nav:hover { background: #e69500; }
+
