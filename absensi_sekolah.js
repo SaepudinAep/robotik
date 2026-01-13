@@ -12,6 +12,25 @@ const logoutBtn = document.querySelector('.logout');
 const activeAcademicYear = localStorage.getItem("activeAcademicYear"); // contoh: "2025/2026"
 const activeSemester = localStorage.getItem("activeSemester");         // contoh: "Semester 2"
 
+// Simpan Nama Sekolah dan Kelas
+classes.forEach(cls => {
+  const card = document.createElement("div");
+  card.className = "class-card";
+  card.textContent = cls.name;
+
+  // Tambahkan event listener klik
+  card.addEventListener("click", () => {
+    // Simpan data kelas ke localStorage
+    localStorage.setItem("activeClassId", cls.id);
+    localStorage.setItem("activeClassName", cls.name);
+
+    // Arahkan ke halaman draft absensi
+    window.location.href = "draft_absensi.html";
+  });
+
+  container.appendChild(card);
+});
+
 // Tampilkan label semester
 semesterLabelEl.textContent = `${activeSemester} ${activeAcademicYear}`;
 
