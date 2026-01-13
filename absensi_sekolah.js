@@ -1,67 +1,39 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-import { supabaseUrl, supabaseKey } from './config.js';
+// Ambil data dari localStorage
+window.addEventListener("DOMContentLoaded", () => {
+  const schoolName = localStorage.getItem("activeSchoolName");
+  const className = localStorage.getItem("activeClassName");
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+  // Update header
+  document.getElementById("headerSekolah").textContent = schoolName || "Sekolah Default";
+  document.getElementById("headerKelas").textContent = className || "Kelas Default";
 
-// Elemen HTML
-const semesterLabelEl = document.getElementById('semester-label');
-const classCardGrid = document.getElementById('class-card-grid');
-const logoutBtn = document.querySelector('.logout');
-
-// Ambil semester & tahun ajaran dari localStorage
-const activeAcademicYear = localStorage.getItem("activeAcademicYear"); // contoh: "2025/2026"
-const activeSemester = localStorage.getItem("activeSemester");         // contoh: "Semester 2"
-
-// Tampilkan label semester
-semesterLabelEl.textContent = `${activeSemester} ${activeAcademicYear}`;
-
-// Fungsi ambil kelas sesuai semester & tahun ajaran
-async function loadActiveClasses() {
-  try {
-    const { data, error } = await supabase
-      .from('classes')
-      .select(`
-        id,
-        name,
-        jadwal,
-        semester,
-        schools(name),
-        academic_years(year)
-      `)
-      .eq('semester', activeSemester)
-      .eq('academic_years.year', activeAcademicYear);
-
-    if (error) {
-      console.error('Gagal mengambil data kelas:', error);
-      return;
-    }
-
-    console.log('Data classes:', data); // debug
-
-    classCardGrid.innerHTML = '';
-    data.forEach(cls => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <h2>${cls.name}</h2>
-        <p>${cls.schools?.name ?? '-'}</p>
-      `;
-      card.addEventListener('click', () => {
-        localStorage.setItem("activeClassId", cls.id);
-        window.location.href = 'absensi_kelas.html';
-      });
-      classCardGrid.appendChild(card);
-    });
-  } catch (e) {
-    console.error('Error loadActiveClasses:', e);
+  // Ambil ID kelas untuk load tabel absensi
+  const classId = localStorage.getItem("activeClassId");
+  if (classId) {
+    loadAbsensi(classId);
   }
-}
-
-// Logout
-logoutBtn?.addEventListener('click', async () => {
-  await supabase.auth.signOut();
-  window.location.href = 'index.html';
 });
 
-// Init
-document.addEventListener('DOMContentLoaded', loadActiveClasses);
+// Contoh fungsi load absensi (Supabase)
+async function loadAbsensi(classId) {
+  const { data, error } = await supabase
+    .from("attendances")
+    .select("id, students(name), status")
+    .eq("class_id", classId);
+
+  if (error) {
+    console.error("Gagal load absensi:", error);
+    return;
+  }
+
+  const tbody = document.querySelector("#tableAbsensi tbody");
+  tbody.innerHTML = "";
+  data.forEach((row, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${row.students?.name ?? "-"}</td>
+        <td>${row.status ?? "-"}</td>
+      </tr>`;
+  });
+}
