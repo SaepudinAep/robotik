@@ -24,51 +24,46 @@ async function loadSchools() {
     : '<option value="">Belum ada sekolah</option>';
 }
 
-// Load tahun ajaran berdasarkan sekolah
-async function loadAcademicYears(schoolId) {
-  const { data } = await supabase
-    .from('academic_years')
-    .select('id, year')
-    .eq('school_id', schoolId)
-    .order('year', { ascending: true });
-
+// Load tahun ajaran (tidak tergantung sekolah)
+async function loadAcademicYears() {
+  const { data } = await supabase.from('academic_years').select('id, year').order('year');
   yearSelect.innerHTML = data?.length
     ? ['<option value="">-- Pilih Tahun Ajaran --</option>', ...data.map(y => `<option value="${y.id}">${y.year}</option>`)].join('')
     : '<option value="">Belum ada tahun ajaran</option>';
 }
 
+// Load semester berdasarkan tahun ajaran
+async function loadSemesters(academicYearId) {
+  const { data } = await supabase
+    .from('semesters')
+    .select('id, name')
+    .eq('academic_year_id', academicYearId)
+    .order('name');
+
+  semesterSelect.innerHTML = data?.length
+    ? ['<option value="">-- Pilih Semester --</option>', ...data.map(s => `<option value="${s.id}">${s.name}</option>`)].join('')
+    : '<option value="">Belum ada semester</option>';
+}
+
 // Tambah tahun ajaran baru
 addYearBtn.addEventListener('click', async () => {
-  const schoolId = schoolSelect.value;
-  if (!schoolId) return alert('Pilih sekolah terlebih dahulu');
-
   const tahun = prompt('Masukkan tahun ajaran baru (misal: 2026/2027)');
   if (!tahun) return;
 
-  const { error } = await supabase.from('academic_years').insert([{ year: tahun, school_id: schoolId }]);
+  const { error } = await supabase.from('academic_years').insert([{ year: tahun }]);
   if (error) {
     alert('❌ Gagal menambahkan tahun ajaran: ' + error.message);
   } else {
     alert('✅ Tahun ajaran berhasil ditambahkan');
-    await loadAcademicYears(schoolId);
+    await loadAcademicYears();
     const { data: updated } = await supabase
       .from('academic_years')
       .select('id')
       .eq('year', tahun)
-      .eq('school_id', schoolId)
       .single();
     if (updated) yearSelect.value = updated.id;
   }
 });
-
-// Load semester statis
-function loadSemesterDropdown() {
-  semesterSelect.innerHTML = `
-    <option value="">-- Pilih Semester --</option>
-    <option value="Semester 1">Semester 1</option>
-    <option value="Semester 2">Semester 2</option>
-  `;
-}
 
 // Load level statis
 function loadLevels() {
@@ -76,7 +71,6 @@ function loadLevels() {
     <option value="">-- Pilih Level --</option>
     <option value="Kiddy">Kiddy</option>
     <option value="Beginner">Beginner</option>
-
   `;
 }
 
@@ -84,7 +78,12 @@ function loadLevels() {
 async function loadClassesTable() {
   const { data } = await supabase
     .from('classes')
-    .select('id, name, level, jadwal, semester, academic_years (year), schools (name)')
+    .select(`
+      id, name, level, jadwal,
+      academic_years (year),
+      schools (name),
+      semesters (name)
+    `)
     .order('name');
 
   listEl.innerHTML = data?.length
@@ -93,7 +92,7 @@ async function loadClassesTable() {
         <td>${c.name}</td>
         <td>${c.schools?.name || '-'}</td>
         <td>${c.academic_years?.year || '-'}</td>
-        <td>${c.semester || '-'}</td>
+        <td>${c.semesters?.name || '-'}</td>
         <td>${c.level || '-'}</td>
         <td>${c.jadwal || '-'}</td>
         <td>
@@ -111,29 +110,35 @@ form.addEventListener('submit', async (e) => {
   const name = classInput.value.trim();
   const schoolId = schoolSelect.value;
   const yearId = yearSelect.value;
-  const semester = semesterSelect.value;
+  const semesterId = semesterSelect.value;
   const level = levelSelect.value;
   const jadwal = scheduleInput.value.trim();
 
-  if (!schoolId || !yearId || !semester || !name || !level || !jadwal) {
+  if (!schoolId || !yearId || !semesterId || !name || !level || !jadwal) {
     alert('Semua field wajib diisi');
     return;
   }
 
+  const payload = {
+    name,
+    school_id: schoolId,
+    academic_year_id: yearId,
+    semester_id: semesterId,
+    level,
+    jadwal
+  };
+
   if (form.dataset.editId) {
-    await supabase.from('classes')
-      .update({ name, school_id: schoolId, academic_year_id: yearId, semester, level, jadwal })
-      .eq('id', form.dataset.editId);
+    await supabase.from('classes').update(payload).eq('id', form.dataset.editId);
     alert('Kelas berhasil diupdate');
     form.dataset.editId = '';
   } else {
-    await supabase.from('classes')
-      .insert([{ name, school_id: schoolId, academic_year_id: yearId, semester, level, jadwal }]);
+    await supabase.from('classes').insert([payload]);
     alert('Kelas berhasil ditambahkan');
   }
 
   form.reset();
-  yearSelect.innerHTML = '<option value="">-- Pilih Tahun Ajaran --</option>';
+  semesterSelect.innerHTML = '<option value="">-- Pilih Semester --</option>';
   loadClassesTable();
 });
 
@@ -141,9 +146,10 @@ form.addEventListener('submit', async (e) => {
 window.editClass = async (id) => {
   const { data } = await supabase.from('classes').select('*').eq('id', id).single();
   form.school_id.value = data.school_id;
-  await loadAcademicYears(data.school_id);
+  await loadAcademicYears();
   form.academic_year.value = data.academic_year_id;
-  semesterSelect.value = data.semester;
+  await loadSemesters(data.academic_year_id);
+  form.semester.value = data.semester_id;
   classInput.value = data.name;
   form.level.value = data.level;
   form.schedule.value = data.jadwal;
@@ -170,15 +176,15 @@ cancelDeleteBtn.addEventListener('click', () => {
   deleteModal.style.display = 'none';
 });
 
-// Saat sekolah dipilih, load tahun ajaran
-schoolSelect.addEventListener('change', async (e) => {
-  const schoolId = e.target.value;
-  if (!schoolId) return;
-  await loadAcademicYears(schoolId);
+// Saat tahun ajaran dipilih, load semester
+yearSelect.addEventListener('change', async (e) => {
+  const yearId = e.target.value;
+  if (!yearId) return;
+  await loadSemesters(yearId);
 });
 
 // Inisialisasi halaman
 loadSchools();
+loadAcademicYears();
 loadLevels();
-loadSemesterDropdown();
 loadClassesTable();

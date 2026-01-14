@@ -1,4 +1,4 @@
-// registrasi_sekolah.js v1.2.0
+// registrasi_sekolah.js v1.2.0 Untuk registrasi siswa sekolah
 import { supabase } from './config.js';
 
 // DOM Elements
@@ -90,9 +90,13 @@ saveBtn.addEventListener('click', async (e) => {
     }
   }
 
-  alertBox.textContent = '✅ Data siswa berhasil disimpan';
-  loadStudentsTable(classId);
-});
+  alertBox.textContent = '✅ Data siswa berhasil disimpan'; loadStudentsTable(classId); // Reset form input ke satu baris kosong 
+    studentTable.innerHTML = ` <tr> 
+        <td><input type="text" name="student_name" required></td> 
+       <td><input type="text" name="student_class" required></td> </tr> 
+   `;
+
+ });
 
 // Tampilkan daftar siswa
 async function loadStudentsTable(classId) {
