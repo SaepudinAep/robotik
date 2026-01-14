@@ -1,3 +1,4 @@
+// JS Absensi sekolah v.1.2
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 import { supabaseUrl, supabaseKey } from './config.js';
 
@@ -21,15 +22,16 @@ async function loadActiveClasses() {
     const { data, error } = await supabase
       .from('classes')
       .select(`
-        id,
-        name,
-        jadwal,
-        semester,
-        schools(name),
-        academic_years(year)
-      `)
-      .eq('semester', activeSemester)
-      .eq('academic_years.year', activeAcademicYear);
+              id,
+              name,
+              jadwal,
+              semesters (name),
+              schools (name),
+              academic_years (year)
+              `)
+    .eq('semesters.name', activeSemester)
+    .eq('academic_years.year', activeAcademicYear);
+
 
     if (error) {
       console.error('Gagal mengambil data kelas:', error);
