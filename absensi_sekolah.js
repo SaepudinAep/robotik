@@ -57,7 +57,7 @@ async function loadActiveClasses() {
         localStorage.setItem("activeAcademicYear", activeAcademicYear);
         localStorage.setItem("activeSemester", activeSemester);
 
-        window.location.href = 'absensi_kelas.html';
+        window.location.href = 'draft_absensi.html';
       });
       classCardGrid.appendChild(card);
     });
