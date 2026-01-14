@@ -85,8 +85,8 @@ navCards.forEach((card) => {
     const text = card.textContent.trim();
 
     const routes = {
-      'Sekolah': 'absensi_sekolah.html',
-      'Private': 'absensi_private.html',
+      'Absensi': 'absensi_sekolah.html',
+      'Private': 'guru_materi.html',
       'Registrasi Siswa': 'registrasi_sekolah.html',
       'Registrasi Private': 'registrasi_private.html',
       'Profil Sekolah': 'profil_sekolah.html',

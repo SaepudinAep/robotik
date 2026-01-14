@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Guru & Materi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff3d6;
+      color: #333;
+    }
+
+    header {
+      background: #4d97ff;
+      padding: 12px 20px;
+    }
+    .nav-main ul {
+      list-style: none;
+      display: flex;
+      gap: 24px;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-main a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-family: 'Fredoka One', cursive;
+    }
+
+    .tab-buttons {
+      margin: 20px auto;
+      text-align: center;
+    }
+    .tab-buttons button {
+      background: #ffab19;
+      border: none;
+      padding: 12px 24px;
+      margin: 0 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'Fredoka One', cursive;
+    }
+    .tab-buttons button:hover { background: #e69500; }
+
+    section {
+      display: none;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 900px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    section.active { display: block; }
+
+    form input, form select, form textarea {
+      display: block;
+      margin: 12px 0;
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .form-actions { margin-top: 12px; }
+    .form-actions button {
+      background: #4d97ff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: 'Fredoka One', cursive;
+    }
+    .form-actions button:hover { background: #3a7ad9; }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    th {
+      background: #4d97ff;
+      color: white;
+      font-family: 'Fredoka One', cursive;
+    }
+    td button {
+      background: #ffab19;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    td button:hover { background: #e69500; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #4d97ff;
+      color: white;
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav class="nav-main">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="absensi_sekolah.html">Absensi Sekolah</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="tab-buttons">
+    <button id="btnGuru">Guru</button>
+    <button id="btnMateri">Materi</button>
+  </div>
+
+  <section id="guru">
+    <h2>Input Guru</h2>
+    <form id="formGuru">
+      <input type="text" id="guruName" placeholder="Nama Guru/Asisten" required>
+      <select id="guruRole">
+        <option value="guru">Guru</option>
+        <option value="asisten">Asisten</option>
+      </select>
+      <div class="form-actions">
+        <button type="submit" id="saveGuru">Simpan Guru</button>
+        <button type="button" id="resetGuru">Batal</button>
+      </div>
+    </form>
+    <table id="tableGuru">
+      <thead>
+        <tr><th>No</th><th>Nama</th><th>Role</th><th>Aksi</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="materi">
+    <h2>Input Materi</h2>
+    <form id="formMateri">
+      <input type="text" id="materiTitle" placeholder="Judul Materi" required>
+      <input type="text" id="materiLevel" placeholder="Level (opsional)">
+      <input type="text" id="materiDesc" placeholder="Deskripsi (opsional)">
+      <textarea id="materiDetail" placeholder="Detail (opsional)"></textarea>
+      <div class="form-actions">
+        <button type="submit" id="saveMateri">Simpan Materi</button>
+        <button type="button" id="resetMateri">Batal</button>
+      </div>
+    </form>
+    <table id="tableMateri">
+      <thead>
+        <tr><th>No</th><th>Title</th><th>Level</th><th>Description</th><th>Detail</th><th>Aksi</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <footer>
+    <p>© 2026 Robopanda | Created by Saepudin</p>
+    <script type="module" src="guru_materi.js"></script>
+  </footer>
+
+</body>
+</html>
