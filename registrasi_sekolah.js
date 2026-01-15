@@ -91,11 +91,13 @@ saveBtn.addEventListener('click', async (e) => {
   const students = [];
   for (const r of rows) {
     const name = r.querySelector('input[name="student_name"]').value.trim();
+    const kelas = r.querySelector('input[name="student_class"]').value.trim();
+
     if (!name) continue;
 
     if (r.dataset.editId) {
       const { error } = await supabase.from('students')
-        .update({ name })
+        .update({ name, kelas })
         .eq('id', r.dataset.editId);
       if (error) {
         alertBox.textContent = '❌ Gagal update: ' + error.message;
@@ -103,7 +105,14 @@ saveBtn.addEventListener('click', async (e) => {
       }
       r.dataset.editId = '';
     } else {
-      students.push({ name, class_id: classId, school_id: schoolId, user_id: null });
+      students.push({
+      name,           // dari input nama
+      kelas,          // dari input kelas
+      class_id: classId,     // dari dropdown
+      school_id: schoolId,   // dari dropdown
+      user_id: null
+});
+
     }
   }
 
@@ -130,8 +139,8 @@ saveBtn.addEventListener('click', async (e) => {
 async function loadStudentsTable(classId) {
   const { data, error } = await supabase
     .from('students')
-    .select('id, name, kelas, classes (name), schools (name)')
-    .order('name');
+    .select('id, name, kelas, class_id, classes (name), schools (name)')
+    .order('kelas, name');
 
   if (error) {
     console.error('Gagal load siswa:', error.message);
@@ -144,7 +153,7 @@ async function loadStudentsTable(classId) {
     ? filtered.map(s => `
       <tr>
         <td>${s.name}</td>
-        <td>${s.kelas || '-'}</td>
+        <td>${s.kelas}</td>
         <td>
           <button onclick="editStudent('${s.id}')">Edit</button>
           <button onclick="deleteStudent('${s.id}')">Hapus</button>
@@ -156,7 +165,7 @@ async function loadStudentsTable(classId) {
 
 // ✏️ Edit siswa
 window.editStudent = async (id) => {
-  const { data, error } = await supabase.from('students').select('id, name, class_id, classes (name)').eq('id', id).single();
+  const { data, error } = await supabase.from('students').select('id, name, kelas, class_id, classes (name)').eq('id', id).single();
   if (error) {
     alertBox.textContent = '❌ Gagal mengambil data siswa: ' + error.message;
     return;
@@ -173,7 +182,7 @@ window.editStudent = async (id) => {
   }
 
   row.querySelector('input[name="student_name"]').value = data.name;
-  row.querySelector('input[name="student_class"]').value = data.classes?.name || '';
+  row.querySelector('input[name="student_class"]').value = data.kelas|| '';
   row.dataset.editId = id;
   updateFormState();
 };
@@ -253,5 +262,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadSchools();
   updateFormState(); // Pastikan form dalam kondisi awal (disable)
 });
-
 
