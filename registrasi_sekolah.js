@@ -130,7 +130,7 @@ saveBtn.addEventListener('click', async (e) => {
 async function loadStudentsTable(classId) {
   const { data, error } = await supabase
     .from('students')
-    .select('id, name, class_id, classes (name), schools (name)')
+    .select('id, name, kelas, classes (name), schools (name)')
     .order('name');
 
   if (error) {
