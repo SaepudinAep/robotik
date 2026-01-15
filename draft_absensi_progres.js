@@ -1,19 +1,15 @@
-// draft_absensi.js v2.1.0 — Absensi berdasarkan materi yang sudah ada
+// draft_absensi_v2.2.0_part1.js — Bagian 1
 import { supabase } from './config.js';
 
 // === 1. HEADER SEKOLAH & KELAS ===
 async function renderHeader() {
   const classId = localStorage.getItem("activeClassId");
-  if (!classId) {
-    console.warn("⚠️ Tidak ada classId di localStorage");
-    return;
-  }
+  if (!classId) return;
 
   const { data: kelas, error } = await supabase
     .from('classes')
     .select(`
-      name,
-      jadwal,
+      name, jadwal,
       schools (name),
       semesters (name),
       academic_years (year)
@@ -21,14 +17,11 @@ async function renderHeader() {
     .eq('id', classId)
     .single();
 
-  if (error || !kelas) {
-    console.error("❌ Gagal mengambil data kelas:", error);
-    return;
+  if (kelas) {
+    document.getElementById("school-name").textContent = kelas.schools?.name ?? "-";
+    document.getElementById("semester-year").textContent = `${kelas.semesters?.name ?? "-"} — Tahun Ajaran ${kelas.academic_years?.year ?? "-"}`;
+    document.getElementById("class-schedule").textContent = `${kelas.name} | Jadwal: ${kelas.jadwal ?? "-"}`;
   }
-
-  document.getElementById("school-name").textContent = kelas.schools?.name ?? "-";
-  document.getElementById("semester-year").textContent = `${kelas.semesters?.name ?? "-"} — Tahun Ajaran ${kelas.academic_years?.year ?? "-"}`;
-  document.getElementById("class-schedule").textContent = `${kelas.name} | Jadwal: ${kelas.jadwal ?? "-"}`;
 }
 
 // === 2. TABEL SISWA ===
@@ -36,20 +29,12 @@ let siswaList = [];
 
 async function initTable() {
   const classId = localStorage.getItem("activeClassId");
-  if (!classId) {
-    console.warn("⚠️ Tidak ada classId di localStorage");
-    return;
-  }
+  if (!classId) return;
 
-  const { data: students, error } = await supabase
+  const { data: students } = await supabase
     .from("students")
     .select("id, name, class_id, classes(name)")
     .eq("class_id", classId);
-
-  if (error) {
-    console.error("❌ Gagal ambil data siswa:", error.message);
-    return;
-  }
 
   siswaList = students;
 
@@ -69,7 +54,6 @@ async function initTable() {
   });
 }
 
-
 // === 3. FORM PILIH MATERI ===
 function setupMateriForm() {
   const form = document.getElementById("materi-form");
@@ -87,18 +71,18 @@ function setupMateriForm() {
     const guru = document.getElementById("materi-guru").value;
     const asisten = document.getElementById("materi-asisten").value;
 
-    if (!date || !title || !guru) {
-      alert("Tanggal, judul, dan guru wajib diisi.");
+    if (!date || !title || !guru || !asisten) {
+      alert("Tanggal, judul, guru, dan asisten wajib diisi.");
       return;
     }
 
-    const { data: materi, error } = await supabase
+    const { data: materi } = await supabase
       .from("materi")
       .select("id")
-     .eq("title", title)
+      .eq("title", title)
       .single();
 
-    if (error || !materi) {
+    if (!materi) {
       alert("Materi tidak ditemukan.");
       return;
     }
@@ -115,8 +99,13 @@ function tambahKolomAbsensi(date, materiId) {
   const totalsRow = document.getElementById("totals-row");
   const tbody = document.querySelector("#absensi-table tbody");
 
+  const formattedDate = new Date(date).toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "short"
+  });
+
   const th = document.createElement("th");
-  th.textContent = date;
+  th.textContent = formattedDate;
   headRow.appendChild(th);
 
   const tdTotal = document.createElement("td");
@@ -132,19 +121,78 @@ function tambahKolomAbsensi(date, materiId) {
   document.getElementById("save-absensi").style.display = "inline-block";
 }
 
-// === 5. SIMPAN ABSENSI KE SUPABASE ===
+// === 5. DROPDOWN GURU & ASISTEN ===
+async function loadGuruDropdowns() {
+  const { data } = await supabase
+    .from("teachers")
+    .select("name")
+    .order("name");
+
+  const guruSelect = document.getElementById("materi-guru");
+  const asistenSelect = document.getElementById("materi-asisten");
+
+  guruSelect.innerHTML = `<option value="">-- Pilih Guru --</option>`;
+  asistenSelect.innerHTML = `<option value="">-- Pilih Asisten --</option>`;
+
+  data.forEach(t => {
+    const opt1 = document.createElement("option");
+    opt1.value = t.name;
+    opt1.textContent = t.name;
+    guruSelect.appendChild(opt1);
+
+    const opt2 = opt1.cloneNode(true);
+    asistenSelect.appendChild(opt2);
+  });
+}
+
+// draft_absensi_v2.2.0_part2.js — Bagian 2
+
+// === 6. SIMPAN ABSENSI KE SUPABASE ===
 function setupSimpanAbsensi() {
   const btn = document.getElementById("save-absensi");
   btn.addEventListener("click", async () => {
     const rows = document.querySelectorAll("#absensi-table tbody tr");
     const absensiData = [];
 
+    const tanggal = document.getElementById("materi-date").value;
+    const guruName = document.getElementById("materi-guru").value;
+    const asistenName = document.getElementById("materi-asisten").value;
+
+    // Ambil ID guru dan asisten
+    const { data: guruData } = await supabase
+      .from("teachers")
+      .select("id")
+      .eq("name", guruName)
+      .single();
+
+    const { data: asistenData } = await supabase
+      .from("teachers")
+      .select("id")
+      .eq("name", asistenName)
+      .single();
+
+    const teacherId = guruData?.id;
+    const assistantId = asistenData?.id;
+
+    if (!teacherId || !assistantId || !tanggal) {
+      alert("Data guru, asisten, dan tanggal wajib diisi.");
+      return;
+    }
+
     rows.forEach(row => {
       const studentId = row.dataset.studentId;
       row.querySelectorAll("input[type='checkbox']").forEach(input => {
         const materiId = input.dataset.materiId;
         const status = input.checked ? "hadir" : "alfa";
-        absensiData.push({ student_id: studentId, materi_id: materiId, status });
+
+        absensiData.push({
+          student_id: studentId,
+          materi_id: materiId,
+          status,
+          teacher_id: teacherId,
+          assistant_id: assistantId,
+          tanggal
+        });
       });
     });
 
@@ -158,24 +206,21 @@ function setupSimpanAbsensi() {
       alert("Gagal menyimpan absensi.");
       console.error(error);
     } else {
-      document.getElementById("toast").textContent = "✅ Absensi berhasil disimpan";
-      document.getElementById("toast").style.display = "block";
-      setTimeout(() => {
-        document.getElementById("toast").style.display = "none";
-      }, 3000);
+      const toast = document.getElementById("toast");
+      toast.textContent = "✅ Absensi berhasil disimpan";
+      toast.style.display = "block";
+      setTimeout(() => (toast.style.display = "none"), 3000);
     }
   });
 }
 
-// === 6. AUTO-SUGGESTION JUDUL MATERI ===
+// === 7. AUTO-SUGGESTION JUDUL MATERI ===
 async function loadJudulMateriSuggestions() {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("materi")
     .select("title")
     .order("date", { ascending: false })
     .limit(30);
-
-  if (error) return;
 
   const datalist = document.getElementById("judul-list");
   datalist.innerHTML = "";
@@ -188,35 +233,9 @@ async function loadJudulMateriSuggestions() {
   });
 }
 
-// === 7. DROPDOWN GURU & ASISTEN ===
-async function loadGuruDropdowns() {
-  const { data, error } = await supabase
-    .from("teachers")
-    .select("name")
-    .order("name", { ascending: true });
-
-  if (error) return;
-
-  const guruSelect = document.getElementById("materi-guru");
-  const asistenSelect = document.getElementById("materi-asisten");
-
-  guruSelect.innerHTML = `<option value="">-- Pilih Guru --</option>`;
-  asistenSelect.innerHTML = `<option value="">-- (Opsional) Pilih Asisten --</option>`;
-
-  data.forEach(t => {
-    const option1 = document.createElement("option");
-    option1.value = t.name;
-    option1.textContent = t.name;
-    guruSelect.appendChild(option1);
-
-    const option2 = option1.cloneNode(true);
-    asistenSelect.appendChild(option2);
-  });
-}
-
 // === 8. TAMPILKAN CARD MATERI ===
 async function tampilkanDaftarMateri() {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("materi")
     .select(`
       id, date, title,
@@ -225,20 +244,20 @@ async function tampilkanDaftarMateri() {
     `)
     .order("date", { ascending: false });
 
-  if (error) {
-    console.error("Gagal ambil daftar materi:", error.message);
-    return;
-  }
-
   const container = document.getElementById("materi-list");
   container.innerHTML = "";
 
   data.forEach(m => {
+    const tanggal = new Date(m.date).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short"
+    });
+
     const card = document.createElement("div");
     card.className = "materi-card";
     card.innerHTML = `
       <h4>${m.title}</h4>
-      <p><strong>Tanggal:</strong> ${m.date}</p>
+      <p><strong>Tanggal:</strong> ${tanggal}</p>
       <p><strong>Guru:</strong> ${m.teachers?.name ?? "-"}</p>
       <p><strong>Asisten:</strong> ${m.asisten?.name ?? "-"}</p>
     `;
@@ -246,7 +265,6 @@ async function tampilkanDaftarMateri() {
   });
 }
 
-// === 9. INISIALISASI ===
 // === 9. INISIALISASI ===
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();               // Tampilkan info sekolah & kelas
