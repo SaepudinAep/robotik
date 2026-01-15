@@ -1,61 +1,73 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registrasi Siswa Sekolah</title>
+
   <!-- Font & CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dashboard-page">
-  <!-- Header -->
+
+  <!-- 🔷 HEADER -->
   <header class="header">
     <div class="header-text">
       <h1>Registrasi Siswa Sekolah</h1>
-      <p>Manajemen Data Siswa</p>
+      <p>Manajemen Data Siswa berdasarkan Sekolah & Kelas</p>
     </div>
   </header>
 
-  <!-- Filter Section -->
+  <!-- 🔶 FILTER: PILIH SEKOLAH & KELAS -->
   <section class="filter-section">
     <label for="school_id">Sekolah</label>
     <select id="school_id" name="school_id" required></select>
+    <small id="school-warning" style="color: #c00; display: none; font-style: italic;">
+      ⚠️ Pilih sekolah terlebih dahulu
+    </small>
 
-    <label for="class_id">Kelas Robotik</label>
+    <label for="class_id">Kelas</label>
     <select id="class_id" name="class_id" required></select>
+    <small id="class-warning" style="color: #c00; display: none; font-style: italic;">
+      ⚠️ Pilih kelas terlebih dahulu
+    </small>
   </section>
 
-  <!-- Form Tabel Input Siswa -->
+  <!-- 🔷 FORM INPUT SISWA -->
   <section class="form-section">
     <h2>Input Data Siswa</h2>
+    <p id="form-warning" style="color: #c00; font-style: italic; display: none;">
+      ⚠️ Silakan pilih sekolah dan kelas terlebih dahulu untuk mengaktifkan form input siswa.
+    </p>
+
     <table id="student-input-table">
       <thead>
         <tr>
-          <th>Nama</th>
-          <th>Kelas</th>
+          <th>Nama Siswa</th>
+          <th>Kelas (Tulis Ulang)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><input type="text" name="student_name" required></td>
-          <td><input type="text" name="student_class" required></td>
+          <td><input type="text" name="student_name" required /></td>
+          <td><input type="text" name="student_class" required /></td>
         </tr>
       </tbody>
     </table>
-    <div class="form-actions">
-      <button id="add-row" class="btn-secondary">Tambah Baris</button>
-     <button id="import-btn" class="btn-primary">Import XLS/CSV</button>
-      <button id="save-students" class="btn-primary">Simpan</button>
 
+    <!-- 🔘 TOMBOL AKSI -->
+    <div class="form-actions">
+      <button id="add-row" class="btn-secondary">➕ Tambah Baris</button>
+      <button id="import-btn" class="btn-primary">📥 Import XLS/CSV</button>
+      <button id="save-students" class="btn-primary">💾 Simpan</button>
     </div>
 
-    
-
+    <!-- 🔔 ALERT FEEDBACK -->
     <div id="alert-feedback"></div>
   </section>
 
-  <!-- Tabel Daftar Siswa -->
+  <!-- 🔶 DAFTAR SISWA YANG SUDAH TERSIMPAN -->
   <section class="list-section">
     <h2>Daftar Siswa</h2>
     <table id="student-list" class="class-table">
@@ -67,21 +79,22 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Data siswa akan diisi oleh JS -->
+        <!-- Data siswa akan diisi oleh JavaScript -->
       </tbody>
     </table>
   </section>
 
-  <!-- Footer -->
+  <!-- 🔷 FOOTER -->
   <footer class="footer">
     <nav>
-      <a href="dashboard.html" class="btn-nav">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav">🏠 Kembali ke Dashboard</a>
     </nav>
     <p>Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot</p>
   </footer>
-  
+
+  <!-- 📦 SCRIPT -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script type="module" src="registrasi_sekolah.js"></script>
-<script type="module" src="auth_guard.js"></script>
+  <script type="module" src="registrasi_sekolah.js"></script>
+  <script type="module" src="auth_guard.js"></script>
 </body>
 </html>

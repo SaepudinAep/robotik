@@ -1,4 +1,3 @@
-// registrasi_sekolah.js v1.2.0 Untuk registrasi siswa sekolah
 import { supabase } from './config.js';
 
 // DOM Elements
@@ -10,8 +9,33 @@ const importBtn = document.getElementById('import-btn');
 const saveBtn = document.getElementById('save-students');
 const alertBox = document.getElementById('alert-feedback');
 const listEl = document.getElementById('student-list').querySelector('tbody');
+const warningMsg = document.getElementById('form-warning');
+const schoolWarning = document.getElementById('school-warning');
+const classWarning = document.getElementById('class-warning');
 
-// Load sekolah
+// 🔁 Update form state
+function updateFormState() {
+  const schoolSelected = schoolSelect.value !== '';
+  const classSelected = classSelect.value !== '';
+  const enabled = schoolSelected && classSelected;
+
+  // Aktifkan/nonaktifkan tombol dan input
+  addRowBtn.disabled = !enabled;
+  importBtn.disabled = !enabled;
+  saveBtn.disabled = !enabled;
+
+  const inputs = studentTable.querySelectorAll('input');
+  inputs.forEach(input => input.disabled = !enabled);
+
+  // Tampilkan peringatan global
+  warningMsg.style.display = enabled ? 'none' : 'block';
+
+  // Tampilkan peringatan spesifik
+  schoolWarning.style.display = schoolSelected ? 'none' : 'inline';
+  classWarning.style.display = classSelected ? 'none' : 'inline';
+}
+
+// 🔽 Load sekolah
 async function loadSchools() {
   const { data, error } = await supabase.from('schools').select('id, name').order('name');
   if (error) {
@@ -19,13 +43,14 @@ async function loadSchools() {
     schoolSelect.innerHTML = '<option value="">Belum bisa memuat sekolah</option>';
     return;
   }
-  schoolSelect.innerHTML = data?.length
+  schoolSelect.innerHTML = data.length
     ? ['<option value="">-- Pilih Sekolah --</option>', ...data.map(s => `<option value="${s.id}">${s.name}</option>`)].join('')
     : '<option value="">Belum ada sekolah</option>';
   classSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+  updateFormState();
 }
 
-// Load kelas (ambil semua, filter di JS)
+// 🔽 Load kelas berdasarkan sekolah
 async function loadClasses(schoolId) {
   const { data, error } = await supabase.from('classes').select('id, name, school_id').order('name');
   if (error) {
@@ -37,9 +62,10 @@ async function loadClasses(schoolId) {
   classSelect.innerHTML = filtered.length
     ? ['<option value="">-- Pilih Kelas --</option>', ...filtered.map(c => `<option value="${c.id}">${c.name}</option>`)].join('')
     : '<option value="">Belum ada kelas</option>';
+  updateFormState();
 }
 
-// Tambah baris input siswa
+// ➕ Tambah baris input siswa
 addRowBtn.addEventListener('click', (e) => {
   e.preventDefault();
   const row = document.createElement('tr');
@@ -48,9 +74,10 @@ addRowBtn.addEventListener('click', (e) => {
     <td><input type="text" name="student_class" required></td>
   `;
   studentTable.appendChild(row);
+  updateFormState();
 });
 
-// Simpan data siswa (insert/update)
+// 💾 Simpan siswa
 saveBtn.addEventListener('click', async (e) => {
   e.preventDefault();
   const schoolId = schoolSelect.value;
@@ -67,7 +94,6 @@ saveBtn.addEventListener('click', async (e) => {
     if (!name) continue;
 
     if (r.dataset.editId) {
-      // Update siswa
       const { error } = await supabase.from('students')
         .update({ name })
         .eq('id', r.dataset.editId);
@@ -77,7 +103,6 @@ saveBtn.addEventListener('click', async (e) => {
       }
       r.dataset.editId = '';
     } else {
-      // Insert siswa baru
       students.push({ name, class_id: classId, school_id: schoolId, user_id: null });
     }
   }
@@ -90,25 +115,22 @@ saveBtn.addEventListener('click', async (e) => {
     }
   }
 
-  alertBox.textContent = '✅ Data siswa berhasil disimpan'; loadStudentsTable(classId); // Reset form input ke satu baris kosong 
-    studentTable.innerHTML = ` <tr> 
-        <td><input type="text" name="student_name" required></td> 
-       <td><input type="text" name="student_class" required></td> </tr> 
-   `;
+  alertBox.textContent = '✅ Data siswa berhasil disimpan';
+  loadStudentsTable(classId);
+  studentTable.innerHTML = `
+    <tr>
+      <td><input type="text" name="student_name" required></td>
+      <td><input type="text" name="student_class" required></td>
+    </tr>
+  `;
+  updateFormState();
+});
 
- });
-
-// Tampilkan daftar siswa
+// 📋 Tampilkan daftar siswa
 async function loadStudentsTable(classId) {
   const { data, error } = await supabase
     .from('students')
-    .select(`
-      id,
-      name,
-      class_id,
-      classes (name),
-      schools (name)
-    `)
+    .select('id, name, class_id, classes (name), schools (name)')
     .order('name');
 
   if (error) {
@@ -118,7 +140,6 @@ async function loadStudentsTable(classId) {
   }
 
   const filtered = data.filter(s => s.class_id === classId);
-
   listEl.innerHTML = filtered.length
     ? filtered.map(s => `
       <tr>
@@ -133,21 +154,14 @@ async function loadStudentsTable(classId) {
     : '<tr><td colspan="3">Belum ada siswa</td></tr>';
 }
 
-// Edit siswa
+// ✏️ Edit siswa
 window.editStudent = async (id) => {
-  const { data, error } = await supabase.from('students').select(`
-    id,
-    name,
-    class_id,
-    classes (name)
-  `).eq('id', id).single();
-
+  const { data, error } = await supabase.from('students').select('id, name, class_id, classes (name)').eq('id', id).single();
   if (error) {
     alertBox.textContent = '❌ Gagal mengambil data siswa: ' + error.message;
     return;
   }
 
-  // Cari baris input pertama (atau buat baru kalau kosong)
   let row = studentTable.querySelector('tr');
   if (!row) {
     row = document.createElement('tr');
@@ -158,16 +172,17 @@ window.editStudent = async (id) => {
     studentTable.appendChild(row);
   }
 
-  // Isi input dengan data siswa
   row.querySelector('input[name="student_name"]').value = data.name;
   row.querySelector('input[name="student_class"]').value = data.classes?.name || '';
-
-  // Simpan id di dataset untuk update
   row.dataset.editId = id;
+  updateFormState();
 };
 
-// Hapus siswa
+// 🗑️ Hapus siswa
 window.deleteStudent = async (id) => {
+  const konfirmasi = confirm("Apakah kamu yakin ingin menghapus siswa ini?");
+  if (!konfirmasi) return;
+
   const { error } = await supabase.from('students').delete().eq('id', id);
   if (error) {
     alertBox.textContent = '❌ Gagal menghapus: ' + error.message;
@@ -178,7 +193,8 @@ window.deleteStudent = async (id) => {
   if (classId) loadStudentsTable(classId);
 };
 
-// Import XLS/CSV
+
+// 📥 Import dari file
 importBtn.addEventListener('click', async (e) => {
   e.preventDefault();
   const input = document.createElement('input');
@@ -192,11 +208,9 @@ importBtn.addEventListener('click', async (e) => {
     reader.onload = (evt) => {
       const data = new Uint8Array(evt.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      // Tambahkan ke tabel input
       rows.slice(1).forEach(r => {
         if (r[0]) {
           const row = document.createElement('tr');
@@ -208,33 +222,35 @@ importBtn.addEventListener('click', async (e) => {
         }
       });
       alertBox.textContent = '✅ Data dari file berhasil diimpor';
+      updateFormState();
     };
     reader.readAsArrayBuffer(file);
   };
   input.click();
 });
 
-// Event saat sekolah dipilih
+// 🔄 Event: sekolah dipilih
 schoolSelect.addEventListener('change', async (e) => {
   const schoolId = e.target.value;
-  if (!schoolId) {
-    classSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-    return;
-  }
-  await loadClasses(schoolId);
+  classSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+  if (schoolId) await loadClasses(schoolId);
+  updateFormState();
 });
 
-// Event saat kelas dipilih
+// 🔄 Event: kelas dipilih
 classSelect.addEventListener('change', async (e) => {
   const classId = e.target.value;
   if (!classId) {
     listEl.innerHTML = '<tr><td colspan="3">Belum ada siswa</td></tr>';
+    updateFormState();
     return;
   }
   await loadStudentsTable(classId);
+  updateFormState();
 });
 
-// Inisialisasi halaman
 document.addEventListener('DOMContentLoaded', async () => {
   await loadSchools();
+  updateFormState(); // Pastikan form dalam kondisi awal (disable)
 });
+
