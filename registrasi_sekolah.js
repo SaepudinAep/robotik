@@ -144,7 +144,7 @@ async function loadStudentsTable(classId) {
     ? filtered.map(s => `
       <tr>
         <td>${s.name}</td>
-        <td>${s.classes?.name || '-'}</td>
+        <td>${s.kelas || '-'}</td>
         <td>
           <button onclick="editStudent('${s.id}')">Edit</button>
           <button onclick="deleteStudent('${s.id}')">Hapus</button>
@@ -253,4 +253,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadSchools();
   updateFormState(); // Pastikan form dalam kondisi awal (disable)
 });
+
 
