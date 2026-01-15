@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profil Kelas</title>
+
   <!-- Font & CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dashboard-page">
-  <!-- Header -->
+
+  <!-- 🔷 HEADER -->
   <header class="header">
     <div class="header-text">
       <h1>Profil Kelas</h1>
       <p>Manajemen Data Kelas</p>
     </div>
     <nav class="nav-actions">
-      <a href="dashboard.html" class="btn-nav">Dashboard</a>
-      <a href="profil_sekolah.html" class="btn-nav">Sekolah</a>
-      <a href="profil_tahun.html" class="btn-nav">Tahun</a>
+      <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+      <a href="profil_sekolah.html" class="btn-nav">🏫 Sekolah</a>
     </nav>
   </header>
 
-  <!-- Form Input -->
+  <!-- 🔶 FORM INPUT KELAS -->
   <main>
     <section class="form-section">
-      <h2>Tambah / Edit Kelas</h2>
+      <h2>Input Data Kelas</h2>
+
       <form id="class-form">
         <label for="school_id">Sekolah</label>
         <select id="school_id" name="school_id" required></select>
@@ -33,68 +35,21 @@
         <label for="academic_year">Tahun Ajaran</label>
         <div class="year-wrapper">
           <select id="academic_year" name="academic_year" required></select>
-          <button type="button" id="add-year-btn" class="btn-secondary"> + </button>
+          <button type="button" id="add-year-btn" class="btn-secondary">➕</button>
         </div>
 
         <label for="semester">Semester</label>
         <select id="semester" name="semester" required></select>
 
         <label for="class_name">Nama Kelas</label>
-        <input type="text" id="class_name" name="class_name" required>
+        <input type="text" id="class_name" name="class_name" required />
 
         <label for="level">Level</label>
         <select id="level" name="level" required></select>
 
         <label for="schedule">Jadwal</label>
-        <input type="text" id="schedule" name="schedule" required>
+        <input type="text" id="schedule" name="schedule" required />
 
+        <!-- 🔘 TOMBOL AKSI -->
         <div class="form-actions">
-          <button type="submit" class="btn-primary">Simpan</button>
-          <button type="reset" class="btn-secondary">Batal</button>
-        </div>
-      </form>
-    </section>
-
-    <!-- Daftar Kelas -->
-    <section class="list-section">
-      <h2>Daftar Kelas</h2>
-      <table class="class-table">
-        <thead>
-          <tr>
-            <th>Nama Kelas</th>
-            <th>Sekolah</th>
-            <th>Tahun Ajaran</th>
-            <th>Semester</th>
-            <th>Level</th>
-            <th>Jadwal</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="class-list">
-          <!-- Data kelas akan diisi oleh JS -->
-        </tbody>
-      </table>
-    </section>
-  </main>
-
-  <!-- Modal Konfirmasi Hapus -->
-  <div id="delete-modal" class="modal">
-    <div class="modal-content">
-      <p>Apakah Anda yakin ingin menghapus kelas ini?</p>
-      <div class="modal-actions">
-        <button id="confirm-delete" class="btn-danger">Ya</button>
-        <button id="cancel-delete" class="btn-secondary">Tidak</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="footer">
-    Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot
-  </footer>
-
-  <!-- Koneksi ke file JS -->
-  <script type="module" src="profil_kelas.js"></script>
-  <script type="module" src="auth_guard.js"></script>
-</body>
-</html>
+          <button type="submit" class="btn-primary">💾 Simpan</button>

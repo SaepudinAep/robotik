@@ -1,44 +1,50 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Profil Sekolah</title>
+
   <!-- Font & CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dashboard-page">
-  <!-- Header -->
+
+  <!-- 🔷 HEADER -->
   <header class="header">
     <div class="header-text">
       <h1>Profil Sekolah</h1>
       <p>Manajemen Data Sekolah</p>
     </div>
     <nav class="nav-actions">
-      <a href="dashboard.html" class="btn-nav">Dashboard</a>
-      <a href="profil_tahun.html" class="btn-nav">Tahun</a>
+      <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
     </nav>
   </header>
 
-  <!-- Form Input -->
+  <!-- 🔶 FORM INPUT SEKOLAH -->
   <section class="form-section">
-    <h2>Tambah / Edit Sekolah</h2>
+    <h2>Input Data Sekolah</h2>
+
     <form id="school-form">
       <label for="school_name">Nama Sekolah</label>
-      <input type="text" id="school_name" name="school_name" required>
+      <input type="text" id="school_name" name="school_name" required />
 
       <label for="school_address">Alamat Sekolah</label>
       <textarea id="school_address" name="school_address" required></textarea>
 
+      <!-- 🔘 TOMBOL AKSI -->
       <div class="form-actions">
-        <button type="submit" class="btn-primary">Simpan</button>
-        <button type="reset" class="btn-secondary">Batal</button>
+        <button type="submit" class="btn-primary">💾 Simpan</button>
+        <button type="reset" class="btn-secondary">↩️ Batal</button>
       </div>
     </form>
+
+    <!-- 🔔 ALERT FEEDBACK -->
+    <div id="alert-feedback"></div>
   </section>
 
-  <!-- Daftar Sekolah -->
+  <!-- 🔷 DAFTAR SEKOLAH -->
   <section class="list-section">
     <h2>Daftar Sekolah</h2>
     <table class="school-table">
@@ -50,12 +56,12 @@
         </tr>
       </thead>
       <tbody id="school-list">
-        <!-- Data sekolah akan diisi oleh JS -->
+        <!-- Data sekolah akan diisi oleh JavaScript -->
       </tbody>
     </table>
   </section>
 
-  <!-- Modal Konfirmasi Hapus -->
+  <!-- 🗑️ MODAL KONFIRMASI HAPUS -->
   <div id="delete-modal" class="modal">
     <div class="modal-content">
       <p>Apakah Anda yakin ingin menghapus sekolah ini?</p>
@@ -66,12 +72,15 @@
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- 🔻 FOOTER -->
   <footer class="footer">
-    Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot
+    <nav>
+      <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+    </nav>
+    <p>Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot</p>
   </footer>
 
-  <!-- Koneksi ke file JS -->
+  <!-- 📦 SCRIPT -->
   <script type="module" src="profil_sekolah.js"></script>
   <script type="module" src="auth_guard.js"></script>
 </body>
