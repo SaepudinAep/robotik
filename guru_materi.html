@@ -5,16 +5,31 @@
   <title>Guru & Materi</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fff3d6;
-      color: #333;
+    :root {
+      --scratch-blue: #4d97ff;
+      --scratch-orange: #ffab19;
+      --scratch-yellow: #fff3d6;
+      --white: #ffffff;
+      --text: #333;
+      --radius: 8px;
+      --shadow: 0 2px 6px rgba(0,0,0,0.1);
+      --font-heading: 'Fredoka One', cursive;
+      --font-body: 'Roboto', sans-serif;
+      --mint: #a8e6cf;
+      --lavender: #e6e6fa;
+      --peach: #ffd9b3;
     }
 
+    body {
+      font-family: var(--font-body);
+      margin: 0;
+      background: #f9f9f9;
+      color: var(--text);
+    }
+
+    /* Header */
     header {
-      background: #4d97ff;
+      background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
       padding: 12px 20px;
     }
     .nav-main ul {
@@ -25,91 +40,177 @@
       padding: 0;
     }
     .nav-main a {
-      color: white;
+      color: var(--white);
       text-decoration: none;
       font-weight: bold;
-      font-family: 'Fredoka One', cursive;
+      font-family: var(--font-heading);
     }
 
+    /* Tab Buttons */
     .tab-buttons {
       margin: 20px auto;
       text-align: center;
     }
     .tab-buttons button {
-      background: #ffab19;
+      background: var(--scratch-orange);
       border: none;
-      padding: 12px 24px;
-      margin: 0 8px;
-      border-radius: 8px;
+      padding: 10px 20px;
+      margin: 0 6px;
+      border-radius: var(--radius);
       cursor: pointer;
       font-weight: bold;
-      font-family: 'Fredoka One', cursive;
+      font-family: var(--font-heading);
+      transition: all 0.3s ease;
     }
-    .tab-buttons button:hover { background: #e69500; }
+    .tab-buttons button:hover {
+      background: #e69500;
+      transform: scale(1.05);
+    }
 
+    /* Section */
     section {
       display: none;
-      padding: 20px;
-      background: #fff;
-      border-radius: 10px;
+      padding: 16px;
+      background: var(--white);
+      border: 1px solid #ddd;
+      border-radius: var(--radius);
       margin: 20px auto;
       max-width: 900px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow);
     }
     section.active { display: block; }
+    section h2 {
+      font-family: var(--font-heading);
+      color: var(--scratch-blue);
+      margin-top: 0;
+    }
 
+    /* Form */
     form input, form select, form textarea {
       display: block;
-      margin: 12px 0;
-      padding: 10px;
+      margin: 8px 0;
+      padding: 8px;
       width: 100%;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: var(--radius);
+      font-size: 0.9em;
     }
-    .form-actions { margin-top: 12px; }
+    form input:focus, form select:focus, form textarea:focus {
+      outline: none;
+      border-color: var(--scratch-blue);
+      box-shadow: 0 0 4px rgba(77,151,255,0.4);
+    }
+    .form-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
     .form-actions button {
-      background: #4d97ff;
-      color: white;
+      background: var(--scratch-blue);
+      color: var(--white);
       border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius);
       cursor: pointer;
       font-weight: bold;
-      font-family: 'Fredoka One', cursive;
+      font-family: var(--font-heading);
+      transition: all 0.3s ease;
     }
-    .form-actions button:hover { background: #3a7ad9; }
+    .form-actions button:hover {
+      background: #3a7ad9;
+      transform: scale(1.05);
+    }
 
+    /* Table */
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 20px;
+      margin-top: 16px;
+      font-size: 0.85em;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 8px;
     }
     th {
-      background: #4d97ff;
-      color: white;
-      font-family: 'Fredoka One', cursive;
+      background: var(--scratch-blue);
+      color: var(--white);
+      font-family: var(--font-heading);
     }
+    tbody tr:nth-child(odd) { background: #fffdf5; }
+    tbody tr:nth-child(even) { background: #f5fbff; }
+    tbody tr:hover { background: #f0f0f0; }
+
+    /* Tombol di tabel */
     td button {
-      background: #ffab19;
+      background: var(--scratch-orange);
       border: none;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
+      transition: all 0.2s ease;
     }
-    td button:hover { background: #e69500; }
+    td button:hover {
+      background: #e69500;
+      transform: scale(1.05);
+    }
+    
+    @media (max-width: 768px) {
+  .nav-main ul {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .tab-buttons button {
+    padding: 8px 16px;
+    margin: 6px 0;
+    width: 90%;
+  }
+  section {
+    margin: 12px;
+    padding: 12px;
+  }
+  table {
+    font-size: 0.8em;
+  }
+}
 
+@media (max-width: 480px) {
+  header {
+    text-align: center;
+  }
+  .nav-main ul {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form-actions button {
+    width: 100%;
+  }
+  table, th, td {
+    font-size: 0.75em;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+
+    /* Footer */
     footer {
       text-align: center;
-      padding: 20px;
-      background: #4d97ff;
-      color: white;
-      font-family: 'Roboto', sans-serif;
+      padding: 16px;
+      background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+      color: var(--white);
+      font-family: var(--font-body);
+      margin-top: 20px;
     }
   </style>
 </head>
