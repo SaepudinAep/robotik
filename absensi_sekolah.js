@@ -63,7 +63,7 @@ function renderClassCards(classes) {
     card.addEventListener('click', () => {
       // Simpan hanya ID, data lainnya diambil ulang di halaman berikutnya
       localStorage.setItem("activeClassId", cls.id);
-      window.location.href = 'draft_absensi.html';
+      window.location.href = 'absensi_harian.html';
     });
 
     classCardGrid.appendChild(card);
