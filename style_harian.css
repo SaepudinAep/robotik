@@ -1,0 +1,288 @@
+/* ==========================
+   Variabel Global
+========================== */
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+
+  /* Aksen segar */
+  --mint: #a8e6cf;
+  --lavender: #e6e6fa;
+  --peach: #ffd9b3;
+}
+
+/* ==========================
+   Reset & Body
+========================== */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: #f9f9f9;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================
+   Header & Footer
+========================== */
+.header {
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header h1 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+.header p { margin: 0; font-weight: 500; }
+
+.footer {
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+  font-size: 0.9rem;
+}
+.nav-footer {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* ==========================
+   Tombol
+========================== */
+.btn-nav {
+  background: var(--scratch-orange);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.btn-nav:hover {
+  background: #e69500;
+  transform: scale(1.05);
+}
+
+.btn-primary {
+  background: var(--scratch-orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-primary:hover {
+  background: #ff9800;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btn-secondary {
+  background: var(--scratch-yellow);
+  color: var(--text);
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.btn-secondary:hover { background: #ffe9b3; }
+
+.logout {
+  background: #ff4d4d;
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.logout:hover { background: #cc0000; }
+
+/* ==========================
+   Section & Form
+========================== */
+.form-section {
+  background: var(--white);
+  margin: 1rem auto;
+  padding: 1rem;
+  border-radius: var(--radius);
+  max-width: 900px;
+  box-shadow: var(--shadow);
+}
+.form-section h2 {
+  font-family: var(--font-heading);
+  color: var(--scratch-blue);
+  margin: 0 0 0.8rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  color: var(--scratch-blue);
+}
+.form-group input,
+.form-group select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+  font-size: 0.9em;
+}
+.form-group.full-width { grid-column: 1 / span 2; }
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--scratch-blue);
+  box-shadow: 0 0 4px rgba(77,151,255,0.4);
+}
+
+/* ==========================
+   Absensi Table
+========================== */
+.absensi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+.absensi-header select {
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius);
+  border: 1px solid #ccc;
+}
+
+.table-wrapper { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 0.6rem;
+  text-align: center;
+}
+table th {
+  background: var(--scratch-yellow);
+  font-family: var(--font-heading);
+}
+table tbody tr:nth-child(odd) { background: #fffdf5; }
+table tbody tr:nth-child(even) { background: #f5fbff; }
+table tbody tr:hover {
+  background: #f0f0f0;
+  transition: background 0.3s ease;
+}
+
+/* ==========================
+   Card Grid (Kelas & Materi)
+========================== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+.card-grid .card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  text-align: center;
+  font-family: var(--font-body);
+}
+
+/* Variasi warna segar */
+.card-grid .card:nth-child(5n+1) { background: var(--scratch-blue); color: #fff; }
+.card-grid .card:nth-child(5n+2) { background: var(--scratch-orange); color: #fff; }
+.card-grid .card:nth-child(5n+3) { background: var(--mint); color: #333; }
+.card-grid .card:nth-child(5n+4) { background: var(--scratch-yellow); color: #333; }
+.card-grid .card:nth-child(5n+5) { background: var(--lavender); color: #333; }
+
+.card-grid .card h3 {
+  font-family: var(--font-heading);
+  margin: 0 0 0.5rem;
+}
+
+.card-grid .card .btn-primary {
+  background: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.card-grid .card .btn-primary:hover { opacity: 0.9; }
+
+/* ==========================
+   Toast
+========================== */
+.toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #4CAF50;
+  color: var(--white);
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  font-weight: 600;
+}
+.toast.error { background: #F44336; }
+.materi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin: 0.8rem;
+}
+
+.materi-cards .card {
+  background: var(--scratch-yellow);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  padding: 0.4rem;
+  min-height: 40px;
+  max-height: 60px;
+}
+
+.materi-cards h3 {
+  font-family: var(--font-heading);
+  font-size: 0.85em;
+  margin: 0 0 0.2rem;
+  line-height: 1.2;
+}
+
+.materi-cards p {
+  font-size: 0.75em;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--text);
+}
