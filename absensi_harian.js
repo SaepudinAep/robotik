@@ -31,9 +31,9 @@ async function renderHeader() {
 }
 
 // 🔹 OPSI SIKAP
-function getSikapOptions(selected = "3") {
+function getSikapOptions(selected = "0") {
   const options = [
-    { value: "", label: "-" },
+    { value: "0", label: "❌" },
     { value: "1", label: "🤐 " },
     { value: "2", label: "🙈 " },
     { value: "3", label: "🙂 " },
@@ -46,11 +46,25 @@ function getSikapOptions(selected = "3") {
     .join("");
 }
 
+// 🔹 OPSI FOKUS
+function getFokusOptions(selected = "0") {
+  const options = [
+    { value: "0", label: "❌" },
+    { value: "1", label: "😶" },
+    { value: "2", label: "🙂" },
+    { value: "3", label: "🔥" }
+  ];
+
+  return options
+    .map(opt => `<option value="${opt.value}" ${opt.value === selected ? "selected" : ""}>${opt.label}</option>`)
+    .join("");
+}
+
 // 🔹 MUAT ABSENSI
 async function loadAbsensi(pertemuanId) {
   const { data } = await supabase
     .from("attendance")
-    .select("student_id, status, sikap")
+    .select("student_id, status, sikap, fokus")
     .eq("pertemuan_id", pertemuanId);
 
   return data ?? [];
@@ -87,6 +101,7 @@ async function initTable(pertemuanId) {
       <th>Kelas</th>
       <th>Status</th>
       <th>Sikap</th>
+      <th>Fokus</th>
     </tr>
   `;
 
@@ -94,6 +109,7 @@ async function initTable(pertemuanId) {
     const absen = absensi.find(a => a.student_id === siswa.id);
     const status = absen?.status ?? "0";
     const sikap = absen?.sikap ?? "3";
+    const fokus = absen?.fokus ?? "2";
 
     const row = document.createElement("tr");
     row.dataset.studentId = siswa.id;
@@ -111,6 +127,11 @@ async function initTable(pertemuanId) {
       <td>
         <select class="sikap-select">
           ${getSikapOptions(sikap)}
+        </select>
+      </td>
+      <td>
+        <select class="fokus-select">
+          ${getFokusOptions(fokus)}
         </select>
       </td>
     `;
@@ -151,114 +172,12 @@ async function generateAbsensi(pertemuanId) {
     pertemuan_id: pertemuanId,
     student_id: siswa.id,
     status: "0",
-    sikap: "3",
+    sikap: "0",
+    fokus: "0",
     tanggal: pertemuan.tanggal
   }));
 
   await supabase.from("attendance").insert(records);
-}
-
-// 🔹 TAMPILKAN CARD MATERI
-async function tampilkanDaftarMateri() {
-  const classId = localStorage.getItem("activeClassId");
-  if (!classId) return;
-
-  const { data } = await supabase
-    .from("pertemuan_kelas")
-    .select(`
-      id, tanggal,
-      materi:materi_id (title),
-      guru:guru_id (name),
-      asisten:asisten_id (name)
-    `)
-    .eq("class_id", classId)
-    .order("tanggal", { ascending: false });
-
-  const container = document.getElementById("materi-list");
-  container.innerHTML = "";
-
-  data.forEach(p => {
-    const tanggal = new Date(p.tanggal).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "short"
-    });
-
-    const card = document.createElement("div");
-    card.className = "materi-card";
-    card.innerHTML = `
-     <h3>${p.materi?.title ?? "-"}</h3>
-    <p><strong>📅</strong> ${tanggal}</p>
-    <p><strong>👤 Guru:</strong> ${p.guru?.name ?? "-"}</p>
-    <p><strong>👥 Asisten:</strong> ${p.asisten?.name ?? "-"}</p>
-    `;
-    container.appendChild(card);
-  });
-}
-
-// 🔹 DROPDOWN PERTEMUAN
-async function loadPertemuanOptions() {
-  const classId = localStorage.getItem("activeClassId");
-  const select = document.getElementById("pertemuan-selector");
-  select.innerHTML = `<option value="">-- Pilih Pertemuan --</option>`;
-
-  const { data } = await supabase
-    .from("pertemuan_kelas")
-    .select("id, tanggal, materi (title)")
-    .eq("class_id", classId)
-    .order("tanggal", { ascending: false });
-
-  data.forEach(p => {
-    const tgl = new Date(p.tanggal).toLocaleDateString("id-ID", {
-      day: "2-digit", month: "short"
-    });
-    const option = document.createElement("option");
-    option.value = p.id;
-    option.textContent = `${tgl} — ${p.materi?.title ?? "-"}`;
-    select.appendChild(option);
-  });
-}
-
-// 🔹 DROPDOWN GURU & ASISTEN
-async function loadGuruDropdowns() {
-  const { data } = await supabase
-    .from("teachers")
-    .select("id, name")
-    .order("name");
-
-  const guruSelect = document.getElementById("materi-guru");
-  const asistenSelect = document.getElementById("materi-asisten");
-
-  guruSelect.innerHTML = `<option value="">-- Pilih Guru --</option>`;
-  asistenSelect.innerHTML = `<option value="">-- Pilih Asisten --</option>`;
-
-  data.forEach(t => {
-    const opt1 = document.createElement("option");
-    opt1.value = t.id;
-    opt1.textContent = t.name;
-    guruSelect.appendChild(opt1);
-
-    const opt2 = opt1.cloneNode(true);
-    asistenSelect.appendChild(opt2);
-  });
-}
-
-// 🔹 DATALIST JUDUL MATERI
-async function loadJudulMateriSuggestions() {
-  const { data } = await supabase
-    .from("materi")
-    .select("title")
-    .order("date", { ascending: false })
-    .limit(30);
-
-  const datalist = document.getElementById("judul-list");
-  datalist.innerHTML = "";
-
-  const uniqueTitles = [...new Set(data.map(m => m.title).filter(Boolean))];
-  uniqueTitles.forEach(title => {
-    const option = document.createElement("option");
-    option.value = title;
-    datalist.appendChild(option);
-  });
 }
 
 // 🔹 SIMPAN ABSENSI
@@ -283,13 +202,15 @@ document.getElementById("simpan-absensi").addEventListener("click", async () => 
   rows.forEach(row => {
     const studentId = row.dataset.studentId;
     const status = row.querySelector(".status-select")?.value || "0";
-    const sikap = row.querySelector(".sikap-select")?.value || "3";
+    const sikap = row.querySelector(".sikap-select")?.value || "0";
+    const fokus = row.querySelector(".fokus-select")?.value || "0";
 
     updates.push({
       pertemuan_id: selectedPertemuanId,
       student_id: studentId,
       status,
       sikap,
+      fokus,
       tanggal
     });
   });
@@ -305,105 +226,209 @@ document.getElementById("simpan-absensi").addEventListener("click", async () => 
   }
 });
 
-// 🔹 SIMPAN FORM PERTEMUAN BARU
-document.getElementById("materi-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+
+// 🔹 TAMPILKAN CARD MATERI
+async function tampilkanDaftarMateri() {
+  const classId = localStorage.getItem("activeClassId");
+  if (!classId) return;
+
+  const { data } = await supabase
+    .from("pertemuan_kelas")
+    .select(`
+      id, tanggal,
+      materi:materi_id (title),
+      guru:guru_id (name),
+      asisten:asisten_id (name)
+    `)
+    .eq("class_id", classId)
+    .order("tanggal", { ascending: false });
+
+  const container = document.getElementById("materi-list");
+  container.innerHTML = "";
+
+  data.forEach(p => {
+    const tanggal = new Date(p.tanggal).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short"
+    });
+
+    const card = document.createElement("div");
+    card.className = "materi-card";
+    card.innerHTML = `
+     <h3>${p.materi?.title ?? "-"}</h3>
+    <p><strong>📅</strong> ${tanggal}</p>
+    <p><strong>👤 :</strong> ${p.guru?.name ?? "-"}</p>
+    <p><strong>👥 :</strong> ${p.asisten?.name ?? "-"}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// 🔹 DROPDOWN PERTEMUAN
+async function loadPertemuanOptions() {
+  const classId = localStorage.getItem("activeClassId");
+  const select = document.getElementById("pertemuan-selector");
+  select.innerHTML = `<option value="">-- Pilih Pertemuan --</option>`;
+
+  const { data } = await supabase
+    .from("pertemuan_kelas")
+    .select("id, tanggal, materi (title)")
+    .eq("class_id", classId)
+    .order("tanggal", { ascending: false });
+
+  data.forEach(p => {
+    const tgl = new Date(p.tanggal).toLocaleDateString("id-ID", {
+      day: "2-digit", month: "short"
+    });
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = `${tgl} — ${p.materi?.title ?? "-"}`;
+    select.appendChild(option);
+  });
+}
+
+// 🔹 DROPDOWN GURU & ASISTEN
+async function loadGuruDropdowns() {
+  const { data } = await supabase
+    .from("teachers")
+    .select("id, name")
+    .order("name");
+
+  const guruSelect = document.getElementById("materi-guru");
+  const asistenSelect = document.getElementById("materi-asisten");
+
+  guruSelect.innerHTML = `<option value="">-- Pilih Guru --</option>`;
+  asistenSelect.innerHTML = `<option value="">-- Pilih Asisten --</option>`;
+
+  data.forEach(t => {
+    const opt1 = document.createElement("option");
+    opt1.value = t.id;
+    opt1.textContent = t.name;
+    guruSelect.appendChild(opt1);
+
+    const opt2 = opt1.cloneNode(true);
+    asistenSelect.appendChild(opt2);
+  });
+}
+
+// 🔹 DATALIST JUDUL MATERI
+async function loadJudulMateriSuggestions() {
+  const { data } = await supabase
+    .from("materi")
+    .select("title")
+    .order("date", { ascending: false })
+    .limit(30);
+
+  const datalist = document.getElementById("judul-list");
+  datalist.innerHTML = "";
+
+  const uniqueTitles = [...new Set(data.map(m => m.title).filter(Boolean))];
+  uniqueTitles.forEach(title => {
+    const option = document.createElement("option");
+    option.value = title;
+    datalist.appendChild(option);
+  });
+}
 
-  const classId = localStorage.getItem("activeClassId");
-  const schoolId = localStorage.getItem("activeSchoolId");
-
-  const tanggal = document.getElementById("materi-date").value;
-  const title = document.getElementById("materi-title").value.trim();
-  const guruId = document.getElementById("materi-guru").value;
-  const asistenId = document.getElementById("materi-asisten").value;
-
-  if (!classId || !schoolId || !tanggal || !title || !guruId || !asistenId) {
-    alert("Mohon lengkapi semua data.");
-    return;
-  }
-
-  try {
-    let { data: materi } = await supabase
-      .from("materi")
-      .select("id")
-      .eq("title", title)
-      .single();
-
-    if (!materi) {
-      const { data: newMateri } = await supabase
-        .from("materi")
-        .insert({ title })
-        .select()
-        .single();
-      materi = newMateri;
-    }
-
-    const payload = {
-      school_id: schoolId,
-      class_id: classId,
-      tanggal,
-      materi_id: materi.id,
-      guru_id: guruId,
-      asisten_id: asistenId
-    };
-
-    const { data: pertemuanData } = await supabase
-      .from("pertemuan_kelas")
-      .insert([payload])
-      .select("id")
-      .single();
-
-    selectedPertemuanId = pertemuanData.id;
-
-    await generateAbsensi(selectedPertemuanId);
-    await initTable(selectedPertemuanId);
-    await tampilkanDaftarMateri();
-    await loadPertemuanOptions();
-
-    e.target.reset();
-    document.getElementById("materi-form").style.display = "none";
-    alert("✅ Pertemuan & absensi berhasil disimpan.");
-  } catch (err) {
-    alert("Terjadi kesalahan saat menyimpan.");
-    console.error(err);
-  }
-});
-
-// 🔹 PILIH PERTEMUAN DARI DROPDOWN
-document.getElementById("pertemuan-selector").addEventListener("change", async (e) => {
-  const pertemuanId = e.target.value;
-  if (!pertemuanId) return;
-
-  selectedPertemuanId = pertemuanId;
-  await initTable(pertemuanId);
-});
-// 🔹 AUTO PILIH PERTEMUAN PERTAMA
-async function autoSelectPertemuanAwal() {
-  const select = document.getElementById("pertemuan-selector");
-  const firstOption = select.querySelector("option[value]:not([value=''])");
-  if (firstOption) {
-    selectedPertemuanId = firstOption.value;
-    select.value = selectedPertemuanId;
-    await initTable(selectedPertemuanId);
-  }
-}
-
-// 🔹 INISIALISASI SAAT DOM DIMUAT
-document.addEventListener("DOMContentLoaded", async () => {
-  await renderHeader();
-  await loadGuruDropdowns();
-  await loadJudulMateriSuggestions();
-  await tampilkanDaftarMateri();
-  await loadPertemuanOptions();
-  await autoSelectPertemuanAwal();
-
-  // 🔹 Toggle Form Materi
-  const toggleBtn = document.getElementById("toggle-materi-form");
-  const form = document.getElementById("materi-form");
-
-  toggleBtn.addEventListener("click", () => {
-    const isHidden = form.style.display === "none";
-    form.style.display = isHidden ? "block" : "none";
-    toggleBtn.textContent = isHidden ? "− Tutup Form" : "+ Tambah Pertemuan";
-  });
+// 🔹 SIMPAN FORM PERTEMUAN BARU
+document.getElementById("materi-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const classId = localStorage.getItem("activeClassId");
+  const schoolId = localStorage.getItem("activeSchoolId");
+
+  const tanggal = document.getElementById("materi-date").value;
+  const title = document.getElementById("materi-title").value.trim();
+  const guruId = document.getElementById("materi-guru").value;
+  const asistenId = document.getElementById("materi-asisten").value;
+
+  if (!classId || !schoolId || !tanggal || !title || !guruId || !asistenId) {
+    alert("Mohon lengkapi semua data.");
+    return;
+  }
+
+  try {
+    let { data: materi } = await supabase
+      .from("materi")
+      .select("id")
+      .eq("title", title)
+      .single();
+
+    if (!materi) {
+      const { data: newMateri } = await supabase
+        .from("materi")
+        .insert({ title })
+        .select()
+        .single();
+      materi = newMateri;
+    }
+
+    const payload = {
+      school_id: schoolId,
+      class_id: classId,
+      tanggal,
+      materi_id: materi.id,
+      guru_id: guruId,
+      asisten_id: asistenId
+    };
+
+    const { data: pertemuanData } = await supabase
+      .from("pertemuan_kelas")
+      .insert([payload])
+      .select("id")
+      .single();
+
+    selectedPertemuanId = pertemuanData.id;
+
+    await generateAbsensi(selectedPertemuanId);
+    await initTable(selectedPertemuanId);
+    await tampilkanDaftarMateri();
+    await loadPertemuanOptions();
+
+    e.target.reset();
+    document.getElementById("materi-form").style.display = "none";
+    alert("✅ Pertemuan & absensi berhasil disimpan.");
+  } catch (err) {
+    alert("Terjadi kesalahan saat menyimpan.");
+    console.error(err);
+  }
+});
+
+// 🔹 PILIH PERTEMUAN DARI DROPDOWN
+document.getElementById("pertemuan-selector").addEventListener("change", async (e) => {
+  const pertemuanId = e.target.value;
+  if (!pertemuanId) return;
+
+  selectedPertemuanId = pertemuanId;
+  await initTable(pertemuanId);
+});
+// 🔹 AUTO PILIH PERTEMUAN PERTAMA
+async function autoSelectPertemuanAwal() {
+  const select = document.getElementById("pertemuan-selector");
+  const firstOption = select.querySelector("option[value]:not([value=''])");
+  if (firstOption) {
+    selectedPertemuanId = firstOption.value;
+    select.value = selectedPertemuanId;
+    await initTable(selectedPertemuanId);
+  }
+}
+
+// 🔹 INISIALISASI SAAT DOM DIMUAT
+document.addEventListener("DOMContentLoaded", async () => {
+  await renderHeader();
+  await loadGuruDropdowns();
+  await loadJudulMateriSuggestions();
+  await tampilkanDaftarMateri();
+  await loadPertemuanOptions();
+  await autoSelectPertemuanAwal();
+
+  // 🔹 Toggle Form Materi
+  const toggleBtn = document.getElementById("toggle-materi-form");
+  const form = document.getElementById("materi-form");
+
+  toggleBtn.addEventListener("click", () => {
+    const isHidden = form.style.display === "none";
+    form.style.display = isHidden ? "block" : "none";
+    toggleBtn.textContent = isHidden ? "− Tutup Form" : "+ Tambah Pertemuan";
+  });
 });
