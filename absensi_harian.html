@@ -1,113 +1,114 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Absensi & Materi</title>
-
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
-
-  <!-- CSS eksternal -->
-  <link rel="stylesheet" href="style_harian.css" />
-</head>
-<body class="absensi-page">
-
-  <!-- 🔷 HEADER -->
-  <header class="header">
-    <nav class="nav-actions">
-      <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
-      <a href="absensi_sekolah.html" class="btn-nav">🏫 Kelas</a>
-    </nav>
-  </header>
-
-  <!-- 🔶 INFORMASI KELAS -->
-  <section class="form-section">
-    <div class="class-meta">
-      <p>🏫 <span id="header-sekolah">Nama Sekolah</span></p>
-      <p>Tahun Ajaran: <span id="header-tahun">2026</span> | Semester: <span id="header-semester">Genap</span></p>
-      <p>Kelas: <span id="header-kelas">Robotik A</span> | <span id="header-jadwal">Senin 08:00</span></p>
-    </div>
-  </section>
-
-  <!-- 🔶 FORM INPUT MATERI -->
-  <main>
-<section class="form-section">
-  <h2>Tambah Pertemuan</h2>
-  <button id="toggle-materi-form" class="btn-secondary">➕ Tambah Pertemuan</button>
-  <form id="materi-form" style="display:none;">
-    <div class="form-grid">
-      <div class="form-group">
-        <label for="materi-date">Tanggal</label>
-        <input type="date" id="materi-date" required />
-      </div>
-
-      <div class="form-group full-width">
-        <label for="materi-title">Judul Materi</label>
-        <input type="text" id="materi-title" list="judul-list" placeholder="Judul materi" required />
-        <datalist id="judul-list"></datalist>
-      </div>
-
-      <div class="form-group">
-        <label for="materi-guru">Guru</label>
-        <select id="materi-guru" required></select>
-      </div>
-
-      <div class="form-group">
-        <label for="materi-asisten">Asisten</label>
-        <select id="materi-asisten" required></select>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="btn-primary">💾 Simpan Materi</button>
-    </div>
-  </form>
-</section>
-
-
-    <!-- 🔶 ABSENSI -->
-    <section class="form-section">
-      <div class="absensi-header">
-        <h2>Absensi</h2>
-        <select id="pertemuan-selector">
-          <option value="">-- Pilih Pertemuan --</option>
-        </select>
-      </div>
-      <div class="table-wrapper">
-        <table id="absensi-table">
-          <thead></thead>
-          <tbody></tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4" style="text-align:left;">TOTAL HADIR: <span id="total-hadir">0</span></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-      <button id="simpan-absensi" class="btn-primary">💾 Simpan Absensi</button>
-    </section>
-
-    <!-- 🔶 DAFTAR MATERI -->
-    <section class="form-section">
-      <h2>Materi</h2>
-     <div id="materi-list" class="materi-list card-grid">
-         <!-- Kartu materi akan diisi via JavaScript -->
-     </div>
-
-    </section>
-  </main>
-
-  <!-- 🔷 TOAST -->
-  <div id="toast" class="toast" style="display:none;">✅ Absensi tersimpan</div>
-
-  <!-- 🔷 FOOTER -->
-  <footer class="footer">
-    <p>Sistem Absensi v1.5.0 — Dibuat oleh Saepudin & Copilot</p>
-    <div id="debug-output" style="font-size: 0.9em; color: #555; margin-top: 1em;"></div>
-  </footer>
-
-  <!-- 🔷 SCRIPT -->
-  <script type="module" src="absensi_harian.js"></script>
-</body>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Absensi & Materi</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
+
+  <!-- CSS eksternal -->
+  <link rel="stylesheet" href="style_harian.css" />
+</head>
+<body class="absensi-page">
+
+  <!-- 🔷 HEADER -->
+  <header class="header">
+    <nav class="nav-actions">
+    <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+    <a href="absensi_sekolah.html" class="btn-nav">🏫 Kelas</a>
+    <a href="guru_materi.html" class="btn-nav">📚 Materi</a>
+    </nav>
+  </header>
+
+  <!-- 🔶 INFORMASI KELAS -->
+  <section class="form-section">
+    <div class="class-meta">
+      <p>🏫 <span id="header-sekolah">Nama Sekolah</span></p>
+      <p>Tahun Ajaran: <span id="header-tahun">2026</span> | Semester: <span id="header-semester">Genap</span></p>
+      <p>Kelas: <span id="header-kelas">Robotik A</span> | <span id="header-jadwal">Senin 08:00</span></p>
+    </div>
+  </section>
+
+  <!-- 🔶 FORM INPUT MATERI -->
+  <main>
+<section class="form-section">
+  <h2>Tambah Pertemuan</h2>
+  <button id="toggle-materi-form" class="btn-secondary">➕ Tambah Pertemuan</button>
+  <form id="materi-form" style="display:none;">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="materi-date">Tanggal</label>
+        <input type="date" id="materi-date" required />
+      </div>
+
+      <div class="form-group full-width">
+        <label for="materi-title">Judul Materi</label>
+        <input type="text" id="materi-title" list="judul-list" placeholder="Judul materi" required />
+        <datalist id="judul-list"></datalist>
+      </div>
+
+      <div class="form-group">
+        <label for="materi-guru">Guru</label>
+        <select id="materi-guru" required></select>
+      </div>
+
+      <div class="form-group">
+        <label for="materi-asisten">Asisten</label>
+        <select id="materi-asisten" required></select>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">💾 Simpan Materi</button>
+    </div>
+  </form>
+</section>
+
+
+    <!-- 🔶 ABSENSI -->
+    <section class="form-section">
+      <div class="absensi-header">
+        <h2>Absensi</h2>
+        <select id="pertemuan-selector">
+          <option value="">-- Pilih Pertemuan --</option>
+        </select>
+      </div>
+      <div class="table-wrapper">
+        <table id="absensi-table">
+          <thead></thead>
+          <tbody></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" style="text-align:left;">TOTAL HADIR: <span id="total-hadir">0</span></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <button id="simpan-absensi" class="btn-primary">💾 Simpan Absensi</button>
+    </section>
+
+    <!-- 🔶 DAFTAR MATERI -->
+    <section class="form-section">
+      <h2>Materi</h2>
+     <div id="materi-list" class="materi-list card-grid">
+         <!-- Kartu materi akan diisi via JavaScript -->
+     </div>
+
+    </section>
+  </main>
+
+  <!-- 🔷 TOAST -->
+  <div id="toast" class="toast" style="display:none;">✅ Absensi tersimpan</div>
+
+  <!-- 🔷 FOOTER -->
+  <footer class="footer">
+    <p>Sistem Absensi v1.5.0 — Dibuat oleh Saepudin & Copilot</p>
+    <div id="debug-output" style="font-size: 0.9em; color: #555; margin-top: 1em;"></div>
+  </footer>
+
+  <!-- 🔷 SCRIPT -->
+  <script type="module" src="absensi_harian.js"></script>
+</body>
 </html>
