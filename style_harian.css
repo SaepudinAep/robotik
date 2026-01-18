@@ -206,41 +206,98 @@ table tbody tr:hover {
 /* ==========================
    Card Grid (Kelas & Materi)
 ========================== */
+/* 🔷 GRID KARTU */
 .card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  padding: 1rem;
-}
-.card-grid .card {
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1rem;
-  text-align: center;
-  font-family: var(--font-body);
+  display: grid; /* Mengatur layout menjadi grid */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Kolom fleksibel, minimal 200px */
+  gap: 1.2rem; /* Jarak antar kartu */
+  padding: 1rem; /* Ruang di sekitar grid */
 }
 
-/* Variasi warna segar */
-.card-grid .card:nth-child(5n+1) { background: var(--scratch-blue); color: #fff; }
-.card-grid .card:nth-child(5n+2) { background: var(--scratch-orange); color: #fff; }
-.card-grid .card:nth-child(5n+3) { background: var(--mint); color: #333; }
-.card-grid .card:nth-child(5n+4) { background: var(--scratch-yellow); color: #333; }
-.card-grid .card:nth-child(5n+5) { background: var(--lavender); color: #333; }
-
-.card-grid .card h3 {
-  font-family: var(--font-heading);
-  margin: 0 0 0.5rem;
+/* 🔷 KARTU INDIVIDU */
+.card {
+  background: #e0f2ff; /* Warna latar biru muda segar */
+  border: 1px solid #b3d9ff; /* Garis tepi lembut */
+  border-radius: 10px; /* Sudut membulat */
+  padding: 0.8rem; /* Ruang dalam kartu */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Bayangan lembut */
+  font-family: 'Segoe UI', sans-serif; /* Font modern dan bersih */
+  color: #003355; /* Warna teks utama */
+  height: 80px; /* Tinggi tetap agar seragam */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Konten rata tengah secara vertikal */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animasi saat hover */
 }
 
-.card-grid .card .btn-primary {
-  background: var(--white);
-  border: none;
-  border-radius: var(--radius);
-  padding: 0.5rem 1rem;
-  font-weight: 700;
-  cursor: pointer;
+/* 🔷 EFEK HOVER */
+.card:hover {
+  transform: translateY(-4px); /* Efek naik saat hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Bayangan lebih tegas saat hover */
 }
-.card-grid .card .btn-primary:hover { opacity: 0.9; }
+
+/* 🔷 TEKS UTAMA DALAM KARTU */
+.card p {
+  margin: 0.1rem 0; /* Jarak antar baris sangat rapat */
+  font-size: 0.85rem; /* Ukuran font kecil tapi terbaca */
+  line-height: 1.2;  /* Baris padat */
+  font-weight: 500; /* Ketebalan sedang */
+}
+
+/* 🔷 TEKS YANG DITEBALKAN */
+.card strong {
+  font-weight: 600; /* Penekanan teks */
+  color: #002233; /* Warna lebih gelap untuk kontras */
+}
+
+/* 🔷 JUDUL (tidak dipakai di versi format baru, tapi tetap disiapkan) */
+.card h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 🔷 DETAIL KHUSUS (jika digunakan kembali) */
+.card-detail p {
+  margin: 0.1rem 0;
+  font-size: 0.85rem;
+  color: #222;
+  line-height: 1.2;
+}
+
+.card-detail .label {
+  font-weight: 600;
+  color: #222;
+}
+
+
+.baris-tanggal {
+  font-size: 0.85rem;
+  font-weight: 1000;
+  margin: 0.1rem 0;
+  color: #003355;
+}
+
+.baris-pengajar {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 0.1rem 0;
+  color: #002233;
+}
+
+.judul-materi {
+  font-weight: 1000;
+  color: #003366;
+}
+
+
+.card:nth-child(5n+1) { background: #e0f2ff; color: #003366; }
+.card:nth-child(5n+2) { background: #cceeff; color: #003355; }
+.card:nth-child(5n+3) { background: #dbe4ff; color: #002244; }
+.card:nth-child(5n+4) { background: #f0f9ff; color: #003344; }
+.card:nth-child(5n+5) { background: #b3d9ff; color: #002233; }
+
 
 /* ==========================
    Toast

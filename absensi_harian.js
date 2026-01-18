@@ -227,42 +227,52 @@ document.getElementById("simpan-absensi").addEventListener("click", async () => 
 });
 
 
-// 🔹 TAMPILKAN CARD MATERI
-async function tampilkanDaftarMateri() {
-  const classId = localStorage.getItem("activeClassId");
-  if (!classId) return;
-
-  const { data } = await supabase
-    .from("pertemuan_kelas")
-    .select(`
-      id, tanggal,
-      materi:materi_id (title),
-      guru:guru_id (name),
-      asisten:asisten_id (name)
-    `)
-    .eq("class_id", classId)
-    .order("tanggal", { ascending: false });
-
-  const container = document.getElementById("materi-list");
-  container.innerHTML = "";
-
-  data.forEach(p => {
-    const tanggal = new Date(p.tanggal).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "short"
-    });
-
-    const card = document.createElement("div");
-    card.className = "materi-card";
-    card.innerHTML = `
-     <h3>${p.materi?.title ?? "-"}</h3>
-    <p><strong>📅</strong> ${tanggal}</p>
-    <p><strong>👤 :</strong> ${p.guru?.name ?? "-"}</p>
-    <p><strong>👥 :</strong> ${p.asisten?.name ?? "-"}</p>
-    `;
-    container.appendChild(card);
-  });
-}
+// 🔹 TAMPILKAN CARD MATERI (versi baru dengan tampilan rapi)
+async function tampilkanDaftarMateri() {
+  const classId = localStorage.getItem("activeClassId");
+  if (!classId) return;
+
+  const { data } = await supabase
+    .from("pertemuan_kelas")
+    .select(`
+      id, tanggal,
+      materi:materi_id (title),
+      guru:guru_id (name),
+      asisten:asisten_id (name)
+    `)
+    .eq("class_id", classId)
+    .order("tanggal", { ascending: false });
+
+  const container = document.getElementById("materi-list");
+  container.innerHTML = "";
+  container.classList.add("card-grid");
+
+  data.forEach(p => {
+    const tanggal = new Date(p.tanggal).toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short"
+    });
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+card.innerHTML = `
+  <p class="baris-tanggal">
+    <strong>📅 ${tanggal} :</strong> <span class="judul-materi">${p.materi?.title ?? "-"}</span>
+  </p>
+  <p class="baris-pengajar">
+    <span><strong>👤</strong> ${p.guru?.name ?? "-"}</span>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <span><strong>👥</strong> ${p.asisten?.name ?? "-"}</span>
+  </p>
+`;
+
+
+    container.appendChild(card);
+  });
+}
+
+
 
 // 🔹 DROPDOWN PERTEMUAN
 async function loadPertemuanOptions() {
