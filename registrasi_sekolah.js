@@ -182,7 +182,7 @@ window.editStudent = async (id) => {
   }
 
   row.querySelector('input[name="student_name"]').value = data.name;
-  row.querySelector('input[name="student_class"]').value = data.kelas|| '';
+  row.querySelector('input[name="student_class"]').value = data.grade|| '';
   row.dataset.editId = id;
   updateFormState();
 };
