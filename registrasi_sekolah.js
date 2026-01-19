@@ -97,7 +97,7 @@ saveBtn.addEventListener('click', async (e) => {
 
     if (r.dataset.editId) {
       const { error } = await supabase.from('students')
-        .update({ name, kelas })
+        .update({ name, grade })
         .eq('id', r.dataset.editId);
       if (error) {
         alertBox.textContent = '❌ Gagal update: ' + error.message;
@@ -107,7 +107,7 @@ saveBtn.addEventListener('click', async (e) => {
     } else {
       students.push({
       name,           // dari input nama
-      kelas,          // dari input kelas
+      grade,          // dari input kelas
       class_id: classId,     // dari dropdown
       school_id: schoolId,   // dari dropdown
       user_id: null
@@ -139,8 +139,8 @@ saveBtn.addEventListener('click', async (e) => {
 async function loadStudentsTable(classId) {
   const { data, error } = await supabase
     .from('students')
-    .select('id, name, kelas, class_id, classes (name), schools (name)')
-    .order('kelas, name');
+    .select('id, name, grade, class_id, classes (name), schools (name)')
+    .order('grade, name');
 
   if (error) {
     console.error('Gagal load siswa:', error.message);
@@ -153,7 +153,7 @@ async function loadStudentsTable(classId) {
     ? filtered.map(s => `
       <tr>
         <td>${s.name}</td>
-        <td>${s.kelas}</td>
+        <td>${s.grade}</td>
         <td>
           <button onclick="editStudent('${s.id}')">Edit</button>
           <button onclick="deleteStudent('${s.id}')">Hapus</button>
@@ -165,7 +165,7 @@ async function loadStudentsTable(classId) {
 
 // ✏️ Edit siswa
 window.editStudent = async (id) => {
-  const { data, error } = await supabase.from('students').select('id, name, kelas, class_id, classes (name)').eq('id', id).single();
+  const { data, error } = await supabase.from('students').select('id, name, grade, class_id, classes (name)').eq('id', id).single();
   if (error) {
     alertBox.textContent = '❌ Gagal mengambil data siswa: ' + error.message;
     return;
