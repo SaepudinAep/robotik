@@ -71,7 +71,7 @@ addRowBtn.addEventListener('click', (e) => {
   const row = document.createElement('tr');
   row.innerHTML = `
     <td><input type="text" name="student_name" required></td>
-    <td><input type="text" name="student_class" required></td>
+    <td><input type="text" name="student_grade" required></td>
   `;
   studentTable.appendChild(row);
   updateFormState();
@@ -91,7 +91,7 @@ saveBtn.addEventListener('click', async (e) => {
   const students = [];
   for (const r of rows) {
     const name = r.querySelector('input[name="student_name"]').value.trim();
-    const kelas = r.querySelector('input[name="student_class"]').value.trim();
+    const grade = r.querySelector('input[name="student_grade"]').value.trim();
 
     if (!name) continue;
 
@@ -129,7 +129,7 @@ saveBtn.addEventListener('click', async (e) => {
   studentTable.innerHTML = `
     <tr>
       <td><input type="text" name="student_name" required></td>
-      <td><input type="text" name="student_class" required></td>
+      <td><input type="text" name="student_grade" required></td>
     </tr>
   `;
   updateFormState();
@@ -176,13 +176,13 @@ window.editStudent = async (id) => {
     row = document.createElement('tr');
     row.innerHTML = `
       <td><input type="text" name="student_name" required></td>
-      <td><input type="text" name="student_class" required></td>
+      <td><input type="text" name="student_grade" required></td>
     `;
     studentTable.appendChild(row);
   }
 
   row.querySelector('input[name="student_name"]').value = data.name;
-  row.querySelector('input[name="student_class"]').value = data.grade|| '';
+  row.querySelector('input[name="student_grade"]').value = data.grade|| '';
   row.dataset.editId = id;
   updateFormState();
 };
@@ -225,7 +225,7 @@ importBtn.addEventListener('click', async (e) => {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td><input type="text" name="student_name" value="${r[0]}" required></td>
-            <td><input type="text" name="student_class" value="${r[1] || ''}" required></td>
+            <td><input type="text" name="student_grade" value="${r[1] || ''}" required></td>
           `;
           studentTable.appendChild(row);
         }
