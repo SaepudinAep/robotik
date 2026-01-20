@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rekap Absensi Sekolah</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style_rekap.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-text">
+      <h1>Rekap Absensi Siswa</h1>
+    </div>
+       <nav class="nav-actions">
+    <a href="dashboard.html" class="btn-nav"> Dashboard</a>
+    <a href="absensi_sekolah.html" class="btn-nav"> Kelas</a>
+    </nav>
+  </header>
+
+
+  <!--  Panel Filter -->
+  <section class="filter-panel">
+    <div class="filter-group">
+      <select id="academicYearSelect"></select>
+    </div>
+    <div class="filter-group">
+      <select id="semesterSelect"></select>
+    </div>
+    <div class="filter-group">
+      <select id="classSelect"></select>
+    </div>
+
+    <div class="filter-group">
+      <button id="loadRekap">Tampilkan</button>
+    </div>
+  </section>
+
+  <!--  Header Rekap -->
+  <header class="rekap-header">
+    <h2 id="schoolName">–</h2>
+    <p><strong>Tahun Ajaran:</strong> – &nbsp;&nbsp; <strong>Semester:</strong> –</p>
+    <p><strong>Kelas:</strong> – &nbsp;&nbsp; <strong>Jadwal:</strong> Senin, 07.30 - 09.00</p>
+  </header>
+
+  <!--  Konten Rekap -->
+  <main class="rekap-container">
+    <!--  Menu Rekap -->
+    <div class="rekap-menu">
+      <button id="btnRekapAbsensi" class="rekap-button active">Rekap Absensi</button>
+      <button id="btnRekapPembelajaran" class="rekap-button">Rekap Pembelajaran</button>
+     <label for="pertemuanStartSelect">Pertemuan Awal</label>
+      <select id="pertemuanStartSelect"></select>
+      <label for="pertemuanEndSelect">Pertemuan Akhir</label>
+       <select id="pertemuanEndSelect"></select>
+    </div>
+
+<!--  Tabel Data Siswa -->
+<section id="tabelSiswaSection" class="rekap-section">
+  <div class="table-scroll">
+    <table id="tabelDataSiswa" class="table table-bordered tabel-siswa">
+
+      <thead>
+            </thead>
+      <tbody>
+        <!-- Baris siswa akan diisi lewat JavaScript -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+    <!--  Tabel Absensi -->
+    <section id="rekapAbsensiSection" class="rekap-section">
+      <div class="table-scroll">
+        <table id="rekapAbsensiTable"></table>
+      </div>
+    </section>
+
+    <!--  Tabel Pembelajaran -->
+    <section id="rekapPembelajaranSection" class="rekap-section" style="display: none;">
+      <div class="table-scroll">
+        <table id="rekapPembelajaranTable"></table>
+      </div>
+    </section>
+
+    <!--  Tombol Ekspor -->
+    <div class="export-buttons">
+      <button id="exportExcel">Ekspor Excel</button>
+      <button id="printRekap">Cetak (A4)</button>
+    </div>
+  </main>
+
+  <script src="rekap_absensi_sekolah.js" type="module"></script>
+</body>
+</html>
