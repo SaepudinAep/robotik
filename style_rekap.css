@@ -245,7 +245,7 @@ td:nth-child(n+4) {
 #rekapAbsensiTable td:nth-child(2),
 #rekapPembelajaranTable td:nth-child(2) {
   width: 150px;
-  text-align: left;
+  text-align: center;
 }
 
 #rekapAbsensiTable th:nth-child(3),
