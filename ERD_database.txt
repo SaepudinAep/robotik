@@ -1,0 +1,177 @@
+Tentu, Saepudin! Berikut versi yang sudah dirapikan dan diformat agar cocok untuk dipaste ke GitHub README, Notion, atau dokumentasi teknis lainnya:
+
+---
+
+📘 ERD Sederhana — Schema: public
+
+Berikut adalah daftar tabel utama beserta kolom, tipe data, primary key (PK), dan foreign key (FK) dalam skema public.
+
+---
+
+🏫 schools
+
+| Kolom        | Tipe Data   | Keterangan     |
+|--------------|-------------|----------------|
+| id           | uuid      | PK             |
+| name         | text      |                |
+| address      | text      |                |
+| headmaster   | text      |                |
+| npsn         | text      |                |
+| phone        | text      |                |
+| email        | text      |                |
+| logo_url     | text      |                |
+| is_active    | boolean   |                |
+| created_at   | timestamptz |              |
+| user_id      | uuid      | FK → auth.users.id |
+
+Relasi:
+- Digunakan oleh: students.schoolid, classes.schoolid, academicyears.schoolid, pertemuankelas.schoolid, teachers.school_id
+
+---
+
+📅 academic_years
+
+| Kolom        | Tipe Data   | Keterangan     |
+|--------------|-------------|----------------|
+| id           | uuid      | PK             |
+| school_id    | uuid      | FK → schools.id |
+| year         | text      |                |
+| is_active    | boolean   |                |
+| created_at   | timestamptz |              |
+
+Relasi:
+- Digunakan oleh: semesters.academicyearid, classes.academicyearid
+
+---
+
+🗓️ semesters
+
+| Kolom            | Tipe Data   | Keterangan     |
+|------------------|-------------|----------------|
+| id               | uuid      | PK             |
+| academicyearid | uuid      | FK → academic_years.id |
+| name             | text      |                |
+| is_active        | boolean   |                |
+| created_at       | timestamptz |              |
+
+Relasi:
+- Digunakan oleh: classes.semester_id
+
+---
+
+🏷️ classes
+
+| Kolom            | Tipe Data   | Keterangan     |
+|------------------|-------------|----------------|
+| id               | uuid      | PK             |
+| name             | text      |                |
+| school_id        | uuid      | FK → schools.id |
+| academicyearid | uuid      | FK → academic_years.id |
+| semester         | text      |                |
+| level            | text      |                |
+| jadwal           | text      |                |
+| created_at       | timestamptz |              |
+| semester_id      | uuid      | FK → semesters.id |
+
+Relasi:
+- Digunakan oleh: students.classid, pertemuankelas.class_id
+
+---
+
+👨‍🎓 students
+
+| Kolom        | Tipe Data   | Keterangan     |
+|--------------|-------------|----------------|
+| id           | uuid      | PK             |
+| name         | text      |                |
+| class_id     | uuid      | FK → classes.id |
+| user_id      | uuid      |                |
+| created_at   | timestamptz |              |
+| school_id    | uuid      | FK → schools.id |
+| grade        | text      |                |
+
+Relasi:
+- Digunakan oleh: attendance.student_id
+
+---
+
+👨‍🏫 teachers
+
+| Kolom      | Tipe Data   | Keterangan     |
+|------------|-------------|----------------|
+| id         | uuid      | PK             |
+| name       | text      |                |
+| school_id  | uuid      | FK → schools.id |
+| role       | text      |                |
+
+Relasi:
+- Digunakan oleh: pertemuankelas.guruid, pertemuankelas.asistenid, materi.guru_id
+
+---
+
+📚 materi
+
+| Kolom       | Tipe Data   | Keterangan     |
+|-------------|-------------|----------------|
+| id          | uuid      | PK             |
+| title       | text      |                |
+| class_id    | uuid      |                |
+| guru_id     | uuid      | FK → teachers.id |
+| asisten_id  | uuid      |                |
+| date        | date      |                |
+| description | text      |                |
+| detail      | text      |                |
+| level       | text      |                |
+| created_at  | timestamptz |              |
+| level_id    | uuid      | FK → levels.id |
+
+Relasi:
+- Digunakan oleh: pertemuankelas.materiid
+
+---
+
+📝 attendance
+
+| Kolom        | Tipe Data   | Keterangan     |
+|--------------|-------------|----------------|
+| id           | uuid      | PK             |
+| student_id   | uuid      | FK → students.id |
+| status       | text      |                |
+| created_at   | timestamptz |              |
+| pertemuanid | uuid      | FK → pertemuankelas.id |
+| sikap        | text      |                |
+| achievement  | text      |                |
+| tanggal      | date      |                |
+| fokus        | text      |                |
+
+---
+
+🧩 levels
+
+| Kolom  | Tipe Data | Keterangan     |
+|--------|-----------|----------------|
+| id     | uuid    | PK             |
+| kode   | text    | Unique         |
+| detail | text    |                |
+
+Relasi:
+- Digunakan oleh: materi.level_id
+
+---
+
+📆 pertemuan_kelas
+
+| Kolom      | Tipe Data   | Keterangan     |
+|------------|-------------|----------------|
+| id         | uuid      | PK             |
+| school_id  | uuid      | FK → schools.id |
+| materi_id  | uuid      | FK → materi.id |
+| guru_id    | uuid      | FK → teachers.id |
+| asisten_id | uuid      | FK → teachers.id |
+| class_id   | uuid      | FK → classes.id |
+| tanggal    | date      |                |
+
+Relasi:
+- Digunakan oleh: attendance.pertemuan_id
+
+---
