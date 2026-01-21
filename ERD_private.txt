@@ -1,0 +1,45 @@
+group_private
+
+Kolom: id (uuid), code (text), owner (text), address (text), created_at (timestamptz)
+PK: id
+FK: class_private.group_id -> public.group_private.id
+
+materi_private
+Kolom: id (uuid), judul (text), deskripsi (text), detail (text), level (text), created_at (timestamptz)
+PK: id
+FK: attendance_private.materi_id -> public.materi_private.id; pertemuan_private.materi_id -> public.materi_private.id
+
+achievement_private
+Kolom: id (uuid), title (text), level (text), catatan (text), created_at (timestamptz)
+PK: id
+FK: achievement_pertemuan.achievement_id -> public.achievement_private.id; achievement_target.achievement_id -> public.achievement_private.id
+
+class_private
+Kolom: id (uuid), group_id (uuid), name (text), level (text), created_at (timestamptz)
+PK: id
+FK: students_private.class_id -> public.class_private.id; class_private.group_id -> public.group_private.id; pertemuan_private.class_id -> public.class_private.id
+
+students_private
+Kolom: id (uuid), class_id (uuid), name (text), created_at (timestamptz)
+PK: id
+FK: attendance_private.student_id -> public.students_private.id; achievement_pertemuan.student_id -> public.students_private.id; students_private.class_id -> public.class_private.id
+
+pertemuan_private
+Kolom: id (uuid), class_id (uuid), pertemuan_ke (integer), tanggal (date), materi_id (uuid), teacher_id (uuid), created_at (timestamptz)
+PK: id
+FK: pertemuan_private.class_id -> public.class_private.id; achievement_pertemuan.pertemuan_id -> public.pertemuan_private.id; pertemuan_private.materi_id -> public.materi_private.id; pertemuan_private.teacher_id -> public.teachers.id; achievement_target.pertemuan_id -> public.pertemuan_private.id; attendance_private.pertemuan_id -> public.pertemuan_private.id
+
+achievement_target
+Kolom: id (uuid), pertemuan_id (uuid), achievement_id (uuid), catatan (text), created_at (timestamptz)
+PK: id
+FK: achievement_target.pertemuan_id -> public.pertemuan_private.id; achievement_target.achievement_id -> public.achievement_private.id
+
+achievement_pertemuan
+Kolom: id (uuid), pertemuan_id (uuid), student_id (uuid), achievement_id (uuid), indikator (integer), catatan (text), created_at (timestamptz)
+PK: id
+FK: achievement_pertemuan.pertemuan_id -> public.pertemuan_private.id; achievement_pertemuan.student_id -> public.students_private.id; achievement_pertemuan.achievement_id -> public.achievement_private.id
+
+attendance_private
+Kolom: id (uuid), pertemuan_id (uuid), student_id (uuid), materi_id (uuid), sikap (integer), fokus (integer), pemahaman (integer), detail (text), catatan (text)
+PK: id
+FK: attendance_private.student_id -> public.students_private.id; attendance_private.materi_id -> public.materi_private.id; attendance_private.pertemuan_id -> public.pertemuan_private.id
