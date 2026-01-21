@@ -185,28 +185,28 @@ function ikonFokus(nilai) {
   const map = { 0: "❌", 1: "😶", 2: "🙂", 3: "🔥" };
   return map[nilai] ?? "–";
 }
-
-// === UTILITAS TANGGAL & MAPPING ===
 function formatTanggal(tgl) {
   const d = new Date(tgl);
   return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}`;
 }
 
-function buatMappingPertemuan(pertemuanList) {
-  const map = {};
-  pertemuanList.forEach((p, i) => { map[p.id] = i + 1; });
-  return map;
-}
-
-// === ISI DROPDOWN PERTEMUAN ===
 async function isiDropdownPertemuan(classId) {
+  console.log("🔍 Memuat pertemuan untuk classId:", classId);
+
   const { data, error } = await supabase
     .from("pertemuan_kelas")
     .select("id, tanggal")
     .eq("class_id", classId)
     .order("tanggal", { ascending: true });
 
-  if (error || !data || data.length === 0) {
+  if (error) {
+    console.error("❌ Supabase error:", error.message);
+    alert("Gagal mengambil data pertemuan.");
+    return;
+  }
+
+  if (!Array.isArray(data) || data.length === 0) {
+    console.warn("⚠️ Tidak ada data pertemuan ditemukan.");
     alert("Data pertemuan tidak ditemukan.");
     return;
   }
@@ -217,6 +217,10 @@ async function isiDropdownPertemuan(classId) {
   endSelect.innerHTML = "";
 
   data.forEach((p, i) => {
+    if (!p.tanggal) {
+      console.warn(`⚠️ Pertemuan ${p.id} tidak memiliki tanggal.`);
+      return;
+    }
     const label = `P ${i + 1} - ${formatTanggal(p.tanggal)}`;
     const option = new Option(label, p.id);
     startSelect.appendChild(option.cloneNode(true));
@@ -226,6 +230,7 @@ async function isiDropdownPertemuan(classId) {
   startSelect.value = data[0].id;
   endSelect.value = data[data.length - 1].id;
 }
+
 
 async function renderTabelSiswa(classId) {
   const { data: siswa, error } = await supabase
@@ -274,9 +279,31 @@ async function renderTabelSiswa(classId) {
 //===============Rekap Absensi========================
 async function loadRekapAbsensi(classId, awalId, akhirId) {
   const table = document.getElementById("rekapAbsensiTable");
-  table.innerHTML = ""; // 🔄 Kosongkan isi lama
+  table.innerHTML = "";
 
-  // 1. Ambil daftar siswa
+  // Ambil semua pertemuan untuk kelas
+  const { data: semuaPertemuan, error: errPertemuan } = await supabase
+    .from("pertemuan_kelas")
+    .select("id, tanggal")
+    .eq("class_id", classId)
+    .order("tanggal", { ascending: true });
+
+  if (errPertemuan || !semuaPertemuan || semuaPertemuan.length === 0) {
+    console.error("❌ Gagal ambil data pertemuan:", errPertemuan?.message);
+    return;
+  }
+
+  // Filter berdasarkan posisi awalId dan akhirId
+  const indexAwal = semuaPertemuan.findIndex(p => p.id === awalId);
+  const indexAkhir = semuaPertemuan.findIndex(p => p.id === akhirId);
+  if (indexAwal === -1 || indexAkhir === -1 || indexAwal > indexAkhir) {
+    console.warn("⚠️ Rentang pertemuan tidak valid.");
+    return;
+  }
+
+  const pertemuanList = semuaPertemuan.slice(indexAwal, indexAkhir + 1);
+
+  // Ambil siswa
   const { data: siswaList, error: siswaError } = await supabase
     .from("students")
     .select("id, name, grade")
@@ -284,27 +311,12 @@ async function loadRekapAbsensi(classId, awalId, akhirId) {
     .order("grade", { ascending: true })
     .order("name", { ascending: true });
 
-
   if (siswaError || !siswaList) {
     console.error("❌ Gagal ambil data siswa:", siswaError?.message);
     return;
   }
 
-  // 2. Ambil daftar pertemuan
-  const { data: pertemuanList, error: pertemuanError } = await supabase
-    .from("pertemuan_kelas")
-    .select("id, tanggal")
-    .eq("class_id", classId)
-    .gte("id", awalId)
-    .lte("id", akhirId)
-    .order("tanggal", { ascending: true });
-
-  if (pertemuanError || !pertemuanList || pertemuanList.length === 0) {
-    console.error("❌ Gagal ambil data pertemuan:", pertemuanError?.message);
-    return;
-  }
-
-  // 3. Ambil data absensi
+  // Ambil absensi
   const { data: absensiList, error: absensiError } = await supabase
     .from("attendance")
     .select("student_id, pertemuan_id, status")
@@ -315,37 +327,27 @@ async function loadRekapAbsensi(classId, awalId, akhirId) {
     return;
   }
 
-  // 4. Buat mapping absensi: { [student_id][pertemuan_id] = status }
   const absensiMap = {};
   absensiList.forEach(a => {
     if (!absensiMap[a.student_id]) absensiMap[a.student_id] = {};
     absensiMap[a.student_id][a.pertemuan_id] = parseInt(a.status);
   });
 
-  // 5. Format tanggal header
-  function formatTanggalHeader(tgl) {
-    const d = new Date(tgl);
-    return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
-  }
-
-  // 6. Bangun <thead>
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
   headerRow.innerHTML = `
     <th>No</th>
     <th>Nama</th>
     <th>Kelas</th>
-    ${pertemuanList.map(p => `<th>${formatTanggalHeader(p.tanggal)}</th>`).join("")}
+    ${pertemuanList.map(p => `<th>${new Date(p.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</th>`).join("")}
   `;
   thead.appendChild(headerRow);
   table.appendChild(thead);
 
-  // 7. Bangun <tbody>
   const tbody = document.createElement("tbody");
   siswaList.forEach((siswa, i) => {
     const row = document.createElement("tr");
     const absensiSiswa = absensiMap[siswa.id] || {};
-
     row.innerHTML = `
       <td>${i + 1}</td>
       <td>${siswa.name}</td>
@@ -363,9 +365,31 @@ async function loadRekapAbsensi(classId, awalId, akhirId) {
 //============================================
 async function loadRekapPembelajaran(classId, awalId, akhirId) {
   const table = document.getElementById("rekapPembelajaranTable");
-  table.innerHTML = ""; // 🔄 Kosongkan isi lama
+  table.innerHTML = "";
 
-  // 1. Ambil daftar siswa
+  // 1. Ambil semua pertemuan
+  const { data: semuaPertemuan, error: errPertemuan } = await supabase
+    .from("pertemuan_kelas")
+    .select("id, tanggal")
+    .eq("class_id", classId)
+    .order("tanggal", { ascending: true });
+
+  if (errPertemuan || !semuaPertemuan || semuaPertemuan.length === 0) {
+    console.error("❌ Gagal ambil data pertemuan:", errPertemuan?.message);
+    return;
+  }
+
+  // 2. Filter rentang pertemuan berdasarkan posisi awalId dan akhirId
+  const indexAwal = semuaPertemuan.findIndex(p => p.id === awalId);
+  const indexAkhir = semuaPertemuan.findIndex(p => p.id === akhirId);
+  if (indexAwal === -1 || indexAkhir === -1 || indexAwal > indexAkhir) {
+    console.warn("⚠️ Rentang pertemuan tidak valid.");
+    return;
+  }
+
+  const pertemuanList = semuaPertemuan.slice(indexAwal, indexAkhir + 1);
+
+  // 3. Ambil daftar siswa
   const { data: siswaList, error: siswaError } = await supabase
     .from("students")
     .select("id, name, grade")
@@ -373,27 +397,12 @@ async function loadRekapPembelajaran(classId, awalId, akhirId) {
     .order("grade", { ascending: true })
     .order("name", { ascending: true });
 
-
   if (siswaError || !siswaList) {
     console.error("❌ Gagal ambil data siswa:", siswaError?.message);
     return;
   }
 
-  // 2. Ambil daftar pertemuan
-  const { data: pertemuanList, error: pertemuanError } = await supabase
-    .from("pertemuan_kelas")
-    .select("id, tanggal")
-    .eq("class_id", classId)
-    .gte("id", awalId)
-    .lte("id", akhirId)
-    .order("tanggal", { ascending: true });
-
-  if (pertemuanError || !pertemuanList || pertemuanList.length === 0) {
-    console.error("❌ Gagal ambil data pertemuan:", pertemuanError?.message);
-    return;
-  }
-
-  // 3. Ambil data pembelajaran (sikap & fokus)
+  // 4. Ambil data pembelajaran
   const { data: pembelajaranList, error: pembelajaranError } = await supabase
     .from("attendance")
     .select("student_id, pertemuan_id, sikap, fokus")
@@ -404,7 +413,7 @@ async function loadRekapPembelajaran(classId, awalId, akhirId) {
     return;
   }
 
-  // 4. Buat mapping: { [student_id][pertemuan_id] = { sikap, fokus } }
+  // 5. Buat mapping data pembelajaran
   const pembelajaranMap = {};
   pembelajaranList.forEach(a => {
     if (!pembelajaranMap[a.student_id]) pembelajaranMap[a.student_id] = {};
@@ -414,12 +423,6 @@ async function loadRekapPembelajaran(classId, awalId, akhirId) {
     };
   });
 
-  // 5. Format tanggal header
-  function formatTanggalHeader(tgl) {
-    const d = new Date(tgl);
-    return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
-  }
-
   // 6. Bangun <thead>
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
@@ -427,7 +430,7 @@ async function loadRekapPembelajaran(classId, awalId, akhirId) {
     <th>No</th>
     <th>Nama</th>
     <th>Kelas</th>
-    ${pertemuanList.map(p => `<th>${formatTanggalHeader(p.tanggal)}</th>`).join("")}
+    ${pertemuanList.map(p => `<th>${new Date(p.tanggal).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}</th>`).join("")}
   `;
   thead.appendChild(headerRow);
   table.appendChild(thead);
@@ -443,17 +446,17 @@ async function loadRekapPembelajaran(classId, awalId, akhirId) {
       <td>${siswa.name}</td>
       <td>${siswa.grade || "-"}</td>
       ${pertemuanList.map(p => {
-      const data = dataSiswa[p.id] || {};
-      const sikapIcon = ikonSikap(data.sikap);
-      const fokusIcon = ikonFokus(data.fokus);
-      return `<td>${sikapIcon} ${fokusIcon}</td>`;
+        const data = dataSiswa[p.id] || {};
+        const sikapIcon = ikonSikap(data.sikap);
+        const fokusIcon = ikonFokus(data.fokus);
+        return `<td>${sikapIcon} ${fokusIcon}</td>`;
       }).join("")}
-
     `;
     tbody.appendChild(row);
   });
   table.appendChild(tbody);
 }
+
 
 //============================================
 
