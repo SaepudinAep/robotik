@@ -51,5 +51,47 @@
         <input type="text" id="schedule" name="schedule" required />
 
         <!-- 🔘 TOMBOL AKSI -->
-        <div class="form-actions">
+          <div class="form-actions">
           <button type="submit" class="btn-primary">💾 Simpan</button>
+          <button type="reset" class="btn-secondary">↩️ Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- 🔶 TABEL DAFTAR KELAS -->
+    <section class="list-section">
+      <h2>Daftar Kelas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nama Kelas</th>
+            <th>Sekolah</th>
+            <th>Tahun Ajaran</th>
+            <th>Semester</th>
+            <th>Level</th>
+            <th>Jadwal</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="class-list"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- 🔶 MODAL HAPUS -->
+  <div id="delete-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <p>Apakah Anda yakin ingin menghapus kelas ini?</p>
+      <button id="confirm-delete" class="btn-danger">Ya, Hapus</button>
+      <button id="cancel-delete" class="btn-secondary">Batal</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 Sistem Manajemen Kelas</p>
+  </footer>
+
+  <!-- 🔗 SCRIPT -->
+  <script type="module" src="profil_kelas.js"></script>
+</body>
+</html>
