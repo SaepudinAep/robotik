@@ -1,0 +1,222 @@
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  background: #f9f9f9;
+  color: var(--text);
+}
+
+/* Header */
+header {
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  padding: 12px 20px;
+  color: var(--white);
+  text-align: center;
+}
+header h1 {
+  margin: 0;
+  font-family: var(--font-heading);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  font-size: 0.85em;
+  margin: 10px auto;
+  max-width: 900px;
+  color: #666;
+}
+.breadcrumb a {
+  color: var(--scratch-blue);
+  text-decoration: none;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* Tab Buttons */
+.tab-buttons {
+  margin: 20px auto;
+  text-align: center;
+}
+.tab-buttons button {
+  background: var(--scratch-orange);
+  border: none;
+  padding: 10px 20px;
+  margin: 0 6px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: bold;
+  font-family: var(--font-heading);
+  transition: all 0.3s ease;
+}
+.tab-buttons button:hover {
+  background: #e69500;
+  transform: scale(1.05);
+}
+
+/* Section */
+section {
+  display: none;
+  padding: 16px;
+  background: var(--white);
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  margin: 20px auto;
+  max-width: 900px;
+  box-shadow: var(--shadow);
+}
+section.active { display: block; }
+section h2 {
+  font-family: var(--font-heading);
+  color: var(--scratch-blue);
+  margin-top: 0;
+}
+
+/* Form */
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--scratch-yellow);
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+form label {
+  font-family: var(--font-heading);
+  font-size: 0.85em;
+  color: var(--scratch-blue);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+form input, form select, form textarea {
+  display: block;
+  margin-bottom: 0.8rem;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+form input:focus, form select:focus, form textarea:focus {
+  outline: none;
+  border-color: var(--scratch-blue);
+  box-shadow: 0 0 6px rgba(77,151,255,0.4);
+}
+.form-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+.form-actions button {
+  flex: 1;
+  background: var(--scratch-blue);
+  color: var(--white);
+  border: none;
+  padding: 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: bold;
+  font-family: var(--font-heading);
+  transition: all 0.3s ease;
+}
+.form-actions button:hover {
+  background: #3a7ad9;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* Table */
+.table-wrapper { overflow-x: auto; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 16px;
+  font-size: 0.85em;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+th {
+  background: var(--scratch-blue);
+  color: var(--white);
+  font-family: var(--font-heading);
+}
+tbody tr:nth-child(odd) { background: #fffdf5; }
+tbody tr:nth-child(even) { background: #f5fbff; }
+tbody tr:hover { background: #f0f0f0; }
+
+/* Tombol di tabel */
+td button {
+  background: var(--scratch-orange);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+td button:hover {
+  background: #e69500;
+  transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 16px;
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  font-family: var(--font-body);
+  margin-top: 20px;
+}
+.nav-footer {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+.btn-nav {
+  background: var(--scratch-orange);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: background 0.3s;
+}
+.btn-nav:hover { background: #e69500; }
+
+/* Responsif */
+@media (max-width: 768px) {
+  .tab-buttons button {
+    padding: 8px 16px;
+    margin: 6px 0;
+    width: 90%;
+  }
+  section {
+    margin: 12px;
+    padding: 12px;
+    max-width: 100%;
+  }
+  form { max-width: 100%; }
+  table { font-size: 0.9em; }
+}
+@media (max-width: 480px) {
+  .form-actions { flex-direction: column; gap: 8px; }
+  .form-actions button { width: 100%; }
+  table, th, td { font-size: 0.85em; }
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+}
