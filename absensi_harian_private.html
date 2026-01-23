@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Private - System</title>
+    <link rel="stylesheet" href="style_private.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="page-header">
+        <h1>MONITORING SESSION</h1>
+    </header>
+
+    <div class="container">
+<section id="section-pertemuan">
+    <h2>Inisialisasi Sesi</h2>
+    <form id="form-pertemuan-awal">
+        <div class="header-inline-grid">
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="date" id="tanggal" value="2026-01-23">
+            </div>
+
+            <div class="form-group">
+                <label>Pertemuan Ke-</label>
+                <input type="number" id="pertemuan_ke" placeholder="P-" min="1">
+            </div>
+
+<div class="form-group">
+    <label>Materi Utama</label>
+    <input list="materi-list" id="materi-input" placeholder="Cari materi...">
+    <datalist id="materi-list">
+        <option value="Mekanik Dasar - Gear">
+        <option value="Logic - Looping">
+    </datalist>
+    <div style="position: relative;">
+        <span class="text-book-hint" onclick="document.getElementById('materi-input').value='Materi dari Textbook'" 
+              style="position: absolute; cursor:pointer; font-size: 9px; color: var(--scratch-blue); white-space: nowrap;">
+            📖 Use Textbook
+        </span>
+    </div>
+</div>
+
+            <div class="form-group">
+                <label>Guru</label>
+                <select id="select-guru">
+                    <option value="">- Pilih -</option>
+                    <option value="guru-1">Mr. Ali</option>
+                    <option value="guru-2">Ms. Siti</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" id="btn-lock" class="btn-primary" style="margin-top: 15px; width: 100%;">💾 LOCK & LANJUTKAN</button>
+    </form>
+</section>
+
+        <div id="summary-header" class="summary-card hidden">
+            <div class="summary-info">
+                <span id="sum-pertemuan">Pertemuan #--</span> | 
+                <span id="sum-materi">--</span>
+            </div>
+            <button id="btn-edit-header" class="btn-nav" style="font-size: 0.8em;">Edit Data</button>
+        </div>
+
+        <section id="section-monitoring" class="hidden">
+            <h2>Monitoring & Achievement</h2>
+            
+            <div class="table-responsive">
+                <table class="table-attendance">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="35%">Nama Siswa</th>
+                            <th width="30%">Sikap</th>
+                            <th width="30%">Fokus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">1</td>
+                            <td><input type="text" value="Budi Setiawan" readonly class="input-inline"></td>
+                            <td>
+                                <select id="skor_sikap" class="select-clean">
+                                    <option value="5" selected>5 - Sangat Baik</option>
+                                    <option value="4">4 - Baik</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Perlu Perhatian</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="skor_fokus" class="select-clean">
+                                    <option value="5" selected>5 - Sangat Fokus</option>
+                                    <option value="4">4 - Fokus</option>
+                                    <option value="3">3 - Cukup</option>
+                                    <option value="2">2 - Kurang</option>
+                                    <option value="1">1 - Mudah Teralihkan</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr class="divider">
+
+            <div class="table-wrapper">
+                <table id="table-achievement">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="20%">Main Achievement</th>
+                            <th width="30%">Sub Achievement</th>
+                            <th width="20%">Nilai</th>
+                            <th width="20%">Catatan</th>
+                            <th width="5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="achievement-tbody"></tbody>
+                </table>
+                <button type="button" id="btn-add-row" class="btn-add-linear">+ Tambah Achievement</button>
+            </div>
+
+            <div class="form-actions" style="margin-top: 30px;">
+                <button type="button" id="btn-save-final" style="background: var(--scratch-orange);">| SIMPAN MONITORING |</button>
+            </div>
+        </section>
+
+        <hr class="divider">
+        <section id="section-history">
+            <div class="card-header">
+                <h2>Riwayat Materi (Siklus Paket)</h2>
+            </div>
+            <div class="history-grid" id="history-grid">
+                <div class="history-card cycle-green">
+                    <span class="history-date">10 Jan 2026</span>
+                    <p class="history-materi"><b>P1:</b> Pengenalan Gear Dasar</p>
+                </div>
+                <div class="history-card cycle-green">
+                    <span class="history-date">12 Jan 2026</span>
+                    <p class="history-materi"><b>P2:</b> Merakit Kincir Angin</p>
+                </div>
+            </div>
+        </section>
+    </div> <footer class="page-footer">
+        <p>&copy; 2026 Scratch Management System</p>
+    </footer>
+
+    <script src="absensi_harian_private.js"></script>
+</body>
+</html>

@@ -1,104 +1,1 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-import { supabaseUrl, supabaseKey } from './config.js';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Elemen HTML
-const sekolahCountEl = document.querySelector('.stat-card.sekolah p');
-const kelasCountEl   = document.querySelector('.stat-card.kelas p');
-const siswaCountEl   = document.querySelector('.stat-card.siswa p');
-const logoutBtn      = document.querySelector('.logout');
-const navCards       = document.querySelectorAll('.nav-card');
-const semesterLabelEl = document.getElementById('semester-label');
-
-// Fungsi tentukan semester & tahun ajaran aktif
-function getActiveSemesterLabel() {
-  const now = new Date();
-  const month = now.getMonth() + 1; // 1-12
-  const year = now.getFullYear();
-
-  let semesterName, academicYear;
-
-  if (month >= 7 && month <= 12) {
-    semesterName = "Semester 1";
-    academicYear = `${year}/${year+1}`;
-  } else {
-    semesterName = "Semester 2";
-    academicYear = `${year-1}/${year}`;
-  }
-
-  // simpan ke localStorage untuk dipakai di page lain
-  localStorage.setItem("activeAcademicYear", academicYear);
-  localStorage.setItem("activeSemester", semesterName);
-
-  return `${semesterName} ${academicYear}`;
-}
-
-// Fungsi ambil jumlah data dari tabel
-async function getCount(table) {
-  const { count, error } = await supabase
-    .from(table)
-    .select('*', { count: 'exact', head: true });
-
-  if (error) {
-    console.error(`Gagal mengambil jumlah dari tabel ${table}:`, error);
-    return 0;
-  }
-  return count ?? 0;
-}
-
-// Fungsi utama dashboard
-async function loadDashboard() {
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) {
-    window.location.href = 'index.html';
-    return;
-  }
-
-  // tampilkan label semester
-  semesterLabelEl.textContent = getActiveSemesterLabel();
-
-  try {
-    const sekolahCount = await getCount('schools');
-    sekolahCountEl.textContent = sekolahCount;
-
-    const kelasCount = await getCount('classes');
-    kelasCountEl.textContent = kelasCount;
-
-    const siswaCount = await getCount('students');
-    siswaCountEl.textContent = siswaCount;
-  } catch (e) {
-    console.error('Gagal memuat data dashboard:', e);
-  }
-}
-
-// Logout
-logoutBtn?.addEventListener('click', async () => {
-  await supabase.auth.signOut();
-  window.location.href = 'index.html';
-});
-
-// Navigasi dari kartu dashboard
-navCards.forEach((card) => {
-  card.addEventListener('click', () => {
-    const text = card.textContent.trim();
-
-    const routes = {
-      'Absensi': 'absensi_sekolah.html',
-      'Guru & Materi': 'guru_materi.html',
-      'Registrasi Siswa': 'registrasi_sekolah.html',
-      'Registrasi Private': 'registrasi_private.html',
-      'Profil Sekolah': 'profil_sekolah.html',
-      'Profil Kelas': 'profil_kelas.html'
-    };
-
-    if (routes[text]) {
-      window.location.href = routes[text];
-    } else {
-      console.warn('Menu tidak dikenali:', text);
-    }
-  });
-});
-
-document.addEventListener('DOMContentLoaded', loadDashboard);
+/** * Project: Scratch Management Dashboard * Version: 2.0 (Refactored for Grouped Menu) * Description: Mengelola statistik, penentuan semester otomatis, dan navigasi grup. */import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';import { supabaseUrl, supabaseKey } from './config.js';const supabase = createClient(supabaseUrl, supabaseKey);// --- 1. SELEKTOR ELEMEN ---const statsElements = {    sekolah: document.getElementById('count-sekolah'),    kelas: document.getElementById('count-kelas'),    siswa: document.getElementById('count-siswa')};const logoutBtn = document.getElementById('btn-logout');const semesterLabelEl = document.getElementById('semester-label');const navCards = document.querySelectorAll('.nav-card');// --- 2. LOGIKA SEMESTER & TAHUN AJARAN ---function updateActiveSemester() {    const now = new Date();    const month = now.getMonth() + 1; // 1-12    const year = now.getFullYear();    let semesterName, academicYear;    // Aturan: Juli-Desember (Sem 1), Januari-Juni (Sem 2)    if (month >= 7 && month <= 12) {        semesterName = "Semester 1";        academicYear = `${year}/${year + 1}`;    } else {        semesterName = "Semester 2";        academicYear = `${year - 1}/${year}`;    }    // Simpan ke localStorage untuk kebutuhan filter di halaman lain    localStorage.setItem("activeAcademicYear", academicYear);    localStorage.setItem("activeSemester", semesterName);    if (semesterLabelEl) {        semesterLabelEl.textContent = `${semesterName} - Tahun Ajaran ${academicYear}`;    }}// --- 3. DATA FETCHING (SUPABASE) ---async function getTableCount(table) {    const { count, error } = await supabase        .from(table)        .select('*', { count: 'exact', head: true });    if (error) {        console.error(`Error fetching count from ${table}:`, error);        return 0;    }    return count ?? 0;}async function refreshStats() {    try {        const [sekolah, kelas, siswa] = await Promise.all([            getTableCount('schools'),            getTableCount('classes'),            getTableCount('students')        ]);        if (statsElements.sekolah) statsElements.sekolah.textContent = sekolah;        if (statsElements.kelas) statsElements.kelas.textContent = kelas;        if (statsElements.siswa) statsElements.siswa.textContent = siswa;    } catch (err) {        console.error('Gagal memuat statistik:', err);    }}// --- 4. NAVIGASI (ROUTING) ---function handleNavigation() {    const routes = {        // Kelompok Manajemen Sekolah (Reguler)        'Absensi Sekolah': 'absensi_sekolah.html',        'Guru & Materi': 'guru_materi.html',        'Registrasi Sekolah': 'registrasi_sekolah2.html',        // Kelompok Manajemen Private        'Absensi Private': 'absensi_private.html',        'Registrasi Private': 'registrasi_private.html',        'Materi Private': 'materi_private.html'    };    navCards.forEach((card) => {        card.addEventListener('click', () => {            const text = card.textContent.trim();            const targetUrl = routes[text];            if (targetUrl) {                window.location.href = targetUrl;            } else {                console.warn(`Rute untuk menu "${text}" belum terdaftar.`);                alert(`Halaman ${text} sedang dalam pengembangan.`);            }        });    });}// --- 5. AUTH & INITIALIZATION ---async function initDashboard() {    // Cek Session    const { data: { session } } = await supabase.auth.getSession();    if (!session) {        window.location.href = 'index.html';        return;    }    updateActiveSemester();    await refreshStats();    handleNavigation();}// Event LogoutlogoutBtn?.addEventListener('click', async () => {    const { error } = await supabase.auth.signOut();    if (!error) {        window.location.href = 'index.html';    }});// Jalankan saat DOM siapdocument.addEventListener('DOMContentLoaded', initDashboard);

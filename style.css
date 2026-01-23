@@ -84,6 +84,47 @@ body {
 }
 
 /* ================= Dashboard Page ================= */
+/* --- RESPONSIVE ADJUSTMENTS --- */
+
+/* Layar Tablet & HP (Lebar di bawah 768px) */
+@media (max-width: 768px) {
+  .menu-group-container {
+    width: 95%;
+  }
+  
+  .group-label {
+    font-size: 1.2rem; /* Judul sedikit lebih kecil di HP */
+  }
+
+  .nav-grid-custom {
+    /* Di HP, kita buat kartu memenuhi lebar layar tapi tetap punya batas maksimal */
+    grid-template-columns: 1fr; 
+    gap: 15px;
+  }
+
+  .nav-card {
+    height: 100px; /* Sedikit lebih pendek di HP agar tidak terlalu banyak scroll */
+    font-size: 1.1rem;
+  }
+
+  /* Stats Grid juga harus vertikal di HP */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Layar Sangat Kecil (HP Kecil) */
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .nav-card {
+    padding: 1rem;
+    height: 80px;
+  }
+}
+
 .header {
   display: flex;
   justify-content: space-between;

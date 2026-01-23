@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrasi Privat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style_private.css" />
+</head>
+<body>
+  <!-- 🔷 HEADER -->
+  <header class="page-header">
+    <h1>Registrasi Privat</h1>
+    <p>Manajemen Group, Class, dan Students</p>
+     <nav class="nav-actions">
+    <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+    </nav>
+  </header>
+
+  <!-- 🔶 MAIN CONTENT -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Tab Menu -->
+      <nav class="tab-menu">
+        <button class="active" onclick="showTab('students')">👩‍🎓 Students</button>
+        <button onclick="showTab('class')">🏫 Class</button>
+        <button onclick="showTab('group')">👨‍👩‍👧 Group</button>
+      </nav>
+
+      <!-- Tab Students -->
+      <section id="tab-students" class="tab-content active">
+        <h2>Tambah Siswa</h2>
+        <form id="form-students">
+          <label for="student-name">Nama Siswa</label>
+          <input type="text" name="name" id="student-name" required>
+
+          <label for="student-class">Pilih Kelas</label>
+          <select name="class_id" id="student-class" required>
+            <option value="">-- Pilih Kelas --</option>
+          </select>
+
+          <div class="form-actions">
+            <button type="submit">💾 Simpan Siswa</button>
+            <button type="reset" class="btn-secondary">↩️ Reset</button>
+          </div>
+          <div class="alert" id="alert-students" style="display:none;"></div>
+        </form>
+
+        <!-- Daftar siswa -->
+        <h3>Daftar Siswa</h3>
+        <table id="student-list">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Kelas</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3">Belum ada siswa</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Tab Class -->
+   <section id="tab-class" class="tab-content">
+      <h2>Tambah Class</h2>
+      <form id="form-class">
+    <label for="class-name">Nama Kelas</label>
+    <input type="text" name="name" id="class-name" required>
+
+    <label for="class-level">Level</label>
+    <select name="level_id" id="class-level" required>
+      <option value="">-- Pilih Level --</option>
+    </select>
+
+    <label for="class-group">Pilih Group</label>
+    <select name="group_id" id="class-group" required>
+      <option value="">-- Pilih Group --</option>
+    </select>
+
+    <div class="form-actions">
+      <button type="submit">💾 Simpan Class</button>
+      <button type="reset" class="btn-secondary">↩️ Reset</button>
+    </div>
+    <div class="alert" id="alert-class" style="display:none;"></div>
+  </form>
+
+  <!-- Daftar kelas -->
+  <h3>Daftar Class</h3>
+  <table id="class-list">
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Level</th>
+        <th>Group</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="4">Belum ada class</td></tr>
+    </tbody>
+  </table>
+</section>
+
+
+      <!-- Tab Group -->
+      <section id="tab-group" class="tab-content">
+        <h2>Tambah Group</h2>
+        <form id="form-group">
+          <label for="group-code">Kode Grup</label>
+          <input type="text" name="code" id="group-code" required>
+
+          <label for="group-owner">Nama Orang Tua</label>
+          <input type="text" name="owner" id="group-owner" required>
+
+          <label for="group-address">Alamat</label>
+          <textarea name="address" id="group-address" rows="3"></textarea>
+
+          <div class="form-actions">
+            <button type="submit">💾 Simpan Group</button>
+            <button type="reset" class="btn-secondary">↩️ Reset</button>
+          </div>
+          <div class="alert" id="alert-group" style="display:none;"></div>
+        </form>
+
+        <!-- Daftar group -->
+        <h3>Daftar Group</h3>
+        <table id="group-list">
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Owner</th>
+              <th>Alamat</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4">Belum ada group</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+
+  <!-- 🔻 FOOTER -->
+  <footer class="page-footer">
+    <p>© 2026 Sistem Registrasi Privat</p>
+  </footer>
+
+  <!-- Script Tab -->
+  <script>
+    function showTab(tabName) {
+      const tabs = ['students', 'class', 'group'];
+      tabs.forEach(name => {
+        document.getElementById(`tab-${name}`).classList.remove('active');
+        document.querySelector(`.tab-menu button[onclick="showTab('${name}')"]`).classList.remove('active');
+      });
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      document.querySelector(`.tab-menu button[onclick="showTab('${tabName}')"]`).classList.add('active');
+    }
+  </script>
+
+  <!-- Supabase logic -->
+  <script type="module" src="registrasi_private.js"></script>
+</body>
+</html>

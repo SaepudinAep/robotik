@@ -1,0 +1,142 @@
+DOKUMEN SPESIFIKASI TEKNIS: MONITORING PRIVATE SYSTEM
+I. STRUKTUR HIRARKI DATA (THE FOUR-LEVEL FLOW)
+Sistem harus berjalan dalam urutan linear yang tidak boleh diacak guna menjamin integritas relasi data:
+
+Level 1: Session Header (Root Data)
+Tujuan: Mendefinisikan kontainer utama pertemuan.
+
+Komponen: Tanggal, Nama Guru (Dropdown), Materi Utama (Datalist).
+
+Relasi: Menjadi parent ID untuk seluruh data di bawahnya.
+
+Level 2: Achievement Master (Indicator Definition)
+Tujuan: Menentukan "apa" yang diajarkan sebelum menentukan "siapa" siswanya.
+
+Mekanisme:
+
+Guru menambah baris secara dinamis.
+
+Setiap baris berisi Main Achievement dan Sub Achievement.
+
+Auto-Indexing (The Legend): Sistem secara otomatis memberikan kode unik (A1, A2, A3...) pada setiap baris.
+
+Visual Legend: Menampilkan tabel referensi ringkas: A1 = Mekanik (Gear), A2 = Coding (Looping).
+
+Level 3: Multi-Student Matrix (Assessment Table)
+Tujuan: Melakukan penilaian kuantitatif terhadap 1 hingga 4 siswa sekaligus.
+
+Komponen Kolom:
+
+Nama Siswa (Read-only/Dropdown).
+
+Pertemuan Ke- (Input manual per anak untuk sinkronisasi paket).
+
+Sikap & Fokus (Dropdown skor 1-5).
+
+Kolom Dinamis (A1, A2, ...): Muncul berdasarkan jumlah indikator di Level 2. Input berupa Rating Bintang.
+
+Keunggulan: Tabel tetap ramping karena judul kolom hanya menggunakan kode "A1, A2".
+
+Level 4: Narrative Progress (Qualitative Data)
+Tujuan: Memberikan catatan personal yang akan menjadi "jiwa" dari laporan orang tua.
+
+Mekanisme: Menghasilkan formulir teks dinamis berdasarkan daftar siswa di Level 3.
+
+Format: [Nama Siswa] : [TextArea untuk Catatan/Progress].
+
+II. SKEMA DATABASE (SUPABASE RELATIONAL MAPPING)
+Data tidak disimpan dalam satu tabel besar, melainkan dipisah untuk mendukung laporan detail:
+
+Table sessions_private:
+
+id (uuid, PK), created_at, date, teacher_name, main_topic.
+
+Table session_indicators:
+
+id, session_id (FK), indicator_code (A1, A2), main_ach, sub_ach.
+
+Table student_performance:
+
+id, session_id (FK), student_id (FK), session_no (Pertemuan ke-), attitude_score, focus_score.
+
+Table indicator_scores:
+
+id, perf_id (FK ke student_performance), indicator_id (FK), star_rating.
+
+Table student_notes:
+
+id, perf_id (FK), narrative_comment.
+
+III. LOGIKA UI/UX & INTERAKSI
+Lock Mechanism: Level 1 & 2 harus "Dikunci" (Lock) sebelum Level 3 & 4 muncul. Ini untuk mencegah perubahan indikator saat penilaian sudah dilakukan.
+
+The Legend Placement: Legenda harus selalu terlihat (sticky atau tepat di atas matriks) saat guru mengisi nilai bintang agar tidak terjadi salah input.
+
+Dynamic UI: Penambahan baris siswa di Level 3 harus otomatis men-trigger penambahan kotak catatan di Level 4.
+
+IV. OUTPUT VALUE (LAPORAN ORANG TUA)
+Tujuan akhir dari keribetan input ini adalah Laporan Detail yang berisi:
+
+Progress Chart: Grafik dari akumulasi nilai bintang.
+
+Learning Evidence: Penjelasan gamblang melalui Legenda tentang apa yang dipelajari.
+
+Personal Touch: Narasi spesifik yang membedakan anak mereka dengan anak lainnya meskipun dalam satu kelas yang sama.
+
+V. KONSEKUENSI PENGEMBANGAN
+Front-End: Membutuhkan manipulasi DOM yang intens untuk mengelola input dinamis (A1, A2).
+
+Back-End: Membutuhkan Transaction (Multi-insert) agar jika satu proses gagal, data tidak menjadi sampah di database.
+
+================================
+================================================================================
+       SISTEM MONITORING PRIVATE ROBOTIK - [MODE: INPUT DASHBOARD]
+================================================================================
+
+[LEVEL 1: SESSION HEADER (GLOBAL)]
+--------------------------------------------------------------------------------
+Tanggal: [ 23/01/2026 ]  Guru: [ Mr. Ali       [v]]  Materi: [ Logic - Loop   [v]]
+--------------------------------------------------------------------------------
+
+[LEVEL 2: ACHIEVEMENT MASTER (DEFINITION)]
+--------------------------------------------------------------------------------
+No  | Main Achievement          | Sub Achievement               | Action
+----|---------------------------|-------------------------------|----------------
+1   | Mechanics                 | Merakit Gear Ratio 1:3        | [ (x) Hapus ]
+2   | Programming               | Looping Forever & Wait        | [ (x) Hapus ]
+--------------------------------------------------------------------------------
+[ + Tambah Indikator ]
+
+>>> LEGENDA (Auto-Generated):
+    [A1] : Mechanics - Merakit Gear Ratio 1:3
+    [A2] : Programming - Looping Forever & Wait
+
+[!] KUNCI & LANJUT KE PENILAIAN SISWA [ BUTTON: LOCK SESSION ]
+--------------------------------------------------------------------------------
+
+
+[LEVEL 3: MULTI-STUDENT MATRIX (ASSESSMENT)] -- (Muncul setelah Lock)
+--------------------------------------------------------------------------------
+Nama Siswa       | P-Ke | Sikap | Fokus |  [A1]  |  [A2]  |  [A3]  | Action
+-----------------|------|-------|-------|--------|--------|--------|------------
+1. Budi Setiawan | [ 5 ]| [ 5[v]]| [ 4[v]]| [* * *]| [* * *]| [ --- ]| [ (-) ]
+2. Iwan Pratama  | [ 2 ]| [ 4[v]]| [ 5[v]]| [* * *]| [* * *]| [ --- ]| [ (-) ]
+-----------------|------|-------|-------|--------|--------|--------|------------
+[ + Tambah Siswa ]
+
+
+[LEVEL 4: NARRATIVE PROGRESS (QUALITATIVE)] -- (Dinamis per Siswa)
+--------------------------------------------------------------------------------
+CATATAN PERKEMBANGAN:
+
+(Siswa 1) Budi Setiawan:
+[ Budi sudah memahami konsep perbandingan gear, namun perlu sedikit       ]
+[ bantuan saat memasang poros (axle) agar tidak terlalu seret.            ]
+
+(Siswa 2) Iwan Pratama:
+[ Iwan sangat cepat dalam menyusun block coding. Logic looping sudah      ]
+[ dikuasai sepenuhnya tanpa bantuan instruktur.                           ]
+
+--------------------------------------------------------------------------------
+[ BUTTON: SIMPAN FINAL & GENERATE REPORT ]
+================================================================================

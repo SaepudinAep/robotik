@@ -1,50 +1,1 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Utama</title>
-  <!-- Font & CSS -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body class="dashboard-page">
-  <!-- Header -->
-  <header class="header">
-    <div class="header-text">
-      <h1>Dashboard Utama</h1>
-      <p id="semester-label"></p> <!-- label dinamis semester + tahun ajaran -->
-    </div>
-    <button class="logout">Logout</button>
-  </header>
-
-  <!-- Stats Grid -->
-  <section class="stats-grid">
-    <div class="stat-card sekolah"><h2>Sekolah</h2><p></p></div>
-    <div class="stat-card kelas"><h2>Kelas</h2><p></p></div>
-    <div class="stat-card siswa"><h2>Siswa</h2><p></p></div>
-  </section>
-
-  <!-- Navigasi Cepat -->
-  <section class="nav-grid">
-    <div class="nav-card">Absensi</div>
-    <div class="nav-card">Guru & Materi</div>
-    <div class="nav-card">Registrasi Siswa</div>
-    <div class="nav-card">Registrasi Private</div>
-    <div class="nav-card">Profil Sekolah</div>
-    <div class="nav-card">Profil Kelas</div>
-  </section>
-
-  <!-- Konten Dinamis -->
-  <section id="content-root"></section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    Sistem Absensi v1.1.0 — Dibuat oleh Saepudin & Copilot
-  </footer>
-
-  <!-- Koneksi ke file JS -->
-  <script type="module" src="dashboard.js"></script>
-  <script type="module" src="auth_guard.js"></script>
-</body>
-</html>
+<!DOCTYPE html><html lang="id"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Dashboard Utama - Scratch Management</title>    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;500&display=swap" rel="stylesheet">  <link rel="stylesheet" href="style.css">    <style>    /* CSS Tambahan khusus untuk pengelompokan di Dashboard */    .menu-group-container {      width: 90%;      max-width: 1200px;      margin: 0 auto 3rem auto;    }    .group-label {      font-family: var(--font-heading);      font-size: 1.5rem;      color: var(--text);      margin-bottom: 1rem;      padding-left: 10px;      border-left: 6px solid;    }    /* Warna Label & Card Kelompok Sekolah */    .label-sekolah { border-color: var(--scratch-blue); }    .group-sekolah .nav-card {       background-color: var(--scratch-blue);       color: white;    }    /* Warna Label & Card Kelompok Private */    .label-private { border-color: var(--scratch-orange); }    .group-private .nav-card {       background-color: var(--scratch-orange);       color: white;    }    /* Layout Nav Grid per Kelompok */    .nav-grid-custom {      display: grid;      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));      gap: 20px;    }    .nav-card {      padding: 2rem;      text-align: center;      font-family: var(--font-heading);      font-size: 1.2rem;      border-radius: 15px;      cursor: pointer;      transition: transform 0.2s, box-shadow 0.2s;      box-shadow: 0 4px 6px rgba(0,0,0,0.1);    }    .nav-card:hover {      transform: translateY(-8px);      box-shadow: 0 8px 15px rgba(0,0,0,0.2);    }  </style></head><body class="dashboard-page">  <header class="header">    <div class="header-text">      <h1>Dashboard Utama</h1>      <p id="semester-label">Memuat Semester...</p>     </div>    <button class="logout" id="btn-logout">Logout</button>  </header>  <section class="stats-grid">    <div class="stat-card sekolah"><h2>Sekolah</h2><p id="count-sekolah">-</p></div>    <div class="stat-card kelas"><h2>Kelas</h2><p id="count-kelas">-</p></div>    <div class="stat-card siswa"><h2>Siswa</h2><p id="count-siswa">-</p></div>  </section>  <div class="menu-group-container group-sekolah">    <h2 class="group-label label-sekolah">Manajemen Sekolah (Reguler)</h2>    <div class="nav-grid-custom">      <div class="nav-card">Absensi Sekolah</div>      <div class="nav-card">Guru & Materi</div>      <div class="nav-card">Registrasi Sekolah</div>    </div>  </div>  <div class="menu-group-container group-private">    <h2 class="group-label label-private">Manajemen Private</h2>    <div class="nav-grid-custom">      <div class="nav-card">Absensi Private</div>      <div class="nav-card">Registrasi Private</div>      <div class="nav-card">Materi Private</div>    </div>  </div>  <footer class="footer">    Sistem Absensi v1.2.0 — Dibuat oleh Saepudin & Gemini  </footer>  <script type="module" src="dashboard.js"></script>  <script type="module" src="auth_guard.js"></script></body></html>

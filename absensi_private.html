@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Private</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style_private.css">
+  <style>
+    /* Warna spesifik berdasarkan Level (Class ini akan ditambahkan via JS) */
+    .card.level-1 { border-left: 8px solid #4d97ff; background-color: #eef5ff; }
+    .card.level-2 { border-left: 8px solid #ffab19; background-color: #fff9ee; }
+    .card.level-3 { border-left: 8px solid #4caf50; background-color: #eef9ef; }
+    .card.level-extra { border-left: 8px solid #9c27b0; background-color: #f6eef9; }
+
+    .level-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 5px;
+      background: rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body class="absensi-page">
+  <header class="header">
+    <div class="header-text">
+      <h1>Absensi Private</h1>
+      <p id="semester-label"> </p>
+    </div>
+    <nav class="nav-actions">
+      <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+      <a class="logout btn-secondary">Logout</a>
+    </nav>
+  </header>
+
+  <section class="card-grid" id="private-class-grid">
+    </section>
+
+  <footer class="footer">
+    <nav class="nav-footer">
+      <a href="dashboard.html" class="btn-nav">Dashboard</a>
+    </nav>
+  </footer>
+
+  <script type="module" src="absensi_private.js"></script>
+</body>
+</html>

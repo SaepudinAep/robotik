@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Data Sekolah</title>
+  <link rel="stylesheet" href="style_private.css" />
+  <style>
+    /* Styling tambahan untuk layout form agar lebih rapi */
+    .selection-group { display: flex; gap: 15px; margin-bottom: 20px; }
+    .selection-item { flex: 1; }
+    .input-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    .input-table th, .input-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .btn-add { cursor: pointer; background-color: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <h1>Manajemen Data Sekolah</h1>
+    <p>Sistem Administrasi Sekolah, Kelas, dan Siswa</p>
+        <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+  </header>
+
+  <nav class="tab-menu">
+    <button id="btn-siswa" class="active">👩‍🎓 Siswa</button>
+    <button id="btn-kelas">📚 Kelas</button>
+    <button id="btn-sekolah">🏫 Sekolah</button>
+  </nav>
+
+  <section id="tab-siswa" class="tab-content active">
+    <h2>Registrasi Siswa</h2>
+    <form id="student-form">
+      <div class="selection-group">
+        <div class="selection-item">
+          <label for="school_id_siswa">Pilih Sekolah</label>
+          <select id="school_id_siswa" style="width: 100%;" required></select>
+        </div>
+        <div class="selection-item">
+          <label for="class_id_siswa">Pilih Kelas</label>
+          <select id="class_id_siswa" style="width: 100%;" required></select>
+        </div>
+      </div>
+
+      <table id="student-input-table" class="input-table">
+        <thead>
+          <tr>
+            <th>Nama Siswa</th>
+            <th>Grade/Kelas Siswa (e.g. 1A)</th>
+            <th style="width: 50px;"><button type="button" id="add-row-btn" class="btn-add">+</button></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" name="student_name" placeholder="Nama Lengkap" required style="width: 95%;"></td>
+            <td><input type="text" name="student_grade" placeholder="Contoh: 4B" style="width: 95%;"></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="form-actions">
+        <button type="submit" id="save-students-btn">Simpan Semua Siswa</button>
+        <button type="reset">Batal</button>
+      </div>
+    </form>
+
+    <hr>
+    <h3>Daftar Siswa di Kelas Terpilih</h3>
+    <table id="student-list">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama</th>
+          <th>Grade</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4">Pilih sekolah dan kelas untuk melihat data</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="tab-kelas" class="tab-content">
+    <h2>Manajemen Profil Kelas</h2>
+    <form id="class-form">
+      <div class="selection-group">
+        <div class="selection-item">
+          <label for="school_id">Sekolah</label>
+          <select id="school_id" required></select>
+        </div>
+        <div class="selection-item">
+          <label for="academic_year">Tahun Ajaran</label>
+          <div style="display: flex; gap: 5px;">
+            <select id="academic_year" required style="flex: 1;"></select>
+            <button type="button" id="add-year-btn" title="Tambah Tahun Ajaran Baru">+</button>
+          </div>
+        </div>
+        <div class="selection-item">
+          <label for="semester">Semester</label>
+          <select id="semester" required></select>
+        </div>
+      </div>
+
+      <label for="class_name">Nama Kelas</label>
+      <input type="text" id="class_name" placeholder="Misal: Kelas Robotik A" required />
+
+      <label for="level">Level</label>
+      <select id="level" required></select>
+
+      <label for="schedule">Jadwal</label>
+      <input type="text" id="schedule" placeholder="Misal: Senin, 14:00 - 15:30" required />
+
+      <div class="form-actions">
+        <button type="submit">Simpan Kelas</button>
+        <button type="reset">Batal</button>
+      </div>
+    </form>
+
+    <table id="class-list">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Kelas</th>
+          <th>Sekolah</th>
+          <th>Tahun</th>
+          <th>Semester</th>
+          <th>Level</th>
+          <th>Jadwal</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="tab-sekolah" class="tab-content">
+    <h2>Profil Sekolah</h2>
+    <form id="school-form">
+      <label for="school_name">Nama Sekolah</label>
+      <input type="text" id="school_name" placeholder="Nama Sekolah Lengkap" required />
+
+      <label for="school_address">Alamat Sekolah</label>
+      <input type="text" id="school_address" placeholder="Alamat Lengkap" required />
+
+      <div class="form-actions">
+        <button type="submit">Simpan Sekolah</button>
+        <button type="reset">Batal</button>
+      </div>
+    </form>
+
+    <table id="school-list">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Sekolah</th>
+          <th>Alamat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <div id="delete-modal" class="modal" style="display:none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+    <div style="background: white; padding: 20px; width: 300px; margin: 15% auto; border-radius: 8px; text-align: center;">
+      <p>Apakah Anda yakin ingin menghapus data ini?</p>
+      <button id="confirm-delete" style="background: red; color: white;">Hapus</button>
+      <button id="cancel-delete">Batal</button>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <p>Sistem Manajemen Sekolah &copy; 2026</p>
+  </footer>
+
+  <script type="module" src="registrasi_sekolah2.js"></script>
+</body>
+</html>

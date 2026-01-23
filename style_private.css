@@ -1,0 +1,593 @@
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  background: #f9f9f9;
+  color: var(--text);
+}
+
+/* 🔷 Header */
+header, .page-header {
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  text-align: center;
+  padding: 24px 20px;
+}
+header h1, .page-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+/* 🔶 Container */
+.container, section {
+  max-width: 960px;
+  margin: 20px auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+/* 📝 Section Titles */
+section h2 {
+  margin-top: 0;
+  color: var(--scratch-blue);
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+
+/* 🟩 Form & Input */
+form {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--scratch-yellow);
+  padding: 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+form label {
+  font-family: var(--font-heading);
+  font-size: 0.9em;
+  color: var(--scratch-blue);
+  margin-bottom: 0.3rem;
+  display: block;
+}
+form input, form select, form textarea {
+  display: block;
+  margin-bottom: 0.8rem;
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: var(--radius);
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  background: var(--white);
+}
+form input:focus, form select:focus, form textarea:focus {
+  outline: none;
+  border-color: var(--scratch-blue);
+  box-shadow: 0 0 6px rgba(77,151,255,0.4);
+}
+.form-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+.form-actions button {
+  flex: 1;
+  background: var(--scratch-blue);
+  color: var(--white);
+  border: none;
+  padding: 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: bold;
+  font-family: var(--font-heading);
+  transition: all 0.3s ease;
+}
+.form-actions button:hover {
+  background: #3a7ad9;
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* 📋 Tables */
+.table-wrapper { overflow-x: auto; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 16px;
+  font-size: 0.85em;
+}
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+th {
+  background: var(--scratch-blue);
+  color: var(--white);
+  font-family: var(--font-heading);
+}
+tbody tr:nth-child(odd) { background: #fffdf5; }
+tbody tr:nth-child(even) { background: #f5fbff; }
+tbody tr:hover { background: #f0f0f0; }
+
+/* Tombol di tabel */
+td button {
+  background: var(--scratch-orange);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+td button:hover {
+  background: #e69500;
+  transform: scale(1.05);
+}
+
+/* 🔻 Footer */
+footer, .page-footer {
+  text-align: center;
+  padding: 16px;
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  font-family: var(--font-body);
+  margin-top: 20px;
+}
+.nav-footer {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+.btn-nav {
+  background: var(--scratch-orange);
+  color: var(--white);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transition: background 0.3s;
+}
+.btn-nav:hover { background: #e69500; }
+
+/* 🔀 Tab Menu */
+.tab-menu {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.tab-menu button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--scratch-orange);
+  color: var(--white);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+.tab-menu button:hover { background: #e69500; }
+.tab-menu button.active {
+  background: var(--scratch-blue);
+  color: var(--white);
+  border-bottom: 4px solid var(--scratch-orange);
+}
+
+/* ✨ Animasi */
+.tab-content {
+  display: none;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+.tab-content.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 📱 Responsif */
+@media (max-width: 768px) {
+  .tab-buttons button, .tab-menu button {
+    padding: 8px 16px;
+    margin: 6px 0;
+    width: 90%;
+  }
+  section {
+    margin: 12px;
+    padding: 12px;
+    max-width: 100%;
+  }
+  form { max-width: 100%; }
+  table { font-size: 0.9em; }
+}
+@media (max-width: 480px) {
+  .form-actions { flex-direction: column; gap: 8px; }
+  .form-actions button { width: 100%; }
+  table, th, td { font-size: 0.85em; }
+  table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+/* 📱 ============Absensi Private=============*/
+/* ============================================================
+   SCRATCH MANAGEMENT SYSTEM - MASTER CSS
+   ============================================================ */
+/* ============================================================
+   SCRATCH MANAGEMENT SYSTEM - MASTER CSS (KONSISTEN)
+   ============================================================ */
+
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 8px;
+  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  background: #f9f9f9;
+  color: var(--text);
+}
+
+/* 🔷 Header (Sesuai Patokan) */
+header, .header {
+  background: var(--scratch-blue);
+  color: var(--white);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1, .header h1 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+/* 🔶 Container & Sections (Halaman Registrasi/Guru) */
+.container, section {
+  max-width: 900px;
+  margin: 20px auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+/* 📋 Form & Table (Agar Page Lain Tidak Berubah) */
+form {
+  background: var(--scratch-yellow);
+  padding: 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+}
+form label { font-family: var(--font-heading); color: var(--scratch-blue); display: block; margin-bottom: 5px; }
+form input, form select, form textarea {
+  width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc;
+}
+
+table { border-collapse: collapse; width: 100%; font-size: 0.85em; }
+th, td { border: 1px solid #ccc; padding: 8px; }
+th { background: var(--scratch-blue); color: var(--white); font-family: var(--font-heading); }
+
+/* 📱 ============ ABSENSI PRIVATE (MATRIX GRID) ============= */
+
+/* Kita gunakan pembungkus khusus .absensi-page agar tidak tabrakan */
+.absensi-page .card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Matrix 3 Kolom sesuai patokan */
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Card dasar (Sesuai patokan warna-warni 4 berulang) */
+.absensi-page .card {
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  text-align: center;
+  aspect-ratio: 1 / 1; /* Membuatnya tetap kotak Matrix */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.absensi-page .card:hover { transform: scale(1.03); }
+
+/* Logika Warna Berulang (Sesuai Patokan Anda) */
+.absensi-page .card:nth-child(4n+1) { background: #4d97ff; color: #ffffff; }
+.absensi-page .card:nth-child(4n+2) { background: #ffab19; color: #ffffff; }
+.absensi-page .card:nth-child(4n+3) { background: #a8e6cf; color: #333333; }
+.absensi-page .card:nth-child(4n+4) { background: #fff3d6; color: #333333; }
+
+.absensi-page .card h3 { font-family: var(--font-heading); margin: 0; }
+
+/* 🔻 Footer & Buttons (Sesuai Patokan) */
+.footer {
+  background: var(--scratch-blue);
+  color: #ffffff;
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+}
+.btn-nav {
+  background: var(--scratch-orange);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.logout {
+  background: #ff4d4d;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* 📱 ============ MONITORING & ACHIEVEMENT (MODULUS 4) ============= */
+
+/* Utilitas untuk Show/Hide Form */
+.hidden {
+    display: none !important;
+}
+
+/* Summary Card (Header kecil saat form atas di-hide) */
+.summary-card {
+    background: var(--scratch-blue);
+    color: var(--white);
+    padding: 15px 20px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    animation: fadeIn 0.4s ease;
+    border-bottom: 4px solid var(--scratch-orange);
+}
+
+.summary-info {
+    font-family: var(--font-heading);
+    font-size: 1.1em;
+}
+
+/* Warna Latar Belakang Dinamis (Modulus 4) untuk Form Bawah */
+/* Menggunakan transparansi 0.15 agar warna tetap lembut dan teks terbaca */
+.bg-cycle-green { 
+    background-color: rgba(168, 230, 207, 0.25) !important; 
+    border: 2px solid #a8e6cf;
+}
+.bg-cycle-orange { 
+    background-color: rgba(255, 171, 25, 0.15) !important; 
+    border: 2px solid var(--scratch-orange);
+}
+.bg-cycle-blue { 
+    background-color: rgba(77, 151, 255, 0.15) !important; 
+    border: 2px solid var(--scratch-blue);
+}
+.bg-cycle-purple { 
+    background-color: rgba(243, 229, 245, 1) !important; 
+    border: 2px solid #9c27b0;
+}
+
+/* Styling Baris Achievement Dinamis */
+.main-achievement-group {
+    background: var(--white);
+    padding: 15px;
+    border-radius: var(--radius);
+    margin-bottom: 15px;
+    border: 1px dashed var(--scratch-blue);
+}
+
+.main-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.sub-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 40px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+    background: #fdfdfd;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.score-v {
+    font-weight: bold;
+    color: var(--scratch-blue);
+    text-align: center;
+}
+
+/* Tombol Khusus Form Monitoring */
+.btn-remove, .btn-del-sub {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-add-sub {
+    background: var(--scratch-blue);
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.catatan-area {
+    min-height: 60px;
+    font-size: 0.85em;
+}
+
+.divider {
+    border: none;
+    border-top: 2px solid var(--scratch-yellow);
+    margin: 20px 0;
+}
+
+.score-input {
+    width: 60px !important;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Styling Linear Row */
+.table-achievement input, 
+.table-achievement select {
+    border: none;
+    background: transparent;
+    padding: 5px;
+    width: 100%;
+    font-size: 0.85em;
+}
+
+.table-achievement input:focus {
+    background: #fff;
+    border-bottom: 2px solid var(--scratch-blue);
+}
+
+/* Star Rating Style */
+.star-rating {
+    display: flex;
+    gap: 2px;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #ccc;
+}
+
+.star.active {
+    color: var(--scratch-orange);
+}
+
+.btn-add-linear {
+    margin-top: 10px;
+    background: var(--scratch-blue);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-family: var(--font-heading);
+    cursor: pointer;
+}
+
+.btn-del-row {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}
+/* Container Grid */
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Card Styling */
+.history-card {
+    padding: 15px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border-left: 5px solid transparent;
+    transition: transform 0.2s;
+    background: white;
+}
+
+.history-card:hover {
+    transform: translateY(-5px);
+}
+
+.history-date {
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #666;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.history-materi {
+    font-size: 0.85em;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Warna Siklus sesuai Modulus 4 */
+.cycle-green { background: #e8f5e9; border-left-color: #4caf50; }
+.cycle-orange { background: #fff3e0; border-left-color: #ff9800; }
+.cycle-blue { background: #e3f2fd; border-left-color: #2196f3; }
+.cycle-purple { background: #f3e5f5; border-left-color: #9c27b0; }
+
+.header-inline-grid {
+    display: grid;
+    /* Membagi 4 kolom secara eksplisit dalam satu baris */
+    grid-template-columns: 1.2fr 0.8fr 2.5fr 1.5fr; 
+    gap: 12px;
+    align-items: flex-end;
+    background: var(--scratch-yellow);
+    padding: 15px;
+    border-radius: var(--radius);
+}
+
+.header-inline-grid .form-group {
+    margin-bottom: 0;
+    min-width: 0; /* Mencegah input meluap keluar grid */
+}
+
+.header-inline-grid label {
+    font-size: 0.75em; /* Sedikit lebih kecil agar aman */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Memastikan semua input tingginya seragam */
+.header-inline-grid input, 
+.header-inline-grid select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Responsif: Hanya pecah jadi 2 baris jika di layar HP kecil */
+@media (max-width: 600px) {
+    .header-inline-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

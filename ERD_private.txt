@@ -1,45 +1,167 @@
-group_private
+Struktur Database (Teks Biasa)
 
-Kolom: id (uuid), code (text), owner (text), address (text), created_at (timestamptz)
-PK: id
-FK: class_private.group_id -> public.group_private.id
+Tabel: academic_years
+id UUID [PK]
+school_id UUID [FK → schools.id]
+year TEXT
+is_active BOOLEAN
+created_at TIMESTAMP
 
-materi_private
-Kolom: id (uuid), judul (text), deskripsi (text), detail (text), level (text), created_at (timestamptz)
-PK: id
-FK: attendance_private.materi_id -> public.materi_private.id; pertemuan_private.materi_id -> public.materi_private.id
+Tabel: attendance
+id UUID [PK]
+student_id UUID [FK → students.id]
+status TEXT
+created_at TIMESTAMP
+pertemuan_id UUID [FK → pertemuan_kelas.id]
+sikap TEXT
+achievement TEXT
+tanggal DATE
+fokus TEXT
 
-achievement_private
-Kolom: id (uuid), title (text), level (text), catatan (text), created_at (timestamptz)
-PK: id
-FK: achievement_pertemuan.achievement_id -> public.achievement_private.id; achievement_target.achievement_id -> public.achievement_private.id
+Tabel: classes
+id UUID [PK]
+name TEXT
+school_id UUID [FK → schools.id]
+academic_year_id UUID [FK → academic_years.id]
+semester TEXT (enum: 'Semester 1', 'Semester 2')
+level TEXT (enum: 'Kiddy', 'Beginner')
+jadwal TEXT
+created_at TIMESTAMP
+semester_id UUID [FK → semesters.id]
 
-class_private
-Kolom: id (uuid), group_id (uuid), name (text), level (text), created_at (timestamptz)
-PK: id
-FK: students_private.class_id -> public.class_private.id; class_private.group_id -> public.group_private.id; pertemuan_private.class_id -> public.class_private.id
+Tabel: levels
+id UUID [PK]
+kode TEXT [UNIQUE]
+detail TEXT
 
-students_private
-Kolom: id (uuid), class_id (uuid), name (text), created_at (timestamptz)
-PK: id
-FK: attendance_private.student_id -> public.students_private.id; achievement_pertemuan.student_id -> public.students_private.id; students_private.class_id -> public.class_private.id
+Tabel: materi
+id UUID [PK]
+title TEXT
+class_id UUID [FK → classes.id]
+guru_id UUID [FK → teachers.id]
+asisten_id UUID [FK → teachers.id]
+date DATE
+description TEXT
+detail TEXT
+level TEXT
+created_at TIMESTAMP
+level_id UUID [FK → levels.id]
 
-pertemuan_private
-Kolom: id (uuid), class_id (uuid), pertemuan_ke (integer), tanggal (date), materi_id (uuid), teacher_id (uuid), created_at (timestamptz)
-PK: id
-FK: pertemuan_private.class_id -> public.class_private.id; achievement_pertemuan.pertemuan_id -> public.pertemuan_private.id; pertemuan_private.materi_id -> public.materi_private.id; pertemuan_private.teacher_id -> public.teachers.id; achievement_target.pertemuan_id -> public.pertemuan_private.id; attendance_private.pertemuan_id -> public.pertemuan_private.id
+Tabel: pertemuan_kelas
+id UUID [PK]
+school_id UUID [FK → schools.id]
+materi_id UUID [FK → materi.id]
+guru_id UUID [FK → teachers.id]
+asisten_id UUID [FK → teachers.id]
+class_id UUID [FK → classes.id]
+tanggal DATE
 
-achievement_target
-Kolom: id (uuid), pertemuan_id (uuid), achievement_id (uuid), catatan (text), created_at (timestamptz)
-PK: id
-FK: achievement_target.pertemuan_id -> public.pertemuan_private.id; achievement_target.achievement_id -> public.achievement_private.id
+Tabel: schools
+id UUID [PK]
+name TEXT
+address TEXT
+headmaster TEXT
+npsn TEXT
+phone TEXT
+email TEXT
+logo_url TEXT
+is_active BOOLEAN
+created_at TIMESTAMP
+user_id UUID [FK → auth.users.id]
 
-achievement_pertemuan
-Kolom: id (uuid), pertemuan_id (uuid), student_id (uuid), achievement_id (uuid), indikator (integer), catatan (text), created_at (timestamptz)
-PK: id
-FK: achievement_pertemuan.pertemuan_id -> public.pertemuan_private.id; achievement_pertemuan.student_id -> public.students_private.id; achievement_pertemuan.achievement_id -> public.achievement_private.id
+Tabel: semesters
+id UUID [PK]
+academic_year_id UUID [FK → academic_years.id]
+name TEXT (enum: 'Semester 1', 'Semester 2')
+is_active BOOLEAN
+created_at TIMESTAMP
 
-attendance_private
-Kolom: id (uuid), pertemuan_id (uuid), student_id (uuid), materi_id (uuid), sikap (integer), fokus (integer), pemahaman (integer), detail (text), catatan (text)
-PK: id
-FK: attendance_private.student_id -> public.students_private.id; attendance_private.materi_id -> public.materi_private.id; attendance_private.pertemuan_id -> public.pertemuan_private.id
+Tabel: students
+id UUID [PK]
+name TEXT
+class_id UUID [FK → classes.id]
+user_id UUID
+created_at TIMESTAMP
+school_id UUID [FK → schools.id]
+grade TEXT
+
+Tabel: teachers
+id UUID [PK]
+name TEXT
+role TEXT (enum: 'guru', 'asisten')
+
+=================Private=================
+Tabel: achievement_private
+id UUID [PK]
+title TEXT
+level TEXT
+catatan TEXT
+created_at TIMESTAMP
+level_id UUID [FK → levels.id]
+
+Tabel: achievement_target
+id UUID [PK]
+pertemuan_id UUID [FK → pertemuan_private.id]
+achievement_id UUID [FK → achievement_private.id]
+catatan TEXT
+created_at TIMESTAMP
+
+Tabel: achievement_pertemuan
+id UUID [PK]
+pertemuan_id UUID [FK → pertemuan_private.id]
+student_id UUID [FK → students_private.id]
+achievement_id UUID [FK → achievement_private.id]
+indikator INTEGER
+catatan TEXT
+created_at TIMESTAMP
+
+Tabel: students_private
+id UUID [PK]
+class_id UUID [FK → class_private.id]
+name TEXT
+created_at TIMESTAMP
+
+
+Tabel: pertemuan_private
+id UUID [PK]
+class_id UUID [FK → class_private.id]
+pertemuan_ke INTEGER
+tanggal DATE
+materi_id UUID [FK → materi_private.id]
+teacher_id UUID [FK → teachers.id]
+created_at TIMESTAMP
+
+Tabel: attendance_private
+id UUID [PK]
+pertemuan_id UUID [FK → pertemuan_private.id]
+student_id UUID [FK → students_private.id]
+materi_id UUID [FK → materi_private.id]
+sikap INTEGER
+fokus INTEGER
+pemahaman INTEGER
+detail TEXT
+catatan TEXT
+
+Tabel: class_private
+id UUID [PK]
+group_id UUID [FK → group_private.id]
+name TEXT
+level TEXT
+created_at TIMESTAMP
+level_id UUID [FK → levels.id]
+
+Tabel: group_private
+id UUID [PK]
+code TEXT
+owner TEXT
+address TEXT
+created_at TIMESTAMP
+
+Tabel: materi_private
+id UUID [PK]
+judul TEXT
+deskripsi TEXT
+detail TEXT
+level TEXT
+created_at TIMESTAMP
+level_id UUID [FK → levels.id]
