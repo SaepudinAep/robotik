@@ -44,10 +44,13 @@ function renderCards(classes) {
       </small>
     `;
 
-    card.onclick = () => {
-      localStorage.setItem("activePrivateClassId", cls.id);
-      window.location.href = 'absensi_harian_private.html';
-    };
+card.onclick = () => {
+  localStorage.setItem("activePrivateClassId", cls.id);
+  // Simpan juga Level ID dan Kode Level agar bisa digunakan di halaman monitoring
+  localStorage.setItem("activeLevelId", cls.level_id); 
+  localStorage.setItem("activeLevelKode", cls.levels?.kode || "");
+  window.location.href = 'absensiMonitoring.html';
+};
 
     container.appendChild(card);
   });

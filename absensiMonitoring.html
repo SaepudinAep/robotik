@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monitoring Kelas</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="styleMonitoing.css">
+</head>
+<body>
+
+    <header onclick="window.toggleFormArea()" style="cursor:pointer;">
+        <div class="header-left">
+           <a href="absensi_private.html" class="btn-back">
+           <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <div>
+            <h1 class="session-title">
+            Monitoring <span id="headerClassName" style="font-weight:300; opacity:0.9;"></span>
+           </h1>
+        
+        <span id="levelDisplay" style="font-size: 0.8rem; opacity: 0.9;">Loading...</span>
+    </div>
+</div>
+        <div style="font-family: 'Fredoka One'; font-size: 1.5rem;" id="sessionTag">P-?</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="setupSection">
+            
+            <div class="form-card">
+                <h3 style="margin:0 0 15px 0; color:var(--scratch-blue); font-family:var(--font-heading);">
+                    <i class="fa-solid fa-calendar-day"></i> Setup Pertemuan
+                </h3>
+                
+                <div class="form-row">
+                    <input type="date" id="tglPertemuan">
+                    <select id="pilihGuru">
+                        <option value="">Guru...</option>
+                        <option value="Guru A">Kak Budi</option>
+                        <option value="Guru B">Kak Siti</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="materiUtama" placeholder="Judul Materi Hari Ini...">
+                </div>
+                <button class="btn-action" id="btnSimpanSesi">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Sesi
+                </button>
+            </div>
+
+            <div class="form-card" style="background:white; border-color:#eee;">
+                <h3 style="margin:0 0 15px 0; color:var(--scratch-orange); font-family:var(--font-heading);">
+                    <i class="fa-solid fa-star"></i> Target Capaian
+                </h3>
+                <div class="form-row">
+                    <input type="text" id="mainAch" placeholder="Topik (Mis: Mekanik)">
+                    <input type="text" id="subAch" placeholder="Sub (Mis: Gear Ratio)">
+                </div>
+                
+                <button class="btn-action" id="btnAddAch" style="background:var(--scratch-orange);">
+                    <i class="fa-solid fa-plus"></i> Tambah Target
+                </button>
+                
+                <div id="targetList" style="margin-top:10px;"></div>
+                
+                <button class="btn-action" id="btnSimpanTarget" style="margin-top:15px; background:#4caf50;">
+                    <i class="fa-solid fa-check-double"></i> Simpan Target
+                </button>
+            </div>
+        </div>
+        <div id="monitoringSection" style="margin-top:20px;">
+            <h3 style="font-family:var(--font-heading); color:#333; margin-bottom:15px;">
+                Daftar Siswa
+            </h3>
+            
+            <div id="studentContainer" class="student-list">
+                <p style="text-align:center; padding:20px;">🔄 Memuat data...</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; margin-bottom: 40px;">
+            <label style="font-weight:bold; color:#888; font-size:0.85rem;">RIWAYAT PERTEMUAN</label>
+            <div id="historyGrid" class="history-wrapper"></div>
+        </div>
+
+    </div>
+
+    <script type="module" src="absensiMonitoring.js"></script>
+</body>
+</html>

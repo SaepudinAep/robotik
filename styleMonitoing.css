@@ -1,0 +1,167 @@
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --radius: 12px;
+  --shadow: 0 4px 8px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #f9f9f9;
+  color: var(--text);
+  margin: 0;
+  padding-bottom: 50px;
+}
+
+/* 🔷 Header Konsisten */
+header {
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(77,151,255,0.3);
+}
+
+.header-left { display: flex; align-items: center; gap: 15px; }
+.btn-back { 
+    background: rgba(255,255,255,0.2); 
+    color: white; 
+    text-decoration: none; 
+    width: 40px; height: 40px; 
+    display: flex; align-items: center; justify-content: center; 
+    border-radius: 50%; font-size: 1.2rem;
+    transition: background 0.2s;
+}
+.btn-back:hover { background: rgba(255,255,255,0.4); }
+
+.session-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* 🔶 Container Utama */
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+/* 🟩 Form Area (Kuning Scratch) */
+.form-card {
+  background: var(--scratch-yellow);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 25px;
+  border: 2px solid #ffe082;
+}
+
+.form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.form-row input, .form-row select {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+}
+.form-row input:focus, .form-row select:focus {
+    border-color: var(--scratch-blue);
+    outline: none;
+}
+
+.btn-action {
+    background: var(--scratch-blue);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: transform 0.1s;
+    width: 100%; justify-content: center;
+}
+.btn-action:active { transform: scale(0.97); }
+
+/* 🎯 Achievement Tags */
+.ach-tag {
+    background: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center; gap: 8px;
+    margin: 5px 5px 0 0;
+    font-size: 0.9rem;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* 📜 History Scroll (Horizontal) */
+.history-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
+}
+.history-card {
+    display: inline-block;
+    background: white;
+    min-width: 140px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-right: 10px;
+    border-left: 5px solid var(--scratch-orange);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    cursor: pointer;
+    vertical-align: top;
+}
+.h-date { font-weight: bold; color: var(--scratch-orange); font-size: 0.85rem; }
+.h-materi { font-weight: 600; font-size: 0.95rem; color: #444; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+
+/* 👥 Siswa Card (Mirip absensi_private.html) */
+.student-list { display: grid; gap: 15px; }
+
+.student-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border-top: 6px solid var(--scratch-blue); /* Default */
+    animation: fadeIn 0.4s ease;
+}
+
+/* Variasi Warna Card (Cycle) */
+.student-card:nth-child(4n+1) { border-top-color: #4d97ff; }
+.student-card:nth-child(4n+2) { border-top-color: #ffab19; }
+.student-card:nth-child(4n+3) { border-top-color: #4caf50; }
+.student-card:nth-child(4n+4) { border-top-color: #9c27b0; }
+
+.s-header { 
+    font-family: var(--font-heading); 
+    font-size: 1.2rem; margin-bottom: 15px; 
+    display: flex; align-items: center; gap: 10px;
+}
+
+.metrics-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.metrics-row label { display: block; font-size: 0.8rem; font-weight: bold; color: #888; margin-bottom: 5px; }
+.metrics-row select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+
+.stars-wrapper { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+.star-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.stars { color: #ddd; font-size: 1.2rem; cursor: pointer; }
+.star-item.active { color: #ffab19; }
+
+textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: var(--font-body); resize: none; margin-bottom: 10px; box-sizing: border-box;}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
