@@ -7,13 +7,9 @@ const classId = localStorage.getItem("activePrivateClassId");
 const levelId = localStorage.getItem("activeLevelId");
 const levelKode = localStorage.getItem("activeLevelKode") || "--";
 
-
-// AMBIL NAMA KELAS (Pastikan key ini sesuai dengan yang Anda simpan di halaman sebelumnya)
-const className = localStorage.getItem("activeClassName") || ""; 
-
-// State Data Global
+// State Global
 let currentSessionId = null;     
-let sessionTargets = [];         
+let sessionTargets = []; // Isi: {id, main, sub}
 let studentList = [];
 let attendanceMap = {}; 
 
@@ -25,53 +21,75 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
-    // 1. Cek ID Kelas
+    // 1. Validasi ID Kelas
     if (!classId) return alert("⚠️ Error: ID Kelas tidak ditemukan.");
     
-    // 2. LOGIKA BARU: Tampilkan Nama Kelas di Header
+    // 2. TAMPILKAN NAMA KELAS (Tabel: class_private)
     const titleEl = document.getElementById('headerClassName');
-    // Cek apakah elemen ada DAN variabel className tidak kosong
-    if (titleEl && className) {
-        titleEl.innerText = ` - ${className}`; 
+    if (titleEl) {
+        let name = localStorage.getItem("activeClassName");
+        // Jika di local kosong, ambil dari DB
+        if (!name) {
+            try {
+                const { data } = await supabase
+                    .from('class_private') // Sesuai Schema
+                    .select('name')
+                    .eq('id', classId)
+                    .single();
+                if (data) { 
+                    name = data.name; 
+                    localStorage.setItem("activeClassName", name); 
+                }
+            } catch (e) { console.log("Gagal fetch nama kelas"); }
+        }
+        if (name) titleEl.innerText = ` - ${name}`;
     }
 
-    // 3. Set Default UI Header
-    updateHeaderInfo("Level: " + levelKode, "Draft Sesi");
-    
-    // 4. Set Tanggal Hari Ini
+    // 3. UI Header Default
+    updateHeaderInfo(`Level: ${levelKode}`, "Draft");
+
     const tglInput = document.getElementById('tglPertemuan');
     if(tglInput) tglInput.valueAsDate = new Date();
     
-    // 5. Load Data (JANGAN DIHAPUS)
     console.log("🚀 System Start...");
-    await fetchStudents(); 
+
+    // 4. LOAD DATA MASTER (Guru & Siswa) - Wajib selesai duluan
+    await Promise.all([
+        fetchTeachers(), // Load Guru (tabel teachers)
+        fetchStudents()  // Load Siswa (tabel students_private)
+    ]);
+
+    // 5. Load History
     await loadHistory();   
-    
-    // 6. Resume Sesi Terakhir
+
+    // 6. Resume Sesi Terakhir (Load ini PALING AKHIR)
     await loadLastSession(); 
     
-    // 7. Event Listeners (PENTING)
     setupEventListeners();
 }
 
 /**
  * Update Header Info (Status Bar)
- * Mengubah teks Level menjadi Materi saat sesi aktif
+ * Kiri: Tanggal - Materi
+ * Kanan: Level (Hijau jika aktif)
  */
 function updateHeaderInfo(subTitle, statusTag, isSaved = false) {
     const lvlDisplay = document.getElementById('levelDisplay');
     const tag = document.getElementById('sessionTag');
 
+    // 1. UPDATE SUB-JUDUL (Kiri Bawah)
     if (lvlDisplay) {
         lvlDisplay.innerText = subTitle;
-        lvlDisplay.style.color = isSaved ? "#ffeb3b" : "rgba(255,255,255,0.9)"; // Kuning jika saved
+        lvlDisplay.style.color = isSaved ? "#ffeb3b" : "rgba(255,255,255,0.9)";
         lvlDisplay.style.fontWeight = isSaved ? "bold" : "normal";
     }
 
+    // 2. UPDATE TAG (Pojok Kanan) -> PAKSA TAMPILKAN LEVEL
     if (tag) {
-        tag.innerText = statusTag;
-        tag.style.color = isSaved ? "#2ecc71" : "#fff"; // Hijau jika aktif
-        tag.style.fontSize = "1.2rem";
+        tag.innerText = levelKode || "Lvl"; 
+        // Hijau (#2ecc71) = Aktif/Saved, Putih = Draft ; orange [#ffab19]
+        tag.style.color = isSaved ? "#ffeb3b" : "#fff"; 
+        tag.style.fontSize = "1.5rem"; 
     }
 }
 
@@ -103,9 +121,9 @@ async function loadLastSession() {
         const judulMateri = data.materi_private?.judul || "";
         document.getElementById('materiUtama').value = judulMateri;
 
-        // Update Header (Tampilkan Materi & Tanggal)
+        // Update Header (Format: 22 Jan - Materi)
         const tglInfo = new Date(data.tanggal).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'});
-        updateHeaderInfo(` ${tglInfo} - ${judulMateri}`, "LANJUT", true);
+        updateHeaderInfo(`${tglInfo} - ${judulMateri}`, "LANJUT", true);
         
         // Load Detail Lainnya
         await fetchSessionTargets(data.id);
@@ -120,12 +138,17 @@ async function loadLastSession() {
 // =========================================
 async function fetchSessionTargets(sessionId) {
     try {
+        // Ambil target dan ID Achievement-nya untuk keperluan save bintang nanti
         const { data } = await supabase.from('achievement_target')
-            .select(`achievement_private ( main_achievement, sub_achievement )`)
+            .select(`
+                achievement_id,
+                achievement_private ( main_achievement, sub_achievement )
+            `)
             .eq('pertemuan_id', sessionId);
             
         if (data && data.length > 0) {
             sessionTargets = data.map(item => ({
+                id: item.achievement_id, // Simpan ID untuk link ke achievement_pertemuan
                 main: item.achievement_private.main_achievement,
                 sub: item.achievement_private.sub_achievement
             }));
@@ -149,7 +172,31 @@ async function fetchSessionAttendance(sessionId) {
 // 5. UI LOGIC (Accordion & Render)
 // =========================================
 
-// FUNGSI ACCORDION (Lipat/Buka Form)
+// --- AMBIL DATA GURU DARI DB (Tabel: teachers) ---
+async function fetchTeachers() {
+    const selectEl = document.getElementById('pilihGuru');
+    if (!selectEl) return;
+
+    try {
+        const { data, error } = await supabase
+            .from('teachers') 
+            .select('id, name')
+            .order('name', { ascending: true });
+
+        if (error) throw error;
+
+        selectEl.innerHTML = '<option value="">Pilih Guru...</option>';
+        data.forEach(guru => {
+            const option = document.createElement('option');
+            option.value = guru.id;
+            option.innerText = guru.name;
+            selectEl.appendChild(option);
+        });
+        
+    } catch (err) { console.error("Gagal load guru:", err.message); }
+}
+
+// FUNGSI ACCORDION
 window.toggleFormArea = () => {
     const setup = document.getElementById('setupSection');
     if (setup) {
@@ -183,7 +230,7 @@ function renderStudentCards() {
         const sId = item.id;
         const savedData = attendanceMap[sId] || {}; 
         
-        // Visual Feedback: Border Hijau jika sudah dinilai
+        // Border Hijau jika sudah dinilai
         const borderStyle = savedData.sikap ? "5px solid #2ecc71" : "1px solid #ddd";
 
         const card = document.createElement('div');
@@ -238,7 +285,6 @@ function renderTargetStarsHTML(studentId) {
     if (sessionTargets.length === 0) {
         return `<div style="font-size:0.8rem; color:#888; text-align:center; padding:10px;">🎯 Target belum diset.</div>`;
     }
-    // Render bintang (Logika simpan bintang per siswa bisa dikembangkan di iterasi selanjutnya)
     return sessionTargets.map((target, idx) => `
         <div class="star-row" data-score="0">
             <span style="font-size:0.9rem; font-weight:600; color:#444;">${target.sub}</span>
@@ -280,11 +326,11 @@ async function savePertemuan() {
         currentSessionId = data.id; 
         alert("✅ Sesi Tersimpan!");
 
-        // Update Header Langsung
+        // Update Header
         const tglInfo = new Date(tgl).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'});
-        updateHeaderInfo(`${materiText} (${tglInfo})`, "AKTIF", true);
+        updateHeaderInfo(`${tglInfo} - ${materiText}`, "AKTIF", true);
         
-        // Auto Accordion: Tutup Form Setup agar lega
+        // Auto Accordion: Tutup Form
         const setup = document.getElementById('setupSection');
         if(setup) setup.style.display = 'none'; 
 
@@ -309,10 +355,13 @@ async function saveTargetAch() {
             }
         }
         alert("✅ Target Tersinkron!");
+        // Reload target agar kita dapat ID achievement-nya untuk keperluan simpan bintang
+        await fetchSessionTargets(currentSessionId); 
         renderStudentCards(); 
     } catch (err) { alert(`Error: ${err.message}`); }
 }
 
+// --- FUNGSI SIMPAN MONITORING (DENGAN LOGIKA BINTANG) ---
 window.saveMonitoringIndividual = async (studentId) => {
     if (!currentSessionId) return alert("⚠️ Sesi belum aktif!");
 
@@ -321,17 +370,42 @@ window.saveMonitoringIndividual = async (studentId) => {
     const catatan = document.getElementById(`catatan-${studentId}`).value;
 
     try {
+        // 1. SIMPAN ATTENDANCE (Sikap & Fokus)
         await supabase.from('attendance_private').upsert({
             student_id: studentId, pertemuan_id: currentSessionId,
             sikap: parseInt(sikap), fokus: parseInt(fokus), catatan: catatan
         });
 
+        // 2. SIMPAN ACHIEVEMENT (Bintang/Indikator)
+        // Loop setiap baris bintang di UI siswa tersebut
+        const container = document.getElementById(`starsContainer-${studentId}`);
+        if (container) {
+            const rows = container.querySelectorAll('.star-row');
+            
+            // Loop setiap target session
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const score = parseInt(row.getAttribute('data-score') || "0");
+                const targetObj = sessionTargets[i]; // Ambil data achievement dari state global
+
+                // Jika ada skor dan data achievement valid
+                if (targetObj && targetObj.id) {
+                    await supabase.from('achievement_pertemuan').upsert({
+                        pertemuan_id: currentSessionId,
+                        student_id: studentId,
+                        achievement_id: targetObj.id,
+                        indikator: score // Nilai Bintang (1-5)
+                    }, { onConflict: 'pertemuan_id, student_id, achievement_id' });
+                }
+            }
+        }
+
         // Update Cache & UI
         attendanceMap[studentId] = { sikap: parseInt(sikap), fokus: parseInt(fokus), catatan: catatan };
         renderStudentCards(); 
 
-        alert("✅ Data Tersimpan!");
-    } catch (err) { alert("Gagal simpan data."); }
+        alert("✅ Data & Bintang Tersimpan!");
+    } catch (err) { alert("Gagal simpan data: " + err.message); }
 };
 
 // =========================================
