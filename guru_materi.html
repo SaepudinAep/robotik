@@ -2,121 +2,76 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- penting untuk HP -->
-  <title>Guru & Materi</title>
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet">
-  <!-- CSS eksternal -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Management Kurikulum | Robopanda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style_materi.css">
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <h1>Input Guru dan Materi</h1>
+  <header class="app-header">
+    <div class="header-content">
+      <h1>Management Data</h1>
+      <p class="breadcrumb">Dashboard / Guru & Materi</p>
+    </div>
   </header>
 
-  <!-- Breadcrumb -->
-  <div class="breadcrumb">
-    <a href="dashboard.html">Dashboard</a> > Guru & Materi
+  <nav class="tab-switcher">
+    <button id="btnMateri" class="tab-btn" data-tab="materi">MATERI</button>
+    <button id="btnAchievement" class="tab-btn" data-tab="achievement">ACHIEVE</button>
+  </nav>
+
+  <div class="search-section">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearch" placeholder="Cari nama, materi, atau topik...">
+    </div>
+    <div id="materi-filter" class="filter-chips" style="display: none;">
+      <span class="chip active">Semua</span>
+      <span class="chip" data-status="incomplete">⚠️ Incomplete</span>
+    </div>
   </div>
 
-  <!-- Tab Buttons -->
-  <div class="tab-buttons">
-    <button id="btnGuru">Guru</button>
-    <button id="btnMateri">Materi</button>
+  <main id="main-load-area" class="content-container">
+    <div id="materi-section" class="tab-content">
+      <div id="materi-list" class="compact-list">
+        </div>
+    </div>
+
+    <div id="achievement-section" class="tab-content">
+      <div id="achievement-library" class="accordion-group">
+        </div>
+    </div>
+    
+  </main>
+
+  <button id="fab-add" class="fab-btn" title="Tambah Data Baru">
+    <span>+</span>
+  </button>
+
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal-drawer">
+      <div class="modal-header">
+        <h2 id="modal-title">Input Data</h2>
+        <button id="modal-close" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="dynamic-form">
+          <div id="form-fields"></div>
+          <div class="form-footer">
+            <button type="submit" class="btn-primary">💾 Simpan Data</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <!-- Section Guru -->
-  <section id="guru" class="active">
-    <h2>Input Guru</h2>
-    <form id="formGuru">
-      <label for="guruName">Nama Guru/Asisten</label>
-      <input type="text" id="guruName" placeholder="Masukkan nama" required>
-
-      <label for="guruRole">Role</label>
-      <select id="guruRole">
-        <option value="guru">Guru</option>
-        <option value="asisten">Asisten</option>
-      </select>
-
-      <div class="form-actions">
-        <button type="submit" id="saveGuru">Simpan Guru</button>
-        <button type="button" id="resetGuru">Batal</button>
-      </div>
-    </form>
-
-    <div class="table-wrapper">
-      <table id="tableGuru">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama</th>
-            <th>Role</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Data guru akan ditambahkan via JS -->
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- Section Materi -->
-  <section id="materi">
-    <h2>Input Materi</h2>
-    <form id="formMateri">
-      <label for="materiTitle">Judul Materi</label>
-      <input type="text" id="materiTitle" placeholder="Masukkan judul materi" required>
-
-      <label for="materiLevel">Level</label>
-      <input type="text" id="materiLevel" placeholder="Level (opsional)">
-
-      <label for="materiDesc">Deskripsi</label>
-      <input type="text" id="materiDesc" placeholder="Deskripsi singkat (opsional)">
-
-      <label for="materiDetail">Detail</label>
-      <textarea id="materiDetail" placeholder="Detail materi (opsional)"></textarea>
-
-      <div class="form-actions">
-        <button type="submit" id="saveMateri">Simpan Materi</button>
-        <button type="button" id="resetMateri">Batal</button>
-      </div>
-    </form>
-
-    <div class="table-wrapper">
-      <table id="tableMateri">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Title</th>
-            <th>Level</th>
-            <th>Description</th>
-            <th>Detail</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Data materi akan ditambahkan via JS -->
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <nav class="nav-footer">
-    <nav class="nav-actions">
-    <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
-    <a href="absensi_sekolah.html" class="btn-nav">🏫 Kelas</a>
-    <a href="rekap_absensi_sekolah.html" class="btn-nav">📊 Rekap</a>
-    </nav>
-    </nav>
-    <p>© 2026 Robopanda | Created by Saepudin</p>
+  <footer class="bottom-nav">
+    <a href="dashboard.html" class="nav-item">🏠<span>Home</span></a>
+    <a href="absensi_sekolah.html" class="nav-item">🏫<span>Kelas</span></a>
+    <a href="rekap_absensi_sekolah.html" class="nav-item">📊<span>Rekap</span></a>
   </footer>
 
-  <!-- Script -->
   <script type="module" src="guru_materi.js"></script>
 </body>
 </html>

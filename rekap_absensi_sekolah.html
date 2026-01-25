@@ -3,93 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rekap Absensi Sekolah</title>
+  <title>Rekap Absensi Sekolah - Scratch Management</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="style_rekap.css" />
+  <link rel="stylesheet" href="style_materi.css" />
 </head>
-<body>
+<body class="bg-app">
 
-  <header class="header">
-    <div class="header-text">
-      <h1>Rekap Absensi Siswa</h1>
+  <header class="app-header no-print">
+    <div class="header-content">
+      <h1 style="font-family: var(--font-heading);">REKAP ABSENSI SISWA</h1>
     </div>
-       <nav class="nav-actions">
-    <a href="dashboard.html" class="btn-nav"> Dashboard</a>
-    <a href="absensi_sekolah.html" class="btn-nav"> Kelas</a>
+    <nav class="nav-actions">
+      <a href="dashboard.html" class="btn-nav"> Dashboard</a>
+      <a href="absensi_sekolah.html" class="btn-nav"> Kelas</a>
     </nav>
   </header>
 
-
-  <!--  Panel Filter -->
-  <section class="filter-panel">
-    <div class="filter-group">
-      <select id="academicYearSelect"></select>
-    </div>
-    <div class="filter-group">
-      <select id="semesterSelect"></select>
-    </div>
-    <div class="filter-group">
-      <select id="classSelect"></select>
-    </div>
-
-    <div class="filter-group">
-      <button id="loadRekap">Tampilkan</button>
-    </div>
-  </section>
-
-  <!--  Header Rekap -->
-  <header class="rekap-header">
-    <h2 id="schoolName">–</h2>
-    <p><strong>Tahun Ajaran:</strong> – &nbsp;&nbsp; <strong>Semester:</strong> –</p>
-    <p><strong>Kelas:</strong> – &nbsp;&nbsp; <strong>Jadwal:</strong> Senin, 07.30 - 09.00</p>
-  </header>
-
-  <!--  Konten Rekap -->
-  <main class="rekap-container">
-    <!--  Menu Rekap -->
-    <div class="rekap-menu">
-      <button id="btnRekapAbsensi" class="rekap-button active">Rekap Absensi</button>
-      <button id="btnRekapPembelajaran" class="rekap-button">Rekap Pembelajaran</button>
-     <label for="pertemuanStartSelect">Pertemuan Awal</label>
-      <select id="pertemuanStartSelect"></select>
-      <label for="pertemuanEndSelect">Pertemuan Akhir</label>
-       <select id="pertemuanEndSelect"></select>
-    </div>
-
-<!--  Tabel Data Siswa -->
-<section id="tabelSiswaSection" class="rekap-section">
-  <div class="table-scroll">
-    <table id="tabelDataSiswa" class="table table-bordered tabel-siswa">
-
-      <thead>
-            </thead>
-      <tbody>
-        <!-- Baris siswa akan diisi lewat JavaScript -->
-      </tbody>
-    </table>
-  </div>
-</section>
-
-
-    <!--  Tabel Absensi -->
-    <section id="rekapAbsensiSection" class="rekap-section">
-      <div class="table-scroll">
-        <table id="rekapAbsensiTable"></table>
+  <main class="content-container">
+    
+    <section class="search-section card shadow-soft no-print">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; align-items: end;">
+        <div class="form-group"><label>Tahun Ajaran</label><select id="academicYearSelect" class="input-pro"></select></div>
+        <div class="form-group"><label>Semester</label><select id="semesterSelect" class="input-pro"></select></div>
+        <div class="form-group"><label>Pilih Kelas</label><select id="classSelect" class="input-pro"></select></div>
+        <div class="form-group"><button id="loadRekap" class="btn-primary" style="width: 100%;">TAMPILKAN</button></div>
       </div>
     </section>
 
-    <!--  Tabel Pembelajaran -->
-    <section id="rekapPembelajaranSection" class="rekap-section" style="display: none;">
-      <div class="table-scroll">
-        <table id="rekapPembelajaranTable"></table>
-      </div>
-    </section>
-
-    <!--  Tombol Ekspor -->
-    <div class="export-buttons">
-      <button id="exportExcel">Ekspor Excel</button>
-      <button id="printRekap">Cetak (A4)</button>
+    <div class="rekap-header card shadow-soft" style="text-align: center; margin-bottom: 20px;">
+        <h2 id="schoolName" style="font-family: var(--font-heading); color: var(--scratch-blue);">-</h2>
+        <p style="margin: 5px 0; font-weight: bold;">Tahun Ajaran: - &nbsp;&nbsp; Semester: -</p>
+        <p style="margin: 5px 0;">Kelas: - &nbsp;&nbsp; Jadwal: -</p>
     </div>
+
+    <div class="card shadow-soft no-print" style="padding: 15px; margin-bottom: 20px;">
+      <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; gap: 8px;">
+          <button id="btnRekapAbsensi" class="btn-nav active"> Rekap Absensi</button>
+          <button id="btnRekapPembelajaran" class="btn-nav"> Rekap Pembelajaran</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label>Rentang:</label>
+          <select id="pertemuanStartSelect" class="input-pro" style="width: 80px;"></select>
+          <span>s/d</span>
+          <select id="pertemuanEndSelect" class="input-pro" style="width: 80px;"></select>
+          <button id="exportExcel" class="btn-primary" style="background: var(--scratch-green);"> Excel</button>
+          <button id="printRekap" class="btn-primary" style="background: var(--scratch-blue);"> Cetak</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-scroll shadow-soft" style="background: white; border-radius: var(--radius-md); overflow-x: auto; padding: 10px;">
+      <section id="tabelSiswaSection" class="rekap-section"><table id="tabelDataSiswa" class="rigid-table"></table></section>
+      <section id="rekapAbsensiSection" class="rekap-section" style="display: none;"><table id="rekapAbsensiTable" class="rigid-table"></table></section>
+      <section id="rekapPembelajaranSection" class="rekap-section" style="display: none;"><table id="rekapPembelajaranTable" class="rigid-table"></table></section>
+    </div>
+
   </main>
 
   <script src="rekap_absensi_sekolah.js" type="module"></script>

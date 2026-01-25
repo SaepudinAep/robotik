@@ -1,222 +1,259 @@
+/* =========================================
+   🟢 SEKTOR 1: ROOT & BASE (SHARED THEME)
+   ========================================= */
 :root {
   --scratch-blue: #4d97ff;
   --scratch-orange: #ffab19;
   --scratch-yellow: #fff3d6;
   --white: #ffffff;
   --text: #333;
-  --radius: 8px;
-  --shadow: 0 2px 6px rgba(0,0,0,0.1);
+  --bg-app: #f4f7f9;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-soft: 0 4px 12px rgba(0,0,0,0.08);
   --font-heading: 'Fredoka One', cursive;
   --font-body: 'Roboto', sans-serif;
+  
+  /* Tambahan untuk Laporan Kaku */
+  --table-border: #333;
+  --table-header-bg: #f2f2f2;
+  --absensi-hadir: #C6EFCE;
 }
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: var(--font-body);
+  background-color: var(--bg-app);
   margin: 0;
-  background: #f9f9f9;
+  padding-bottom: 80px; 
   color: var(--text);
 }
 
-/* Header */
-header {
-  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
-  padding: 12px 20px;
+/* =========================================
+   🟢 SEKTOR 2: HEADER & NAVIGATION (SHARED)
+   ========================================= */
+.app-header {
+  background: var(--scratch-blue);
   color: var(--white);
-  text-align: center;
+  padding: 20px 20px 40px;
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
 }
-header h1 {
+
+.header-content h1 {
   margin: 0;
   font-family: var(--font-heading);
+  font-size: 1.5rem;
 }
 
-/* Breadcrumb */
-.breadcrumb {
-  font-size: 0.85em;
-  margin: 10px auto;
-  max-width: 900px;
-  color: #666;
-}
-.breadcrumb a {
-  color: var(--scratch-blue);
-  text-decoration: none;
-}
-.breadcrumb a:hover { text-decoration: underline; }
-
-/* Tab Buttons */
-.tab-buttons {
-  margin: 20px auto;
-  text-align: center;
-}
-.tab-buttons button {
-  background: var(--scratch-orange);
-  border: none;
-  padding: 10px 20px;
-  margin: 0 6px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-weight: bold;
-  font-family: var(--font-heading);
-  transition: all 0.3s ease;
-}
-.tab-buttons button:hover {
-  background: #e69500;
-  transform: scale(1.05);
+.breadcrumb, .rekap-header p {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 5px;
 }
 
-/* Section */
-section {
-  display: none;
-  padding: 16px;
-  background: var(--white);
-  border: 1px solid #ddd;
-  border-radius: var(--radius);
-  margin: 20px auto;
-  max-width: 900px;
-  box-shadow: var(--shadow);
-}
-section.active { display: block; }
-section h2 {
-  font-family: var(--font-heading);
-  color: var(--scratch-blue);
-  margin-top: 0;
-}
-
-/* Form */
-form {
-  max-width: 600px;
-  margin: 0 auto;
-  background: var(--scratch-yellow);
-  padding: 1rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-form label {
-  font-family: var(--font-heading);
-  font-size: 0.85em;
-  color: var(--scratch-blue);
-  margin-bottom: 0.3rem;
-  display: block;
-}
-form input, form select, form textarea {
-  display: block;
-  margin-bottom: 0.8rem;
-  padding: 10px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: var(--radius);
-  font-size: 0.9em;
-  transition: all 0.3s ease;
-  background: #fff;
-}
-form input:focus, form select:focus, form textarea:focus {
-  outline: none;
-  border-color: var(--scratch-blue);
-  box-shadow: 0 0 6px rgba(77,151,255,0.4);
-}
-.form-actions {
-  margin-top: 10px;
+/* Tab Switcher (Digunakan di Materi & Rekap) */
+.tab-switcher {
   display: flex;
-  gap: 10px;
+  background: rgba(255,255,255,0.2);
+  margin: -25px 20px 0;
+  padding: 5px;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-soft);
 }
-.form-actions button {
+
+.tab-btn {
   flex: 1;
-  background: var(--scratch-blue);
-  color: var(--white);
   border: none;
-  padding: 10px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-weight: bold;
+  background: transparent;
+  padding: 12px;
+  color: var(--white);
   font-family: var(--font-heading);
+  font-size: 0.85rem;
+  border-radius: 10px;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
-.form-actions button:hover {
-  background: #3a7ad9;
-  transform: scale(1.05);
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+
+.tab-btn.active {
+  background: var(--white);
+  color: var(--scratch-blue);
+  box-shadow: var(--shadow-soft);
 }
 
-/* Table */
-.table-wrapper { overflow-x: auto; }
-table {
-  border-collapse: collapse;
+/* =========================================
+   🟢 SEKTOR 3: SEARCH & LOAD AREA (SHARED)
+   ========================================= */
+.search-section {
+  padding: 20px;
+  background: var(--bg-app);
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--white);
+  padding: 12px 15px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.search-wrapper input {
+  border: none; width: 100%; margin-left: 10px; font-size: 1rem; outline: none;
+}
+
+/* Tab Contents */
+.tab-content { display: none; padding: 0 20px; }
+.tab-content.active { display: block; }
+
+/* =========================================
+   🟢 SEKTOR 4: COMPACT LIST (MATERI PAGE)
+   ========================================= */
+.compact-list { display: flex; flex-direction: column; gap: 8px; }
+
+.compact-item {
+  background: var(--white);
+  padding: 15px;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-soft);
+  border-left: 5px solid transparent;
+  transition: transform 0.2s;
+}
+
+.compact-item:active { transform: scale(0.98); }
+.item-info { display: flex; align-items: center; gap: 12px; }
+.status-dot { font-size: 1.2rem; }
+.item-title { font-size: 0.95rem; font-weight: 500; color: var(--text); }
+
+/* =========================================
+   🟢 SEKTOR 5: MODAL DRAWER & FAB (SHARED)
+   ========================================= */
+.fab-btn {
+  position: fixed;
+  bottom: 100px; right: 20px;
+  width: 60px; height: 60px;
+  border-radius: 30px;
+  background: var(--scratch-orange);
+  color: var(--white);
+  border: none;
+  font-size: 30px;
+  font-family: var(--font-heading);
+  box-shadow: 0 4px 15px rgba(255,171,25,0.4);
+  cursor: pointer; z-index: 99;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none; z-index: 1000; align-items: flex-end;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-drawer {
+  background: var(--white);
   width: 100%;
-  margin-top: 16px;
-  font-size: 0.85em;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  padding: 25px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
 }
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-th {
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+#dynamic-form label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: var(--scratch-blue); }
+#dynamic-form input, #dynamic-form select, #dynamic-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-family: var(--font-body); }
+
+.btn-primary {
+  width: 100%;
+  padding: 15px;
   background: var(--scratch-blue);
   color: var(--white);
-  font-family: var(--font-heading);
-}
-tbody tr:nth-child(odd) { background: #fffdf5; }
-tbody tr:nth-child(even) { background: #f5fbff; }
-tbody tr:hover { background: #f0f0f0; }
-
-/* Tombol di tabel */
-td button {
-  background: var(--scratch-orange);
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-td button:hover {
-  background: #e69500;
-  transform: scale(1.05);
+  border-radius: 10px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
 }
 
-/* Footer */
-footer {
-  text-align: center;
-  padding: 16px;
-  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
-  color: var(--white);
-  font-family: var(--font-body);
-  margin-top: 20px;
+/* =========================================
+   🟢 SEKTOR 6: REKAP RIGID AREA (REKAP PAGE ONLY)
+   ========================================= */
+.header-inline-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  background: var(--white);
+  padding: 15px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 15px;
 }
-.nav-footer {
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-.btn-nav {
-  background: var(--scratch-orange);
-  color: var(--white);
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-weight: 600;
-  transition: background 0.3s;
-}
-.btn-nav:hover { background: #e69500; }
 
-/* Responsif */
-@media (max-width: 768px) {
-  .tab-buttons button {
-    padding: 8px 16px;
-    margin: 6px 0;
-    width: 90%;
-  }
-  section {
-    margin: 12px;
-    padding: 12px;
-    max-width: 100%;
-  }
-  form { max-width: 100%; }
-  table { font-size: 0.9em; }
+.form-group label {
+  display: block; font-size: 0.7rem; font-weight: bold; color: var(--scratch-blue);
+  margin-bottom: 4px; text-transform: uppercase;
 }
-@media (max-width: 480px) {
-  .form-actions { flex-direction: column; gap: 8px; }
-  .form-actions button { width: 100%; }
-  table, th, td { font-size: 0.85em; }
-  table { display: block; overflow-x: auto; white-space: nowrap; }
+
+.form-group select {
+  width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.85rem;
 }
+
+.table-scroll {
+  overflow-x: auto;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.rigid-table {
+  width: 100%; border-collapse: collapse; background: white; font-size: 0.85rem;
+}
+
+.rigid-table th, .rigid-table td {
+  border: 1.5px solid var(--table-border);
+  padding: 10px 5px; text-align: center; color: #000;
+}
+
+.rigid-table th {
+  background: var(--table-header-bg);
+  font-family: var(--font-heading);
+  font-size: 0.75rem; text-transform: uppercase;
+}
+
+/* =========================================
+   🟢 SEKTOR 7: PRINT & BOTTOM NAV
+   ========================================= */
+@media print {
+  .no-print, .app-header, .tab-switcher, .search-section, .bottom-nav, .fab-btn {
+    display: none !important;
+  }
+  body { background: white; margin: 0; padding: 0; }
+  .content-container { padding: 0; width: 100%; }
+  .rigid-table { font-size: 10pt; width: 100%; }
+  .table-scroll { overflow: visible; box-shadow: none; }
+  .report-header-print { display: block !important; text-align: center; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+.report-header-print { display: none; }
+
+.bottom-nav {
+  position: fixed; bottom: 0; width: 100%;
+  background: var(--white); display: flex;
+  justify-content: space-around; padding: 10px 0;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100;
+}
+
+.nav-item {
+  text-decoration: none; color: #888;
+  display: flex; flex-direction: column; align-items: center; font-size: 0.75rem;
+}
+.nav-item span { margin-top: 4px; }

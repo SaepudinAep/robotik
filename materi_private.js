@@ -1,226 +1,209 @@
-// materi_private.js
 import { supabase } from './config.js';
 
-// State edit
-let editingMateriId = null;
-let editingLevelId = null;
+let currentTab = "materi"; // Set default ke Materi sesuai permintaan
+let editingId = null;
 
-// =======================
-// 🔄 INIT
-// =======================
+// =========================================
+// 🟢 INITIALIZATION & TABS
+// =========================================
 document.addEventListener('DOMContentLoaded', () => {
-  loadLevels();
-  loadMateri();
-  loadAchievement();
-  loadLevelsDropdown();
-  
-  // Tambahkan satu baris kosong pertama di tab achievement
-  addNewAchievementRow();
-  
-  // Inisialisasi Datalist dari data yang sudah ada
-  refreshMainAchDatalist();
+  // Tambahkan Listeners untuk tombol tab di sini
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  switchTab("materi");
 });
 
-// =======================
-// 📋 LOAD FUNCTIONS
-// =======================
-
-// 1. Load Levels
-async function loadLevels() {
-  const { data, error } = await supabase.from('levels').select('*').order('kode');
-  const tbody = document.querySelector('#levels-list tbody');
-  if (error) return;
-
-  tbody.innerHTML = data.map(l => `
-    <tr>
-      <td><strong>${l.kode}</strong></td>
-      <td>${l.detail || '-'}</td>
-      <td>
-        <button onclick="editLevel('${l.id}')">Edit</button>
-        <button onclick="deleteLevel('${l.id}')">Hapus</button>
-      </td>
-    </tr>`).join('');
-}
-
-// 2. Load Materi
-async function loadMateri() {
-  const { data, error } = await supabase
-    .from('materi_private')
-    .select('id, judul, levels(kode)')
-    .order('judul');
-  const tbody = document.querySelector('#materi-list tbody');
-  if (error) return;
-
-  tbody.innerHTML = data.map(m => `
-    <tr>
-      <td>${m.judul}</td>
-      <td><span class="badge">${m.levels?.kode || '-'}</span></td>
-      <td>
-        <button onclick="editMateri('${m.id}')">Edit</button>
-        <button onclick="deleteMateri('${m.id}')">Hapus</button>
-      </td>
-    </tr>`).join('');
-}
-
-// 3. Load Achievement
-async function loadAchievement() {
-  const { data, error } = await supabase
-    .from('achievement_private')
-    .select('id, main_achievement, sub_achievement, levels(kode)')
-    .order('created_at', { ascending: false });
-
-  const tbody = document.querySelector('#achievement-list tbody');
-  if (error) return;
-
-  tbody.innerHTML = data.map(a => `
-    <tr>
-      <td><span class="badge">${a.levels?.kode || 'N/A'}</span></td>
-      <td><strong>${a.main_achievement || '-'}</strong></td>
-      <td>${a.sub_achievement || '-'}</td>
-      <td>
-        <button onclick="deleteAchievement('${a.id}')">Hapus</button>
-      </td>
-    </tr>`).join('');
-}
-
-// 4. Load Dropdowns
-window.loadLevelsDropdown = async () => {
-  const { data } = await supabase.from('levels').select('id, kode').order('kode');
-  if (!data) return;
-
-  const html = '<option value="">-- Pilih Level --</option>' + 
-               data.map(l => `<option value="${l.id}">${l.kode}</option>`).join('');
+function switchTab(tab) {
+  currentTab = tab;
   
-  document.getElementById('materi-level-select').innerHTML = html;
-  document.getElementById('achievement-level-select').innerHTML = html;
-};
-
-// =======================
-// ⚡ DYNAMIC ROW LOGIC (Achievement)
-// =======================
-
-window.addNewAchievementRow = () => {
-  const tbody = document.getElementById('achievement-rows');
-  const tr = document.createElement('tr');
-  tr.className = 'achievement-input-row';
-  tr.innerHTML = `
-    <td>
-      <input type="text" list="list-main-ach" class="in-main" placeholder="Misal: Mechanics" required>
-    </td>
-    <td>
-      <input type="text" class="in-sub" placeholder="Misal: Merakit Gear Ratio 1:3" required>
-    </td>
-    <td>
-      <button type="button" class="btn-delete" onclick="this.parentElement.parentElement.remove()">❌</button>
-    </td>
-  `;
-  tbody.appendChild(tr);
-};
-
-window.saveBulkAchievements = async () => {
-  const levelId = document.getElementById('achievement-level-select').value;
-  const rows = document.querySelectorAll('.achievement-input-row');
+  // Update class active pada tombol
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+  });
   
-  if (!levelId) return alert("Silakan pilih Level terlebih dahulu!");
-  if (rows.length === 0) return alert("Tambahkan minimal satu baris achievement!");
+  // Update class active pada section konten
+  document.querySelectorAll(".tab-content").forEach(c => {
+    c.classList.toggle("active", c.id === `${tab}-section`);
+  });
+  
+  loadData(); 
+}
+// =========================================
+// 🟢 LOAD & RENDER DATA (Wajib Async)
+// =========================================
+async function loadData() {
+  const search = document.getElementById("globalSearch").value.toLowerCase();
 
-  const dataToSave = Array.from(rows).map(row => ({
-    level_id: levelId,
-    main_achievement: row.querySelector('.in-main').value.trim(),
-    sub_achievement: row.querySelector('.in-sub').value.trim()
-  })).filter(item => item.main_achievement !== "");
-
-  const { error } = await supabase.from('achievement_private').insert(dataToSave);
-
-  if (error) {
-    showAlert('alert-achievement', '❌ ' + error.message, false);
-  } else {
-    showAlert('alert-achievement', `✅ Berhasil menyimpan ${dataToSave.length} achievement`, true);
-    document.getElementById('achievement-rows').innerHTML = '';
-    addNewAchievementRow(); 
-    loadAchievement();
-    refreshMainAchDatalist(); // Update datalist dengan kategori baru jika ada
+  // Gunakan await untuk setiap panggilan database
+  if (currentTab === "levels") {
+    const { data } = await supabase.from('levels').select('*').order('kode');
+    renderLevels(data ? data.filter(l => l.kode.toLowerCase().includes(search)) : []);
+  } 
+  else if (currentTab === "materi") {
+    const { data } = await supabase.from('materi_private').select('*, levels(kode)').order('judul');
+    renderMateri(data ? data.filter(m => m.judul.toLowerCase().includes(search)) : []);
   }
-};
+  else if (currentTab === "achievement") {
+    const { data } = await supabase.from('achievement_private').select('*, levels(kode)').order('created_at', {ascending: false});
+    renderAchievement(data ? data.filter(a => a.main_achievement.toLowerCase().includes(search)) : []);
+  }
+  else if (currentTab === "guru") {
+    const { data } = await supabase.from('teachers').select('*').order('name');
+    renderGuru(data ? data.filter(g => g.name.toLowerCase().includes(search)) : []);
+  }
+}
 
-// Fungsi untuk membuat Datalist menjadi dinamis dari DB
-async function refreshMainAchDatalist() {
-  const { data } = await supabase.from('achievement_private').select('main_achievement');
+// Fungsi Render (UI Only) - Tidak perlu async
+function renderGuru(data) {
+  const container = document.getElementById("guru-list");
+  container.innerHTML = data.map(g => `
+    <div class="compact-item" onclick="openEditModal('guru', '${g.id}')">
+      <div class="item-info">
+        <span class="status-dot">👤</span>
+        <span class="item-title"><b>${g.name}</b> (${g.role.toUpperCase()})</span>
+      </div>
+      <button class="btn-minimal">📝</button>
+    </div>`).join("");
+}
+
+function renderLevels(data) {
+  const container = document.getElementById("levels-list");
+  container.innerHTML = data.map(l => `
+    <div class="compact-item" onclick="openEditModal('levels', '${l.id}')">
+      <div class="item-info">
+        <span class="badge">${l.kode}</span>
+        <span class="item-title">${l.detail || '-'}</span>
+      </div>
+      <button class="btn-minimal">📝</button>
+    </div>`).join("");
+}
+
+function renderMateri(data) {
+  const container = document.getElementById("materi-list");
+  container.innerHTML = data.map(m => `
+    <div class="compact-item" onclick="openEditModal('materi', '${m.id}')">
+      <div class="item-info">
+        <span class="status-dot">📘</span>
+        <span class="item-title"><b>[${m.levels?.kode || '?'}]</b> ${m.judul}</span>
+      </div>
+      <button class="btn-minimal">📝</button>
+    </div>`).join("");
+}
+
+function renderAchievement(data) {
+  const container = document.getElementById("achievement-library");
+  const grouped = data.reduce((acc, obj) => {
+    const key = obj.levels?.kode || 'Uncategorized';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(obj);
+    return acc;
+  }, {});
+
+  container.innerHTML = Object.keys(grouped).map(level => `
+    <div class="achievement-folder">
+      <div class="folder-header">
+        <span>▼ <b>LEVEL ${level}</b></span>
+      </div>
+      <div class="folder-content">
+        ${grouped[level].map(a => `
+          <div class="target-item">
+            <span><b>${a.main_achievement}:</b> ${a.sub_achievement}</span>
+            <button class="btn-minimal" onclick="deleteData('${currentTab}', '${a.id}')">🗑️</button>
+          </div>
+        `).join("")}
+      </div>
+    </div>`).join("");
+}
+
+// =========================================
+// 🟢 MODAL & FORM INJECTION (Wajib Async karena ambil Level)
+// =========================================
+async function injectFormFields(mode = "add", data = {}) {
+  const formFields = document.getElementById("form-fields");
+  
+  if (currentTab === "levels") {
+    formFields.innerHTML = `
+      <label>Kode Level</label>
+      <input type="text" id="kode" value="${data.kode || ""}" placeholder="LV-1" required>
+      <label>Deskripsi Level</label>
+      <textarea id="detail">${data.detail || ""}</textarea>`;
+  } 
+  else if (currentTab === "materi" || currentTab === "achievement") {
+    // Ambil data level untuk dropdown
+    const { data: lvData } = await supabase.from('levels').select('id, kode').order('kode');
+    const options = lvData.map(l => `<option value="${l.id}" ${data.level_id === l.id ? "selected" : ""}>${l.kode}</option>`).join("");
+    
+    if (currentTab === "materi") {
+      formFields.innerHTML = `
+        <label>Pilih Level</label><select id="level_id">${options}</select>
+        <label>Judul Materi</label><input type="text" id="judul" value="${data.judul || ""}" required>
+        <label>Deskripsi</label><textarea id="deskripsi">${data.deskripsi || ""}</textarea>`;
+    } else {
+      formFields.innerHTML = `
+        <label>Pilih Level</label><select id="level_id">${options}</select>
+        <label>Kategori</label><input type="text" id="main_achievement" value="${data.main_achievement || ""}">
+        <label>Detail Target</label><textarea id="sub_achievement">${data.sub_achievement || ""}</textarea>`;
+    }
+  }
+  else if (currentTab === "guru") {
+    formFields.innerHTML = `
+      <label>Nama Guru/Asisten</label><input type="text" id="name" value="${data.name || ""}" required>
+      <label>Role</label>
+      <select id="role">
+        <option value="guru" ${data.role === "guru" ? "selected" : ""}>Guru</option>
+        <option value="asisten" ${data.role === "asisten" ? "selected" : ""}>Asisten</option>
+      </select>`;
+  }
+}
+
+// =========================================
+// 🟢 ACTIONS (CRUD)
+// =========================================
+
+// Klik Baris/Edit
+window.openEditModal = async (type, id) => {
+  const tableMap = { levels: 'levels', materi: 'materi_private', achievement: 'achievement_private', guru: 'teachers' };
+  const { data } = await supabase.from(tableMap[type]).select('*').eq('id', id).single();
   if (data) {
-    const unique = [...new Set(data.map(i => i.main_achievement).filter(Boolean))];
-    const datalist = document.getElementById('list-main-ach');
-    // Tambahkan default jika kosong
-    if (unique.length === 0) unique.push("Mechanics", "Programming", "Electronics");
-    datalist.innerHTML = unique.map(cat => `<option value="${cat}">`).join('');
+    editingId = id;
+    await injectFormFields("edit", data);
+    document.getElementById("modal-overlay").classList.add("active");
   }
-}
-
-// =======================
-// 💾 CRUD ACTIONS
-// =======================
-
-// Materi CRUD
-document.getElementById('form-materi').addEventListener('submit', async e => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const payload = {
-    judul: formData.get('judul'),
-    level_id: formData.get('level_id'),
-    deskripsi: formData.get('deskripsi')
-  };
-
-  let res;
-  if (editingMateriId) {
-    res = await supabase.from('materi_private').update(payload).eq('id', editingMateriId);
-    editingMateriId = null;
-  } else {
-    res = await supabase.from('materi_private').insert([payload]);
-  }
-
-  if (res.error) showAlert('alert-materi', '❌ ' + res.error.message, false);
-  else {
-    showAlert('alert-materi', '✅ Materi berhasil disimpan', true);
-    e.target.reset();
-    loadMateri();
-  }
-});
-
-// Levels CRUD
-document.getElementById('form-levels').addEventListener('submit', async e => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const payload = { kode: formData.get('kode'), detail: formData.get('detail') };
-
-  let res;
-  if (editingLevelId) {
-    res = await supabase.from('levels').update(payload).eq('id', editingLevelId);
-    editingLevelId = null;
-  } else {
-    res = await supabase.from('levels').insert([payload]);
-  }
-
-  if (res.error) showAlert('alert-levels', '❌ ' + res.error.message, false);
-  else {
-    showAlert('alert-levels', '✅ Level berhasil disimpan', true);
-    e.target.reset();
-    loadLevels();
-    loadLevelsDropdown();
-  }
-});
-
-// Delete Achievement
-window.deleteAchievement = async id => {
-  if (!confirm('Hapus data ini dari bank data?')) return;
-  const { error } = await supabase.from('achievement_private').delete().eq('id', id);
-  if (!error) loadAchievement();
 };
 
-// ... Tambahkan window.editMateri, window.deleteMateri, dll sesuai kebutuhan CRUD standard ...
+// Hapus Data
+window.deleteData = async (type, id) => {
+  if(!confirm("Hapus data dari matrix?")) return;
+  const tableMap = { levels: 'levels', materi: 'materi_private', achievement: 'achievement_private', guru: 'teachers' };
+  const { error } = await supabase.from(tableMap[type]).delete().eq('id', id);
+  if(!error) loadData();
+};
 
-function showAlert(id, message, success = true) {
-  const el = document.getElementById(id);
-  el.textContent = message;
-  el.style.display = 'block';
-  el.style.color = success ? 'green' : 'red';
-  setTimeout(() => el.style.display = 'none', 3000);
-}
+// Submit Form
+document.getElementById("dynamic-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const tableMap = { levels: 'levels', materi: 'materi_private', achievement: 'achievement_private', guru: 'teachers' };
+  const payload = {};
+  e.target.querySelectorAll("input, select, textarea").forEach(el => payload[el.id] = el.value);
+
+  const { error } = editingId 
+    ? await supabase.from(tableMap[currentTab]).update(payload).eq('id', editingId)
+    : await supabase.from(tableMap[currentTab]).insert([payload]);
+
+  if(!error) {
+    document.getElementById("modal-overlay").classList.remove("active");
+    loadData();
+  } else alert(error.message);
+});
+
+// Tambah Baru
+document.getElementById("fab-add").addEventListener("click", async () => {
+  editingId = null;
+  await injectFormFields("add");
+  document.getElementById("modal-overlay").classList.add("active");
+});
+
+document.getElementById("modal-close").addEventListener("click", () => document.getElementById("modal-overlay").classList.remove("active"));
+document.getElementById("globalSearch").addEventListener("input", loadData);

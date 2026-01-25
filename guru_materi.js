@@ -1,215 +1,180 @@
-// Import Supabase client dari CDN + config lokal
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-import { supabaseUrl, supabaseKey } from './config.js';
+import { supabase } from "./config.js";
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-const btnGuru = document.getElementById("btnGuru");
-const btnMateri = document.getElementById("btnMateri");
-const sectionGuru = document.getElementById("guru");
-const sectionMateri = document.getElementById("materi");
+// --- State Management ---
+let currentTab = "materi"; // Default ke materi
+let editingId = null;
 
-// Default tampil Guru saat load
-window.addEventListener("DOMContentLoaded", () => {
-  sectionGuru.classList.add("active");
-});
+// --- DOM Elements ---
+const modal = document.getElementById("modal-overlay");
+const formFields = document.getElementById("form-fields");
+const modalTitle = document.getElementById("modal-title");
+const globalSearch = document.getElementById("globalSearch");
 
-// Event tombol tab
-btnGuru.addEventListener("click", (e) => {
-  e.preventDefault();
-  sectionGuru.classList.add("active");
-  sectionMateri.classList.remove("active");
-});
+// =========================================
+// 🟢 SEKTOR 1: TAB NAVIGATION & UI
+// =========================================
 
-btnMateri.addEventListener("click", (e) => {
-  e.preventDefault();
-  sectionMateri.classList.add("active");
-  sectionGuru.classList.remove("active");
-});
-
-// ===== CRUD Guru =====
-const formGuru = document.getElementById("formGuru");
-const resetGuru = document.getElementById("resetGuru");
-const tableGuruBody = document.querySelector("#tableGuru tbody");
-let editingGuruId = null;
-
-// Insert/Update Guru
-async function saveGuru(name, role) {
-  if (editingGuruId) {
-    const { error } = await supabase
-      .from("teachers")
-      .update({ name, role })
-      .eq("id", editingGuruId);
-    if (error) {
-      console.error(error);
-      alert("Gagal update Guru: " + error.message);
-    } else {
-      alert("Guru berhasil diperbarui");
-    }
-    editingGuruId = null;
-  } else {
-    const { error } = await supabase.from("teachers").insert([{ name, role }]);
-    if (error) {
-      console.error(error);
-      alert("Gagal simpan Guru: " + error.message);
-    } else {
-      alert("Guru berhasil disimpan");
-    }
-  }
-  loadGuru();
-}
-
-// Load Guru
-async function loadGuru() {
-  const { data, error } = await supabase.from("teachers").select();
-  if (error) {
-    console.error(error);
-    return;
-  }
-  tableGuruBody.innerHTML = "";
-  data.forEach((row, i) => {
-    tableGuruBody.innerHTML += `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${row.name}</td>
-        <td>${row.role}</td>
-        <td>
-          <button onclick="editGuru('${row.id}', '${row.name}', '${row.role}')">Edit</button>
-          <button onclick="deleteGuru('${row.id}')">Delete</button>
-        </td>
-      </tr>`;
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.tab === tab);
   });
-}
-
-// Delete Guru
-window.deleteGuru = async function(id) {
-  if (confirm("Yakin hapus data Guru?")) {
-    const { error } = await supabase.from("teachers").delete().eq("id", id);
-    if (error) {
-      console.error(error);
-      alert("Gagal hapus Guru: " + error.message);
-    } else {
-      loadGuru();
-    }
-  }
-};
-
-// Edit Guru
-window.editGuru = function(id, name, role) {
-  document.getElementById("guruName").value = name;
-  document.getElementById("guruRole").value = role;
-  editingGuruId = id;
-};
-
-// Event submit Guru
-formGuru.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = document.getElementById("guruName").value;
-  const role = document.getElementById("guruRole").value;
-  await saveGuru(name, role);
-  formGuru.reset();
-});
-
-resetGuru.addEventListener("click", () => {
-  formGuru.reset();
-  editingGuruId = null;
-});
-
-// ===== CRUD Materi =====
-const formMateri = document.getElementById("formMateri");
-const resetMateri = document.getElementById("resetMateri");
-const tableMateriBody = document.querySelector("#tableMateri tbody");
-let editingMateriId = null;
-
-// Insert/Update Materi
-async function saveMateri(title, level, description, detail) {
-  if (editingMateriId) {
-    const { error } = await supabase
-      .from("materi")
-      .update({ title, level, description, detail })
-      .eq("id", editingMateriId);
-    if (error) {
-      console.error(error);
-      alert("Gagal update Materi: " + error.message);
-    } else {
-      alert("Materi berhasil diperbarui");
-    }
-    editingMateriId = null;
-  } else {
-    const { error } = await supabase
-      .from("materi")
-      .insert([{ title, level, description, detail }]);
-    if (error) {
-      console.error(error);
-      alert("Gagal simpan Materi: " + error.message);
-    } else {
-      alert("Materi berhasil disimpan");
-    }
-  }
-  loadMateri();
-}
-
-// Load Materi
-async function loadMateri() {
-  const { data, error } = await supabase.from("materi").select();
-  if (error) {
-    console.error(error);
-    return;
-  }
-  tableMateriBody.innerHTML = "";
-  data.forEach((row, i) => {
-    tableMateriBody.innerHTML += `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${row.title}</td>
-        <td>${row.level || ""}</td>
-        <td>${row.description || ""}</td>
-        <td>${row.detail || ""}</td>
-        <td>
-          <button onclick="editMateri('${row.id}', \`${row.title}\`, \`${row.level ?? ""}\`, \`${row.description ?? ""}\`, \`${row.detail ?? ""}\`)">Edit</button>
-          <button onclick="deleteMateri('${row.id}')">Delete</button>
-        </td>
-      </tr>`;
+  document.querySelectorAll(".tab-content").forEach(content => {
+    content.classList.toggle("active", content.id === `${tab}-section`);
   });
+  
+  // Tampilkan filter khusus hanya jika di tab materi
+  const filterMateri = document.getElementById("materi-filter");
+  if (filterMateri) {
+    filterMateri.style.display = (tab === "materi") ? "flex" : "none";
+  }
+  
+  loadData();
 }
 
-// Delete Materi
-window.deleteMateri = async function(id) {
-  if (confirm("Yakin hapus data Materi?")) {
-    const { error } = await supabase.from("materi").delete().eq("id", id);
-    if (error) {
-      console.error(error);
-      alert("Gagal hapus Materi: " + error.message);
-    } else {
-      loadMateri();
-    }
+// Event Listeners untuk Tab
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
+
+// =========================================
+// 🟢 SEKTOR 2: DATA LOADING & RENDERING
+// =========================================
+
+async function loadData() {
+  const searchTerm = globalSearch.value.toLowerCase();
+
+  if (currentTab === "materi") {
+    const { data } = await supabase.from("materi").select("*").order("level").order("title");
+    const filtered = data ? data.filter(m => m.title.toLowerCase().includes(searchTerm)) : [];
+    renderMateri(filtered);
+  }
+  else if (currentTab === "achievement") {
+    const { data } = await supabase.from("achievement_sekolah").select("*").order("main_achievement");
+    const filtered = data ? data.filter(a => a.main_achievement.toLowerCase().includes(searchTerm)) : [];
+    renderAchievement(filtered);
+  }
+}
+
+// --- RENDER MATERI (Compact List with Status) ---
+function renderMateri(data) {
+  const container = document.getElementById("materi-list");
+  container.innerHTML = data.map(m => {
+    // Logic Status: Judul, Level, Deskripsi, Detail
+    const score = [m.title, m.level, m.description, m.detail].filter(Boolean).length;
+    const statusColor = score === 4 ? "🟢" : (score >= 2 ? "🟡" : "🔴");
+    
+    return `
+      <div class="compact-item" onclick="openEditModal('materi', '${m.id}')">
+        <div class="item-info">
+          <span class="status-dot">${statusColor}</span>
+          <span class="item-title"><b>[LVL ${m.level || "?"}]</b> ${m.title}</span>
+        </div>
+        <div class="item-actions">
+          <button class="btn-minimal">📝</button>
+          <button class="btn-minimal delete" onclick="event.stopPropagation(); deleteData('materi', '${m.id}')">🗑️</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// --- RENDER ACHIEVEMENT (Accordion/Library) ---
+function renderAchievement(data) {
+  const container = document.getElementById("achievement-library");
+  container.innerHTML = data.map(a => `
+    <div class="achievement-folder">
+      <div class="folder-header" onclick="openEditModal('achievement', '${a.id}')">
+        <span>▼ <b>${a.main_achievement}</b></span>
+        <div class="folder-actions">
+          <button class="btn-minimal">📝</button>
+          <button class="btn-minimal delete" onclick="event.stopPropagation(); deleteData('achievement_sekolah', '${a.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+// =========================================
+// 🟢 SEKTOR 3: FORM & MODAL LOGIC
+// =========================================
+
+function injectFormFields(mode = "add", data = {}) {
+  formFields.innerHTML = "";
+  modalTitle.textContent = `${mode === "edit" ? "Edit" : "Tambah"} ${currentTab.toUpperCase()}`;
+
+  if (currentTab === "materi") {
+    formFields.innerHTML = `
+      <label>Judul Materi</label>
+      <input type="text" id="title" value="${data.title || ""}" required>
+      <label>Level</label>
+      <input type="text" id="level" value="${data.level || ""}">
+      <label>Deskripsi</label>
+      <textarea id="description">${data.description || ""}</textarea>
+      <label>Detail Lesson Plan</label>
+      <textarea id="detail" style="height:150px">${data.detail || ""}</textarea>`;
+  }
+  else if (currentTab === "achievement") {
+    formFields.innerHTML = `
+      <label>Topik Utama Achievement</label>
+      <input type="text" id="main_achievement" value="${data.main_achievement || ""}" required>`;
+  }
+}
+
+// Simpan Data
+document.getElementById("dynamic-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const tableMap = { materi: "materi", achievement: "achievement_sekolah" };
+  const table = tableMap[currentTab];
+  
+  const payload = {};
+  formFields.querySelectorAll("input, select, textarea").forEach(el => {
+    payload[el.id] = el.value;
+  });
+
+  const { error } = editingId 
+    ? await supabase.from(table).update(payload).eq("id", editingId)
+    : await supabase.from(table).insert([payload]);
+
+  if (error) alert("Gagal: " + error.message);
+  else {
+    modal.classList.remove("active");
+    loadData();
+  }
+});
+
+// =========================================
+// 🟢 SEKTOR 4: ACTIONS & HELPERS
+// =========================================
+
+window.openEditModal = async (tab, id) => {
+  const tableMap = { materi: "materi", achievement: "achievement_sekolah" };
+  const { data } = await supabase.from(tableMap[tab]).select("*").eq("id", id).single();
+  
+  if (data) {
+    editingId = id;
+    injectFormFields("edit", data);
+    modal.classList.add("active");
   }
 };
 
-// Edit Materi
-window.editMateri = function(id, title, level, description, detail) {
-  document.getElementById("materiTitle").value = title;
-  document.getElementById("materiLevel").value = level;
-  document.getElementById("materiDesc").value = description;
-  document.getElementById("materiDetail").value = detail;
-  editingMateriId = id;
+window.deleteData = async (table, id) => {
+  if (!confirm("Yakin ingin menghapus data ini?")) return;
+  const { error } = await supabase.from(table).delete().eq("id", id);
+  if (error) alert("Gagal hapus: " + error.message);
+  else loadData();
 };
 
-// Event submit Materi
-formMateri.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const title = document.getElementById("materiTitle").value;
-  const level = document.getElementById("materiLevel").value;
-  const description = document.getElementById("materiDesc").value;
-  const detail = document.getElementById("materiDetail").value;
-  await saveMateri(title, level, description, detail);
-  formMateri.reset();
+document.getElementById("fab-add").addEventListener("click", () => {
+  editingId = null;
+  injectFormFields("add");
+  modal.classList.add("active");
 });
 
-resetMateri.addEventListener("click", () => {
-  formMateri.reset();
-  editingMateriId = null;
+document.getElementById("modal-close").addEventListener("click", () => {
+  modal.classList.remove("active");
 });
 
-// ===== Load awal =====
-loadGuru();
-loadMateri();
+globalSearch.addEventListener("input", loadData);
+
+document.addEventListener("DOMContentLoaded", () => {
+  switchTab("materi");
+});
