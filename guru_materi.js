@@ -11,7 +11,7 @@ const modalTitle = document.getElementById("modal-title");
 const globalSearch = document.getElementById("globalSearch");
 
 // =========================================
-// 🟢 SEKTOR 1: TAB NAVIGATION & UI
+//  SEKTOR 1: TAB NAVIGATION & UI
 // =========================================
 
 function switchTab(tab) {
@@ -38,14 +38,19 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 });
 
 // =========================================
-// 🟢 SEKTOR 2: DATA LOADING & RENDERING
+//  SEKTOR 2: DATA LOADING & RENDERING
 // =========================================
 
 async function loadData() {
   const searchTerm = globalSearch.value.toLowerCase();
 
   if (currentTab === "materi") {
-    const { data } = await supabase.from("materi").select("*").order("level").order("title");
+    // JOIN ke tabel levels untuk dapatkan 'kode'
+    const { data } = await supabase
+        .from("materi")
+        .select("*, levels(kode)")
+        .order("title");
+        
     const filtered = data ? data.filter(m => m.title.toLowerCase().includes(searchTerm)) : [];
     renderMateri(filtered);
   }
@@ -56,59 +61,88 @@ async function loadData() {
   }
 }
 
-// --- RENDER MATERI (Compact List with Status) ---
+// --- RENDER MATERI (UNICODE FIX) ---
 function renderMateri(data) {
   const container = document.getElementById("materi-list");
   container.innerHTML = data.map(m => {
-    // Logic Status: Judul, Level, Deskripsi, Detail
-    const score = [m.title, m.level, m.description, m.detail].filter(Boolean).length;
-    const statusColor = score === 4 ? "🟢" : (score >= 2 ? "🟡" : "🔴");
+    // Logic Status
+    const score = [m.title, m.level_id, m.description, m.detail].filter(Boolean).length;
     
+    // MENGGUNAKAN UNICODE AGAR TIDAK HANCUR
+    // \uD83D\uDFE2 =  (Hijau)
+    // \uD83D\uDFE1 =  (Kuning)
+    // \uD83D\uDFE0 =  (Merah)
+    const statusColor = score === 4 ? "\uD83D\uDFE2" : (score >= 2 ? "\uD83D\uDFE1" : "\uD83D\uDFE0");
+    
+    // Label Level
+    const levelLabel = m.levels?.kode || "?";
+    
+    // Icon Edit: \uD83D\uDCDD ()
+    // Icon Hapus: \uD83D\uDDD1\uFE0F ()
     return `
       <div class="compact-item" onclick="openEditModal('materi', '${m.id}')">
         <div class="item-info">
           <span class="status-dot">${statusColor}</span>
-          <span class="item-title"><b>[LVL ${m.level || "?"}]</b> ${m.title}</span>
+          <span class="item-title"><b>[LVL ${levelLabel}]</b> ${m.title}</span>
         </div>
         <div class="item-actions">
-          <button class="btn-minimal">📝</button>
-          <button class="btn-minimal delete" onclick="event.stopPropagation(); deleteData('materi', '${m.id}')">🗑️</button>
+          <button class="btn-minimal">\uD83D\uDCDD</button>
+          <button class="btn-minimal delete" onclick="event.stopPropagation(); deleteData('materi', '${m.id}')">\uD83D\uDDD1\uFE0F</button>
         </div>
       </div>`;
   }).join("");
 }
 
-// --- RENDER ACHIEVEMENT (Accordion/Library) ---
+// --- RENDER ACHIEVEMENT (UNICODE FIX) ---
 function renderAchievement(data) {
   const container = document.getElementById("achievement-library");
   container.innerHTML = data.map(a => `
     <div class="achievement-folder">
       <div class="folder-header" onclick="openEditModal('achievement', '${a.id}')">
-        <span>▼ <b>${a.main_achievement}</b></span>
+        <span>\u25BC <b>${a.main_achievement}</b></span>
         <div class="folder-actions">
-          <button class="btn-minimal">📝</button>
-          <button class="btn-minimal delete" onclick="event.stopPropagation(); deleteData('achievement_sekolah', '${a.id}')">🗑️</button>
+          <button class="btn-minimal">\uD83D\uDCDD</button>
+          <button class="btn-minimal delete" onclick="event.stopPropagation(); deleteData('achievement_sekolah', '${a.id}')">\uD83D\uDDD1\uFE0F</button>
         </div>
       </div>
     </div>`).join("");
 }
 
 // =========================================
-// 🟢 SEKTOR 3: FORM & MODAL LOGIC
+//  SEKTOR 3: FORM & MODAL LOGIC
 // =========================================
 
-function injectFormFields(mode = "add", data = {}) {
-  formFields.innerHTML = "";
+async function getLevelOptions(selectedId) {
+    const { data } = await supabase.from('levels').select('id, kode').order('kode');
+    let html = '<option value="">-- Pilih Level (Kit) --</option>';
+    if (data) {
+        data.forEach(l => {
+            const isSelected = l.id === selectedId ? 'selected' : '';
+            html += `<option value="${l.id}" ${isSelected}>${l.kode}</option>`;
+        });
+    }
+    return html;
+}
+
+async function injectFormFields(mode = "add", data = {}) {
+  formFields.innerHTML = "Loading form...";
   modalTitle.textContent = `${mode === "edit" ? "Edit" : "Tambah"} ${currentTab.toUpperCase()}`;
 
   if (currentTab === "materi") {
+    const dropdownHtml = await getLevelOptions(data.level_id);
+
     formFields.innerHTML = `
       <label>Judul Materi</label>
       <input type="text" id="title" value="${data.title || ""}" required>
-      <label>Level</label>
-      <input type="text" id="level" value="${data.level || ""}">
+      
+      <label>Level / Kit Robot</label>
+      <select id="level_id" required>
+         ${dropdownHtml}
+      </select>
+
       <label>Deskripsi</label>
       <textarea id="description">${data.description || ""}</textarea>
+      
       <label>Detail Lesson Plan</label>
       <textarea id="detail" style="height:150px">${data.detail || ""}</textarea>`;
   }
@@ -142,7 +176,7 @@ document.getElementById("dynamic-form").addEventListener("submit", async (e) => 
 });
 
 // =========================================
-// 🟢 SEKTOR 4: ACTIONS & HELPERS
+//  SEKTOR 4: ACTIONS & HELPERS
 // =========================================
 
 window.openEditModal = async (tab, id) => {
@@ -151,7 +185,7 @@ window.openEditModal = async (tab, id) => {
   
   if (data) {
     editingId = id;
-    injectFormFields("edit", data);
+    await injectFormFields("edit", data);
     modal.classList.add("active");
   }
 };
@@ -163,9 +197,9 @@ window.deleteData = async (table, id) => {
   else loadData();
 };
 
-document.getElementById("fab-add").addEventListener("click", () => {
+document.getElementById("fab-add").addEventListener("click", async () => {
   editingId = null;
-  injectFormFields("add");
+  await injectFormFields("add");
   modal.classList.add("active");
 });
 
