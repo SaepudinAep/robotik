@@ -1,4 +1,4 @@
-import { supabase } from "./config.js";
+import { supabase, cloudinaryConfig } from "./config.js";
 
 // --- State Management ---
 let currentTab = "materi"; // Default ke materi
@@ -10,6 +10,33 @@ const formFields = document.getElementById("form-fields");
 const modalTitle = document.getElementById("modal-title");
 const globalSearch = document.getElementById("globalSearch");
 
+// =========================================
+//  SEKTOR 0: CLOUDINARY LOGIC (NEW)
+// =========================================
+// UBAH IMPORT DI BARIS 1
+
+// UBAH FUNGSI DI SEKTOR 0
+function openUploadWidget(callback, customFolder = "robotic") {
+  window.cloudinary.openUploadWidget({
+    cloudName: cloudinaryConfig.cloudName, // AMBIL DARI CONFIG
+    uploadPreset: cloudinaryConfig.uploadPreset, // AMBIL DARI CONFIG
+    folder: customFolder, 
+    cropping: true, 
+    croppingAspectRatio: 0.75, 
+    showSkipCropButton: false,
+    maxImageWidth: 1000,
+    clientAllowedFormats: ["jpg", "png", "jpeg", "webp"],
+  }, (error, result) => {
+    if (!error && result.event === "success") {
+      // Gunakan optimasi otomatis f_auto, q_auto
+     // Kode Baru: Paksa Cloudinary menggunakan hasil Crop
+const optimizedUrl = result.info.secure_url.replace(
+    "/upload/", 
+    "/upload/c_crop,g_auto/f_auto,q_auto/" );
+      callback(optimizedUrl);
+    }
+  });
+}
 // =========================================
 //  SEKTOR 1: TAB NAVIGATION & UI
 // =========================================
@@ -23,7 +50,6 @@ function switchTab(tab) {
     content.classList.toggle("active", content.id === `${tab}-section`);
   });
   
-  // Tampilkan filter khusus hanya jika di tab materi
   const filterMateri = document.getElementById("materi-filter");
   if (filterMateri) {
     filterMateri.style.display = (tab === "materi") ? "flex" : "none";
@@ -32,7 +58,6 @@ function switchTab(tab) {
   loadData();
 }
 
-// Event Listeners untuk Tab
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => switchTab(btn.dataset.tab));
 });
@@ -45,7 +70,6 @@ async function loadData() {
   const searchTerm = globalSearch.value.toLowerCase();
 
   if (currentTab === "materi") {
-    // JOIN ke tabel levels untuk dapatkan 'kode'
     const { data } = await supabase
         .from("materi")
         .select("*, levels(kode)")
@@ -61,24 +85,16 @@ async function loadData() {
   }
 }
 
-// --- RENDER MATERI (UNICODE FIX) ---
 function renderMateri(data) {
   const container = document.getElementById("materi-list");
   container.innerHTML = data.map(m => {
-    // Logic Status
-    const score = [m.title, m.level_id, m.description, m.detail].filter(Boolean).length;
+    // Logic Status (Sekarang 5 poin: Judul, Level, Deskripsi, Detail, Foto)
+    const score = [m.title, m.level_id, m.description, m.detail, m.image_url].filter(Boolean).length;
     
-    // MENGGUNAKAN UNICODE AGAR TIDAK HANCUR
-    // \uD83D\uDFE2 =  (Hijau)
-    // \uD83D\uDFE1 =  (Kuning)
-    // \uD83D\uDFE0 =  (Merah)
-    const statusColor = score === 4 ? "\uD83D\uDFE2" : (score >= 2 ? "\uD83D\uDFE1" : "\uD83D\uDFE0");
-    
-    // Label Level
+    // Unicode Status Dot
+    const statusColor = score === 5 ? "\uD83D\uDFE2" : (score >= 3 ? "\uD83D\uDFE1" : "\uD83D\uDFE0");
     const levelLabel = m.levels?.kode || "?";
     
-    // Icon Edit: \uD83D\uDCDD ()
-    // Icon Hapus: \uD83D\uDDD1\uFE0F ()
     return `
       <div class="compact-item" onclick="openEditModal('materi', '${m.id}')">
         <div class="item-info">
@@ -93,7 +109,6 @@ function renderMateri(data) {
   }).join("");
 }
 
-// --- RENDER ACHIEVEMENT (UNICODE FIX) ---
 function renderAchievement(data) {
   const container = document.getElementById("achievement-library");
   container.innerHTML = data.map(a => `
@@ -130,6 +145,7 @@ async function injectFormFields(mode = "add", data = {}) {
 
   if (currentTab === "materi") {
     const dropdownHtml = await getLevelOptions(data.level_id);
+    const placeholderImg = "https://via.placeholder.com/150?text=No+Image";
 
     formFields.innerHTML = `
       <label>Judul Materi</label>
@@ -140,11 +156,31 @@ async function injectFormFields(mode = "add", data = {}) {
          ${dropdownHtml}
       </select>
 
+      <label>Foto Project (Cloudinary)</label>
+      <div style="margin-bottom: 20px;">
+        <button type="button" id="btn-upload" class="tab-item" style="background:#2ecc71; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; width:100%; margin-bottom:10px;">
+            Ambil / Pilih Foto Robot
+        </button>
+        <input type="hidden" id="image_url" value="${data.image_url || ""}">
+        <div id="preview-container" style="text-align:center;">
+          <img id="img-preview" src="${data.image_url || placeholderImg}" 
+               style="width:100%; max-height:180px; object-fit:cover; border-radius:12px; border:2px solid #ddd;">
+        </div>
+      </div>
+
       <label>Deskripsi</label>
       <textarea id="description">${data.description || ""}</textarea>
       
       <label>Detail Lesson Plan</label>
       <textarea id="detail" style="height:150px">${data.detail || ""}</textarea>`;
+
+    // Listener Tombol Upload
+    document.getElementById("btn-upload").onclick = () => {
+      openUploadWidget((url) => {
+        document.getElementById("image_url").value = url;
+        document.getElementById("img-preview").src = url;
+      });
+    };
   }
   else if (currentTab === "achievement") {
     formFields.innerHTML = `
@@ -153,7 +189,6 @@ async function injectFormFields(mode = "add", data = {}) {
   }
 }
 
-// Simpan Data
 document.getElementById("dynamic-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   const tableMap = { materi: "materi", achievement: "achievement_sekolah" };
@@ -161,7 +196,7 @@ document.getElementById("dynamic-form").addEventListener("submit", async (e) => 
   
   const payload = {};
   formFields.querySelectorAll("input, select, textarea").forEach(el => {
-    payload[el.id] = el.value;
+    if (el.id) payload[el.id] = el.value;
   });
 
   const { error } = editingId 

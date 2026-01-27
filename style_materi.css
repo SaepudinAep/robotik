@@ -257,3 +257,35 @@ body {
   display: flex; flex-direction: column; align-items: center; font-size: 0.75rem;
 }
 .nav-item span { margin-top: 4px; }
+
+/* Container untuk tombol aksi di sebelah kanan */
+.item-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-minimal {
+  background: transparent;
+  border: none;
+  color: #bdc3c7; /* Warna abu-abu default */
+  cursor: pointer;
+  padding: 5px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.btn-minimal:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+/* Warna khusus tombol hapus */
+.text-danger {
+  color: #e74c3c !important; /* Merah */
+}
+
+.text-danger:hover {
+  color: #c0392b !important;
+  text-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+}
