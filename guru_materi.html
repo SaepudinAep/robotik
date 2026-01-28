@@ -2,10 +2,15 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Management Kurikulum | Robopanda</title>
+  
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
   <link rel="stylesheet" href="style_materi.css">
+  
   <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
 <body>
@@ -18,32 +23,36 @@
   </header>
 
   <nav class="tab-switcher">
-    <button id="btnMateri" class="tab-btn" data-tab="materi">MATERI</button>
+    <button id="btnMateri" class="tab-btn active" data-tab="materi">MATERI</button>
     <button id="btnAchievement" class="tab-btn" data-tab="achievement">ACHIEVE</button>
   </nav>
 
   <div class="search-section">
     <div class="search-wrapper">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="globalSearch" placeholder="Cari nama, materi, atau topik...">
+      <span class="search-icon"><i class="fas fa-search"></i></span>
+      <input type="text" id="globalSearch" placeholder="Cari materi atau achievement...">
     </div>
     <div id="materi-filter" class="filter-chips" style="display: none;">
       <span class="chip active">Semua</span>
-      <span class="chip" data-status="incomplete">⚠️ Incomplete</span>
     </div>
   </div>
 
   <main id="main-load-area" class="content-container">
-    <div id="materi-section" class="tab-content">
-      <div id="materi-list" class="compact-list"></div>
+    
+    <div id="materi-section" class="tab-content active">
+      <div id="materi-list" class="compact-list">
+        </div>
     </div>
+
     <div id="achievement-section" class="tab-content">
-      <div id="achievement-library" class="accordion-group"></div>
+      <div id="achievement-library" class="accordion-group">
+        </div>
     </div>
+    
   </main>
 
   <button id="fab-add" class="fab-btn" title="Tambah Data Baru">
-    <span>+</span>
+    <i class="fas fa-plus"></i>
   </button>
 
   <div id="modal-overlay" class="modal-overlay">
@@ -52,11 +61,15 @@
         <h2 id="modal-title">Input Data</h2>
         <button id="modal-close" class="close-btn">&times;</button>
       </div>
+      
       <div class="modal-body">
         <form id="dynamic-form">
           <div id="form-fields"></div>
+          
           <div class="form-footer">
-            <button type="submit" class="btn-primary">💾 Simpan Data</button>
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-save" style="margin-right:8px;"></i> Simpan Data
+            </button>
           </div>
         </form>
       </div>
@@ -64,11 +77,18 @@
   </div>
 
   <footer class="bottom-nav">
-    <a href="dashboard.html" class="nav-item">🏠<span>Home</span></a>
-    <a href="absensi_sekolah.html" class="nav-item">🏫<span>Kelas</span></a>
-    <a href="rekap_absensi_sekolah.html" class="nav-item">📊<span>Rekap</span></a>
+    <a href="dashboard.html" class="nav-item">
+      <i class="fas fa-home"></i><span>Home</span>
+    </a>
+    <a href="absensi_sekolah.html" class="nav-item">
+      <i class="fas fa-school"></i><span>Kelas</span>
+    </a>
+    <a href="rekap_absensi_sekolah.html" class="nav-item">
+      <i class="fas fa-chart-bar"></i><span>Rekap</span>
+    </a>
   </footer>
 
   <script type="module" src="guru_materi.js"></script>
+
 </body>
 </html>
