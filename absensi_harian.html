@@ -1,1 +1,145 @@
-<!DOCTYPE html><html lang="id"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  <title>Absensi & Materi</title>  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />  <link rel="stylesheet" href="style_harian.css" /></head><body class="absensi-page">  <header class="header">    <nav class="nav-actions">    <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>    <a href="absensi_sekolah.html" class="btn-nav">🏫 Kelas</a>    <a href="rekap_absensi_sekolah.html" class="btn-nav">📊 Rekap</a>    </nav>  </header>  <section class="form-section">    <div class="class-meta">      <p>🏫 <span id="header-sekolah">Nama Sekolah</span></p>      <p>Tahun Ajaran: <span id="header-tahun">2026</span> | Semester: <span id="header-semester">Genap</span></p>      <p>Kelas: <span id="header-kelas">Robotik A</span> | <span id="header-jadwal">Senin 08:00</span></p>    </div>  </section>  <main>    <section class="form-section">      <h2>Tambah Pertemuan</h2>      <button id="toggle-materi-form" class="btn-secondary">➕ Tambah Pertemuan</button>      <form id="materi-form" style="display:none;">  <div class="form-grid">    <div class="form-group">      <label for="materi-level-filter" style="color:var(--scratch-orange); font-weight:bold;">🎯 Kategori Level (EQ)</label>      <select id="materi-level-filter" required>        <option value="">-- Pilih Level/Kit --</option>        </select>    </div>    <div class="form-group">      <label for="materi-date">Tanggal</label>      <input type="date" id="materi-date" required />    </div>        <div class="form-group full-width" style="position: relative;">      <label for="materi-title">Judul Materi (Mission Title)</label>      <input type="text" id="materi-title" placeholder="Ketik judul untuk mencari..." autocomplete="off" required />            <div id="materi-suggestion-box" class="custom-suggestion-box" style="display:none;"></div>            <span id="materi-level-label" style="display:block; margin-top:5px; font-size:0.85em; font-weight:bold; color:#888;"></span>    </div>    <div class="form-group">      <label for="materi-guru">Guru</label>      <select id="materi-guru" required></select>    </div>    <div class="form-group">      <label for="materi-asisten">Asisten</label>      <select id="materi-asisten" required></select>    </div>  </div>  <div class="form-actions">    <button type="submit" class="btn-primary">💾 Simpan Materi & Sesi</button>  </div></form>    </section>    <section class="form-section">      <div style="display:flex; justify-content:space-between; align-items:center;">          <h2 style="margin:0;">Tambah Achievement</h2>          <button type="button" class="btn-secondary" onclick="document.getElementById('target-container').style.display = (document.getElementById('target-container').style.display === 'none' ? 'block' : 'none')">              ▼ Buka          </button>      </div>      <div id="target-container" style="display:none; margin-top:15px;">          <div class="form-grid">              <div class="form-group full-width">                  <label>Main Achievement (Topik)</label>                  <input type="text" id="input-ach-main" list="list-ach-saran" placeholder="Contoh: Mechanics">                  <datalist id="list-ach-saran"></datalist>              </div>              <div class="form-group full-width">                  <label>Sub Achievement (Detail)</label>                  <input type="text" id="input-ach-sub" placeholder="Contoh: Merakit Gearbox">              </div>          </div>                    <button type="button" id="btn-add-target-ui" class="btn-secondary" style="width:100%; margin-top:10px;">              ➕ Tambah ke List          </button>          <div id="target-list-preview" style="margin-top:10px; padding:10px; border:1px dashed #ccc; min-height:30px; background:#fafafa;">              <small style="color:#888;">Belum ada target.</small>          </div>          <button type="button" id="btn-save-targets-db" class="btn-primary" style="width:100%; margin-top:10px;">              💾 Simpan Target ke Database          </button>      </div>    </section>    <section class="form-section">      <div class="absensi-header">        <h2>Absensi</h2>        <select id="pertemuan-selector">          <option value="">-- Pilih Pertemuan --</option>        </select>      </div>      <div class="table-wrapper">        <table id="absensi-table">          <thead></thead>          <tbody></tbody>          <tfoot>            <tr>              <td colspan="4" style="text-align:right;">                 <strong>TOTAL HADIR: <span id="total-hadir" style="font-size: 1.5rem;">0</span></strong>               </td>            </tr>          </tfoot>        </table>      </div>      <button id="simpan-absensi" class="btn-primary">💾 Simpan Absensi</button>    </section>    <section class="form-section">      <h2>Materi</h2>     <div id="materi-list" class="materi-list card-grid">         </div>    </section>  </main>  <div id="toast" class="toast" style="display:none;">✅ Absensi tersimpan</div>  <footer class="footer">    <p>Sistem Absensi v1.5.0 — Dibuat oleh Saepudin & Copilot</p>    <div id="debug-output" style="font-size: 0.9em; color: #555; margin-top: 1em;"></div>  </footer>  <script type="module" src="absensi_harian.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Absensi & Materi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style_harian.css" />
+</head>
+<body class="absensi-page">
+
+  <header class="header">
+    <nav class="nav-actions">
+    <a href="dashboard.html" class="btn-nav">🏠 Dashboard</a>
+    <a href="absensi_sekolah.html" class="btn-nav">🏫 Kelas</a>
+    <a href="rekap_absensi_sekolah.html" class="btn-nav">📊 Rekap</a>
+    </nav>
+  </header>
+
+  <section class="form-section">
+    <div class="class-meta">
+      <p>🏫 <span id="header-sekolah">Nama Sekolah</span></p>
+      <p>Tahun Ajaran: <span id="header-tahun">2026</span> | Semester: <span id="header-semester">Genap</span></p>
+      <p>Kelas: <span id="header-kelas">Robotik A</span> | <span id="header-jadwal">Senin 08:00</span></p>
+    </div>
+  </section>
+
+  <main>
+    <section class="form-section">
+      <h2>Tambah Pertemuan</h2>
+      <button id="toggle-materi-form" class="btn-secondary">➕ Tambah Pertemuan</button>
+      <form id="materi-form" style="display:none;">
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="materi-level-filter" style="color:var(--scratch-orange); font-weight:bold;">🎯 Kategori Level (EQ)</label>
+      <select id="materi-level-filter" required>
+        <option value="">-- Pilih Level/Kit --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label for="materi-date">Tanggal</label>
+      <input type="date" id="materi-date" required />
+    </div>
+    
+    <div class="form-group full-width" style="position: relative;">
+      <label for="materi-title">Judul Materi (Mission Title)</label>
+      <input type="text" id="materi-title" placeholder="Ketik judul untuk mencari..." autocomplete="off" required />
+      
+      <div id="materi-suggestion-box" class="custom-suggestion-box" style="display:none;"></div>
+      
+      <span id="materi-level-label" style="display:block; margin-top:5px; font-size:0.85em; font-weight:bold; color:#888;"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="materi-guru">Guru</label>
+      <select id="materi-guru" required></select>
+    </div>
+    <div class="form-group">
+      <label for="materi-asisten">Asisten</label>
+      <select id="materi-asisten" required></select>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">💾 Simpan Materi & Sesi</button>
+  </div>
+</form>
+    </section>
+
+    <section class="form-section">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h2 style="margin:0;">Tambah Achievement</h2>
+          <button type="button" class="btn-secondary" onclick="document.getElementById('target-container').style.display = (document.getElementById('target-container').style.display === 'none' ? 'block' : 'none')">
+              ▼ Buka
+          </button>
+      </div>
+
+      <div id="target-container" style="display:none; margin-top:15px;">
+          <div class="form-grid">
+              <div class="form-group full-width">
+                  <label>Main Achievement (Topik)</label>
+                  <input type="text" id="input-ach-main" list="list-ach-saran" placeholder="Contoh: Mechanics">
+                  <datalist id="list-ach-saran"></datalist>
+              </div>
+              <div class="form-group full-width">
+                  <label>Sub Achievement (Detail)</label>
+                  <input type="text" id="input-ach-sub" placeholder="Contoh: Merakit Gearbox">
+              </div>
+          </div>
+          
+          <button type="button" id="btn-add-target-ui" class="btn-secondary" style="width:100%; margin-top:10px;">
+              ➕ Tambah ke List
+          </button>
+
+          <div id="target-list-preview" style="margin-top:10px; padding:10px; border:1px dashed #ccc; min-height:30px; background:#fafafa;">
+              <small style="color:#888;">Belum ada target.</small>
+          </div>
+
+          <button type="button" id="btn-save-targets-db" class="btn-primary" style="width:100%; margin-top:10px;">
+              💾 Simpan Target ke Database
+          </button>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="absensi-header">
+        <h2>Absensi</h2>
+        <select id="pertemuan-selector">
+          <option value="">-- Pilih Pertemuan --</option>
+        </select>
+      </div>
+      <div class="table-wrapper">
+        <table id="absensi-table">
+          <thead></thead>
+          <tbody></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" style="text-align:right;"> 
+                <strong>TOTAL HADIR: <span id="total-hadir" style="font-size: 1.5rem;">0</span></strong> 
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <button id="simpan-absensi" class="btn-primary">💾 Simpan Absensi</button>
+    </section>
+
+    <section class="form-section">
+      <h2>Materi</h2>
+     <div id="materi-list" class="materi-list card-grid">
+         </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" style="display:none;">✅ Absensi tersimpan</div>
+
+  <footer class="footer">
+    <p>Sistem Absensi v1.5.0 — Dibuat oleh Saepudin & Copilot</p>
+    <div id="debug-output" style="font-size: 0.9em; color: #555; margin-top: 1em;"></div>
+  </footer>
+<script type="module" src="auth_guard.js"></script>
+  <script type="module" src="absensi_harian.js"></script>
+</body>
+</html>
