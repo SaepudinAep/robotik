@@ -26,7 +26,7 @@ function openUploadWidget(callback, customFolder = "robotic_school") {
     sources: ["local", "camera"],
     multiple: false,
     cropping: true,
-    croppingAspectRatio: 0.75, // 3:4 Portrait
+    croppingAspectRatio: 0.75,
     showSkipCropButton: false,
     croppingShowBackButton: true,
   }, (error, result) => {
@@ -52,68 +52,46 @@ function openUploadWidget(callback, customFolder = "robotic_school") {
 //   SEKTOR 1: INISIALISASI & NAVIGASI
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Pasang Listener Tombol Tab
   const tabs = document.querySelectorAll(".tab-btn");
   if(tabs.length > 0) {
       tabs.forEach(btn => {
         btn.addEventListener("click", () => switchTab(btn.dataset.tab));
       });
   }
-
-  // 2. Listener Search
   if(globalSearch) globalSearch.addEventListener("input", loadData);
-
-  // 3. Jalankan Default
   switchTab("materi");
 });
 
 function switchTab(tab) {
   currentTab = tab;
-  
   document.querySelectorAll(".tab-btn").forEach(b => {
     b.classList.toggle("active", b.dataset.tab === tab);
   });
-  
   document.querySelectorAll(".tab-content").forEach(c => {
     c.classList.toggle("active", c.id === `${tab}-section`);
   });
-
   loadData(); 
 }
 
 // =========================================
-//   SEKTOR 2: LOAD DATA (SESUAI SQL)
+//   SEKTOR 2: LOAD & RENDER DATA
 // =========================================
 async function loadData() {
   const search = globalSearch ? globalSearch.value.toLowerCase() : "";
   const containerMateri = document.getElementById("materi-list");
   const containerAchieve = document.getElementById("achievement-library");
 
-  // Loading UI
-  if (currentTab === "materi" && containerMateri) containerMateri.innerHTML = '<p style="text-align:center; padding:20px;">⏳ Memuat Materi Sekolah...</p>';
-  if (currentTab === "achievement" && containerAchieve) containerAchieve.innerHTML = '<p style="text-align:center; padding:20px;">⏳ Memuat Achievement...</p>';
-
   try {
-    // --- TAB MATERI (Target: tabel 'materi') ---
     if (currentTab === "materi") {
-      // SQL: tabel 'materi' (sekolah)
       const { data, error } = await supabase.from('materi').select('*').order('created_at', { ascending: false });
-      
       if (error) throw error;
-      
-      // PERBAIKAN: Gunakan 'm.title' (bukan judul) sesuai SQL
       const filtered = data ? data.filter(m => m.title?.toLowerCase().includes(search)) : [];
       
-      if (filtered.length === 0) {
-        containerMateri.innerHTML = '<p style="text-align:center; color:#999;">Data materi kosong.</p>';
-        return;
-      }
-
       containerMateri.innerHTML = filtered.map(m => `
         <div class="compact-item" onclick="openEditModal('materi', '${m.id}')">
           <div class="item-info">
              <i class="fas fa-book" style="color: #3498db; margin-right: 12px;"></i>
-             <span class="item-title"><b>${m.title}</b></span> <!- GANTI KE TITLE -->
+             <span class="item-title"><b>${m.title}</b></span>
           </div>
           <div class="item-actions">
             <button class="btn-minimal text-danger" onclick="event.stopPropagation(); deleteData('materi', '${m.id}')">
@@ -122,30 +100,26 @@ async function loadData() {
           </div>
         </div>`).join("");
     } 
-    // --- TAB ACHIEVEMENT (Target: tabel 'achievement_sekolah') ---
     else if (currentTab === "achievement") {
       const { data, error } = await supabase.from('achievement_sekolah').select('*').order('created_at', { ascending: false });
-      
       if (error) throw error;
-
       const filtered = data ? data.filter(a => a.main_achievement?.toLowerCase().includes(search)) : [];
       
-      if (filtered.length === 0) {
-        containerAchieve.innerHTML = '<p style="text-align:center; color:#999;">Data achievement kosong.</p>';
-        return;
-      }
-
-      containerAchieve.innerHTML = filtered.map(a => `
-        <div class="achievement-folder" onclick="openEditModal('achievement', '${a.id}')" style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); cursor:pointer;">
+      containerAchieve.innerHTML = filtered.map(a => {
+        // Pecah sub_achievement menjadi list
+        const subList = (a.sub_achievement || "").split('\n').filter(s => s.trim() !== "");
+        
+        return `
+        <div class="achievement-folder" onclick="openEditModal('achievement', '${a.id}')" style="background:white; padding:15px; border-radius:10px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); cursor:pointer;">
           <div class="folder-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div style="flex:1;">
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
-                <i class="fas fa-trophy" style="color: gold;"></i> 
-                <b style="font-size:1.05rem;">${a.main_achievement}</b>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <i class="fas fa-trophy" style="color: #f1c40f;"></i> 
+                <b style="font-size:1.1rem; color:#2c3e50;">${a.main_achievement}</b>
               </div>
-              <p style="margin:0; font-size:0.9rem; color:#666; padding-left:24px;">
-                ${a.sub_achievement || "-"}
-              </p>
+              <ul style="margin:0; font-size:0.85rem; color:#7f8c8d; padding-left:25px; list-style-type: circle;">
+                ${subList.map(s => `<li>${s}</li>`).join("") || "<li>-</li>"}
+              </ul>
             </div>
             <div class="folder-actions">
               <button class="btn-minimal text-danger" onclick="event.stopPropagation(); deleteData('achievement_sekolah', '${a.id}')">
@@ -153,32 +127,39 @@ async function loadData() {
               </button>
             </div>
           </div>
-        </div>
-      `).join("");
+        </div>`;
+      }).join("");
     }
   } catch (err) {
     console.error("Gagal Load Data:", err.message);
-    const msg = `<div style="text-align:center; color:red; padding:20px;">Error: ${err.message}</div>`;
-    if(currentTab === "materi") containerMateri.innerHTML = msg;
-    else containerAchieve.innerHTML = msg;
   }
 }
 
 // =========================================
-//   SEKTOR 3: FORM & MODAL LOGIC
+//   SEKTOR 3: FORM & DYNAMIC ROWS LOGIC
 // =========================================
+
+// Helper: Menambah baris input sub-achievement
+function addSubRow(value = "") {
+  const container = document.getElementById("sub-ach-container");
+  const row = document.createElement("div");
+  row.className = "sub-row";
+  row.style = "display:flex; gap:8px; margin-bottom:8px;";
+  row.innerHTML = `
+    <input type="text" class="sub-input" value="${value}" placeholder="Masukkan detail target..." style="flex:1;">
+    <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="background:#ff7675; color:white; border:none; border-radius:8px; width:35px; cursor:pointer;">&times;</button>
+  `;
+  container.appendChild(row);
+}
+
 async function injectFormFields(mode = "add", data = {}) {
   modalTitle.textContent = `${mode === "edit" ? "Edit" : "Tambah"} Data`;
 
   if (currentTab === "materi") {
-    // FORM MATERI SEKOLAH (Menggunakan 'title')
     const currentImg = data.image_url || "https://via.placeholder.com/150?text=No+Image";
-    
-    // PERBAIKAN: Input ID='title' agar sesuai nama kolom database saat di-save
     formFields.innerHTML = `
       <label>Judul Materi</label>
       <input type="text" id="title" value="${data.title || ""}" required>
-      
       <label>Foto Project</label>
       <div style="margin-bottom: 20px;">
         <button type="button" id="btn-upload-p" style="background:#3498db; color:white; border:none; padding:12px; border-radius:12px; cursor:pointer; width:100%; margin-bottom:10px; font-weight:bold;">
@@ -189,35 +170,43 @@ async function injectFormFields(mode = "add", data = {}) {
           <img id="img-preview-p" src="${currentImg}" style="width:100%; max-height:180px; object-fit:cover; border-radius:15px; border:2px solid #eee;">
         </div>
       </div>
-
-      <label>Deskripsi</label>
-      <textarea id="description">${data.description || ""}</textarea>
-      
-      <label>Detail Lengkap</label>
-      <textarea id="detail">${data.detail || ""}</textarea>
-      `;
+      <label>Deskripsi</label><textarea id="description">${data.description || ""}</textarea>
+      <label>Detail Lengkap</label><textarea id="detail">${data.detail || ""}</textarea>`;
       
       setTimeout(() => {
-        const btnUpload = document.getElementById("btn-upload-p");
-        if(btnUpload) {
-            btnUpload.onclick = () => {
-              openUploadWidget((url) => {
-                document.getElementById("image_url").value = url;
-                document.getElementById("img-preview-p").src = url;
-              });
-            };
-        }
+        const btn = document.getElementById("btn-upload-p");
+        if(btn) btn.onclick = () => openUploadWidget(url => {
+          document.getElementById("image_url").value = url;
+          document.getElementById("img-preview-p").src = url;
+        });
       }, 100);
 
   } else if (currentTab === "achievement") {
-    // FORM ACHIEVEMENT SEKOLAH
+    // MODAL DYNAMIC ROWS UNTUK ACHIEVEMENT
     formFields.innerHTML = `
       <label>Topik Utama (Main Achievement)</label>
-      <input type="text" id="main_achievement" value="${data.main_achievement || ""}" required>
+      <input type="text" id="main_achievement" value="${data.main_achievement || ""}" placeholder="Contoh: Robotika Dasar" required>
       
-      <label>Detail Target (Sub Achievement)</label>
-      <textarea id="sub_achievement" rows="5">${data.sub_achievement || ""}</textarea>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; margin-bottom:10px;">
+        <label style="margin:0;">Detail Target (Sub Achievements)</label>
+        <button type="button" id="btn-add-sub" style="background:#55efc4; color:#00b894; border:none; padding:4px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">
+          <i class="fas fa-plus"></i> Tambah Sub
+        </button>
+      </div>
+      
+      <div id="sub-ach-container">
+        </div>
     `;
+
+    // Ambil data sub lama (jika ada) dan pecah jadi baris
+    const existingSubs = (data.sub_achievement || "").split('\n').filter(s => s.trim() !== "");
+    if (existingSubs.length > 0) {
+      existingSubs.forEach(val => addSubRow(val));
+    } else {
+      addSubRow(); // Baris kosong pertama jika data baru
+    }
+
+    document.getElementById("btn-add-sub").onclick = () => addSubRow();
   }
 }
 
@@ -225,45 +214,49 @@ async function injectFormFields(mode = "add", data = {}) {
 //   SEKTOR 4: ACTIONS (CRUD)
 // =========================================
 window.openEditModal = async (tab, id) => {
-  // Mapping Table (Achievement -> achievement_sekolah)
   const tableMap = { materi: 'materi', achievement: 'achievement_sekolah' };
-  
   const { data } = await supabase.from(tableMap[tab]).select('*').eq('id', id).single();
   if (data) {
     editingId = id;
     await injectFormFields("edit", data);
-    document.getElementById("modal-overlay").classList.add("active");
+    modal.classList.add("active");
   }
 };
 
 window.deleteData = async (tableType, id) => {
-  // tableType dikirim string 'materi' atau 'achievement_sekolah' dari tombol delete
   if(!confirm("Hapus data ini?")) return;
-  
   const { error } = await supabase.from(tableType).delete().eq('id', id);
   if(!error) loadData();
   else alert("Gagal hapus: " + error.message);
 };
 
-// Form Submit
 const formEl = document.getElementById("dynamic-form");
 if(formEl) {
     formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
       const tableMap = { materi: 'materi', achievement: 'achievement_sekolah' };
-      
       const payload = {};
-      // Otomatis ambil value berdasarkan ID input (title, description, detail, etc)
-      e.target.querySelectorAll("input, select, textarea").forEach(el => {
+      
+      // Ambil input standard
+      e.target.querySelectorAll("input:not(.sub-input), select, textarea").forEach(el => {
         if (el.id) payload[el.id] = el.value;
       });
+
+      // KHUSUS ACHIEVEMENT: Gabungkan semua sub-input jadi satu string teks dipisah newline
+      if (currentTab === "achievement") {
+        const subInputs = Array.from(document.querySelectorAll(".sub-input"));
+        payload.sub_achievement = subInputs
+          .map(input => input.value.trim())
+          .filter(val => val !== "") // Abaikan jika kosong
+          .join('\n');
+      }
 
       const { error } = editingId 
         ? await supabase.from(tableMap[currentTab]).update(payload).eq('id', editingId)
         : await supabase.from(tableMap[currentTab]).insert([payload]);
 
       if(!error) {
-        document.getElementById("modal-overlay").classList.remove("active");
+        modal.classList.remove("active");
         loadData();
       } else {
         alert("Gagal simpan: " + error.message);
@@ -271,19 +264,12 @@ if(formEl) {
     });
 }
 
-// FAB & Modal Listeners
 const fab = document.getElementById("fab-add");
-if(fab) {
-    fab.addEventListener("click", async () => {
-      editingId = null;
-      await injectFormFields("add");
-      document.getElementById("modal-overlay").classList.add("active");
-    });
-}
+if(fab) fab.addEventListener("click", async () => {
+  editingId = null;
+  await injectFormFields("add");
+  modal.classList.add("active");
+});
 
 const closeBtn = document.getElementById("modal-close");
-if(closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      document.getElementById("modal-overlay").classList.remove("active");
-    });
-}
+if(closeBtn) closeBtn.addEventListener("click", () => modal.classList.remove("active"));
