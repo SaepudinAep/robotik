@@ -1,124 +1,1 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Monitoring Kelas</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styleMonitoing.css">
-    
-    <style>
-        /* CSS KHUSUS ANDROID TABLET & SMART INPUT */
-        .suggestion-box {
-            position: absolute; background: white; width: 100%; 
-            border: 1px solid #ddd; border-top: none; 
-            max-height: 200px; overflow-y: auto; z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px;
-        }
-        .suggestion-item {
-            padding: 12px; border-bottom: 1px solid #eee; cursor: pointer;
-        }
-        .suggestion-item:active { background: #f0f0f0; }
-        
-        /* Pastikan Dropdown Muncul di Android */
-        select.android-safe {
-            display: block; width: 100%; padding: 12px; 
-            background: #fff; color: #333; border: 1px solid #ccc;
-            border-radius: 8px; margin-bottom: 10px;
-            -webkit-appearance: menulist; /* Paksa render native */
-        }
-    </style>
-</head>
-<body>
-
-    <header onclick="window.toggleFormArea()" style="cursor:pointer;">
-        <div class="header-left">
-           <a href="absensi_private.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>
-           <div>
-               <h1 class="session-title">Monitoring <span id="headerClassName" style="font-weight:300; opacity:0.9;"></span></h1>
-               <span id="levelDisplay" style="font-size: 0.8rem; opacity: 0.9;">Loading...</span>
-           </div>
-        </div>
-        <div style="font-family: 'Fredoka One'; font-size: 1.5rem;" id="sessionTag">BARU</div>
-    </header>
-
-    <div class="container">
-        <div id="setupSection">
-            <div class="form-card" id="formSesi">
-                <h3 style="margin:0 0 15px 0; color:var(--scratch-blue); font-family:var(--font-heading);">
-                    <i class="fa-solid fa-calendar-day"></i> Setup Sesi
-                </h3>
-                <div class="form-row">
-                    <input type="date" id="tglPertemuan">
-                    <select id="pilihGuru" class="android-safe"><option value="">Loading Guru...</option></select>
-                </div>
-                <div class="form-row">
-                    <input type="text" id="materiUtama" placeholder="Judul Materi (Misal: Aljabar)">
-                </div>
-                <button class="btn-action" id="btnSimpanSesi">
-                    <i class="fa-solid fa-play"></i> MULAI SESI
-                </button>
-            </div>
-
-            <div id="targetSection" class="form-card locked-area" style="background:white; border-color:#eee;">
-                <h3 style="margin:0 0 15px 0; color:var(--scratch-orange); font-family:var(--font-heading);">
-                    <i class="fa-solid fa-bullseye"></i> Target Capaian
-                </h3>
-                
-                <div id="formInputTarget">
-                    <div style="position: relative; margin-bottom: 10px;">
-                        <input type="text" id="mainAchSearch" placeholder="🔍 Cari Topik (Ketik 2 huruf)..." autocomplete="off">
-                        <div id="achSuggestionBox" class="suggestion-box" style="display:none;"></div>
-                    </div>
-
-                    <div id="subAchContainer" style="display:none;">
-                        <select id="subAchSelect" class="android-safe">
-                            <option value="">-- Pilih Rincian Target --</option>
-                        </select>
-                        <div style="text-align:right; margin-bottom:10px;">
-                            <small style="color:#2196F3; cursor:pointer;" onclick="toggleManualSub()">
-                                <i class="fa-solid fa-pen-to-square"></i> Input Manual?
-                            </small>
-                        </div>
-                        <input type="text" id="subAchManual" placeholder="Ketik rincian manual..." style="display:none; margin-bottom:10px;">
-                    </div>
-
-                    <button class="btn-action" id="btnAddAch" style="background:var(--scratch-orange);">
-                        <i class="fa-solid fa-cart-plus"></i> Masukkan ke Keranjang
-                    </button>
-                </div>
-
-                <div id="targetList" style="margin-top:15px; border-top:2px dashed #eee; padding-top:10px;"></div>
-                
-                <button class="btn-action" id="btnSimpanTarget" style="margin-top:15px; background:#4caf50; display:none;">
-                    <i class="fa-solid fa-floppy-disk"></i> SIMPAN TARGET KE DATABASE
-                </button>
-
-                <button class="btn-action" id="btnTambahLagi" style="margin-top:10px; background:#9c27b0; display:none;">
-                    <i class="fa-solid fa-circle-plus"></i> Tambah Target Lain
-                </button>
-            </div>
-        </div>
-
-        <div id="monitoringSection" style="margin-top:20px; display:none;">
-            <h3 style="font-family:var(--font-heading); color:#333; margin-bottom:15px;">
-                <i class="fa-solid fa-users-viewfinder"></i> Penilaian Siswa
-            </h3>
-            <div id="studentContainer" class="student-list"></div>
-        </div>
-
-        <div style="margin-top: 40px; margin-bottom: 40px;">
-            <label style="font-weight:bold; color:#888; font-size:0.85rem;">
-                <i class="fa-solid fa-clock-rotate-left"></i> RIWAYAT KELAS
-            </label>
-            <div id="historyGrid" class="history-wrapper"></div>
-        </div>
-    </div>
-    <script type="module" src="auth_guard.js"></script>
-    <script type="module" src="absensiMonitoring.js"></script>
-</body>
-</html>
+<!DOCTYPE html><html lang="id"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>Monitoring Kelas</title>        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>    <link rel="stylesheet" href="styleMonitoing.css">        <style>        /* CSS KHUSUS ANDROID TABLET & SMART INPUT */        .suggestion-box {            position: absolute; background: white; width: 100%;             border: 1px solid #ddd; border-top: none;             max-height: 200px; overflow-y: auto; z-index: 1000;            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px;        }        .suggestion-item {            padding: 12px; border-bottom: 1px solid #eee; cursor: pointer;        }        .suggestion-item:active { background: #f0f0f0; }                select.android-safe {            display: block; width: 100%; padding: 12px;             background: #fff; color: #333; border: 1px solid #ccc;            border-radius: 8px; margin-bottom: 10px;            -webkit-appearance: menulist;         }    </style></head><body>    <header onclick="window.toggleFormArea()" style="cursor:pointer;">        <div class="header-left">           <a href="absensi_private.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i></a>           <div>               <h1 class="session-title">Monitoring <span id="headerClassName" style="font-weight:300; opacity:0.9;"></span></h1>               <span id="levelDisplay" style="font-size: 0.8rem; opacity: 0.9;">Loading...</span>           </div>        </div>        <div style="font-family: 'Fredoka One'; font-size: 1.5rem;" id="sessionTag">BARU</div>    </header>    <div class="container">                <div id="setupSection" class="form-card">            <h3 style="margin:0 0 15px 0; color:var(--scratch-blue); font-family:var(--font-heading);">                <i class="fa-solid fa-calendar-day"></i> Setup Sesi            </h3>                        <div class="form-row">                <input type="date" id="tglPertemuan">                <select id="pilihGuru" class="android-safe"><option value="">Loading Guru...</option></select>            </div>            <div class="form-row">                <input type="text" id="materiUtama" placeholder="Judul Materi (Misal: Aljabar)">            </div>                        <button class="btn-action" id="btnSimpanSesi">                <i class="fa-solid fa-play"></i> MULAI SESI            </button>        </div>        <div id="targetSection" class="form-card locked-area" style="background:white; border-color:#eee;">            <h3 style="margin:0 0 15px 0; color:var(--scratch-orange); font-family:var(--font-heading);">                <i class="fa-solid fa-bullseye"></i> Target Capaian            </h3>                        <div id="formInputTarget">                <div style="position: relative; margin-bottom: 10px;">                    <input type="text" id="mainAchSearch" placeholder="🔍 Cari Topik (Ketik 2 huruf)..." autocomplete="off">                    <div id="achSuggestionBox" class="suggestion-box" style="display:none;"></div>                </div>                <div id="subAchContainer" style="display:none;">                    <select id="subAchSelect" class="android-safe">                        <option value="">-- Pilih Rincian Target --</option>                    </select>                                        <div style="text-align:right; margin-bottom:10px;">                        <small style="color:#2196F3; cursor:pointer;" id="btnToggleManual">                            <i class="fa-solid fa-pen-to-square"></i> Input Manual?                        </small>                    </div>                                        <input type="text" id="subAchManual" placeholder="Ketik rincian manual..." style="display:none; margin-bottom:10px;">                </div>                <button class="btn-action" id="btnAddAch" style="background:var(--scratch-orange);">                    <i class="fa-solid fa-cart-plus"></i> Masukkan ke Keranjang                </button>            </div>            <div id="targetList" style="margin-top:15px; border-top:2px dashed #eee; padding-top:10px;"></div>                        <button class="btn-action" id="btnSimpanTarget" style="margin-top:15px; background:#4caf50; display:none;">                <i class="fa-solid fa-floppy-disk"></i> SIMPAN TARGET KE DATABASE            </button>            <button class="btn-action" id="btnTambahLagi" style="margin-top:10px; background:#9c27b0; display:none;">                <i class="fa-solid fa-circle-plus"></i> Tambah Target Lain            </button>        </div>        <div id="monitoringSection" style="margin-top:20px; display:none;">            <h3 style="font-family:var(--font-heading); color:#333; margin-bottom:15px;">                <i class="fa-solid fa-users-viewfinder"></i> Penilaian Siswa            </h3>            <div id="studentContainer" class="student-list"></div>        </div>        <div style="margin-top: 40px; margin-bottom: 40px;">            <label style="font-weight:bold; color:#888; font-size:0.85rem;">                <i class="fa-solid fa-clock-rotate-left"></i> RIWAYAT KELAS            </label>            <div id="historyGrid" class="history-wrapper"></div>        </div>    </div>    <script type="module" src="auth_guard.js"></script>    <script type="module" src="absensiMonitoring.js"></script></body></html>

@@ -2,6 +2,8 @@
   --scratch-blue: #4d97ff;
   --scratch-orange: #ffab19;
   --scratch-yellow: #fff3d6;
+  --scratch-green: #4caf50;
+  --scratch-purple: #9c27b0;
   --white: #ffffff;
   --text: #333;
   --radius: 12px;
@@ -15,10 +17,12 @@ body {
   background: #f9f9f9;
   color: var(--text);
   margin: 0;
-  padding-bottom: 50px;
+  padding-bottom: 80px; /* Ruang lebih untuk scroll bawah */
 }
 
-/* 🔷 Header Konsisten */
+/* =========================================
+   1. HEADER AREA
+   ========================================= */
 header {
   background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
   color: var(--white);
@@ -27,9 +31,13 @@ header {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 10px rgba(77,151,255,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-left { display: flex; align-items: center; gap: 15px; }
+
 .btn-back { 
     background: rgba(255,255,255,0.2); 
     color: white; 
@@ -43,105 +51,220 @@ header {
 
 .session-title {
     font-family: var(--font-heading);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin: 0;
+    line-height: 1.2;
 }
 
-/* 🔶 Container Utama */
+/* =========================================
+   2. CONTAINER & LAYOUT
+   ========================================= */
 .container {
   max-width: 800px;
   margin: 20px auto;
   padding: 0 15px;
 }
 
-/* 🟩 Form Area (Kuning Scratch) */
+/* Area Setup & Target (Kuning Scratch) */
 .form-card {
   background: var(--scratch-yellow);
   padding: 20px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   border: 2px solid #ffe082;
+  transition: all 0.3s ease;
 }
 
-.form-row { display: flex; gap: 10px; margin-bottom: 10px; }
-.form-row input, .form-row select {
-    flex: 1;
+/* Judul Section (H3) */
+h3 {
+    margin-top: 0;
+    font-family: var(--font-heading);
+    color: #555;
+}
+
+/* Form Input Styling */
+.form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+
+input[type="date"], input[type="text"], select, textarea {
+    width: 100%;
     padding: 12px;
     border: 2px solid #ddd;
     border-radius: 8px;
     font-family: var(--font-body);
     font-size: 0.95rem;
+    box-sizing: border-box; /* Agar padding tidak merusak lebar */
+    background: white;
 }
-.form-row input:focus, .form-row select:focus {
+
+input:focus, select:focus, textarea:focus {
     border-color: var(--scratch-blue);
     outline: none;
 }
 
+/* =========================================
+   3. BUTTONS (TOMBOL AKSI)
+   ========================================= */
 .btn-action {
     background: var(--scratch-blue);
     color: white;
     border: none;
-    padding: 12px 20px;
+    padding: 14px 20px;
     border-radius: 8px;
     font-family: var(--font-heading);
     font-size: 1rem;
     cursor: pointer;
-    display: flex; align-items: center; gap: 8px;
-    transition: transform 0.1s;
-    width: 100%; justify-content: center;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: transform 0.1s, background 0.2s;
+    width: 100%; 
+    margin-top: 10px;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.1); /* Efek tombol timbul */
 }
-.btn-action:active { transform: scale(0.97); }
 
-/* 🎯 Achievement Tags */
+.btn-action:active { 
+    transform: translateY(3px); 
+    box-shadow: none; 
+}
+
+/* Tombol Tambah Lagi (Ungu) */
+#btnTambahLagi { background: var(--scratch-purple); }
+
+/* Tombol Simpan Target (Hijau) */
+#btnSimpanTarget { background: var(--scratch-green); }
+
+/* =========================================
+   4. ACHIEVEMENT TAGS (KERANJANG)
+   ========================================= */
 .ach-tag {
     background: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    display: inline-flex;
-    align-items: center; gap: 8px;
-    margin: 5px 5px 0 0;
+    padding: 10px 15px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
     font-size: 0.9rem;
-    border: 1px solid #ddd;
+    border-left: 5px solid var(--scratch-blue);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* 📜 History Scroll (Horizontal) */
-.history-wrapper {
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    -webkit-overflow-scrolling: touch;
+.ach-tag i.fa-trash-can {
+    color: #ff5252;
+    background: rgba(255, 82, 82, 0.1);
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
 }
-.history-card {
-    display: inline-block;
-    background: white;
-    min-width: 140px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-right: 10px;
-    border-left: 5px solid var(--scratch-orange);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    cursor: pointer;
-    vertical-align: top;
+.ach-tag i.fa-trash-can:hover {
+    background: rgba(255, 82, 82, 0.2);
 }
-.h-date { font-weight: bold; color: var(--scratch-orange); font-size: 0.85rem; }
-.h-materi { font-weight: 600; font-size: 0.95rem; color: #444; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
 
-/* 👥 Siswa Card (Mirip absensi_private.html) */
-.student-list { display: grid; gap: 15px; }
+/* =========================================
+   5. HISTORY / MATERI CARD (VERTIKAL)
+   ========================================= */
+/* =========================================
+   5. HISTORY / MATERI CARD (GRID SYSTEM 2-3 KOLOM)
+   ========================================= */
+
+/* Container Grid */
+#historyGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Default HP: 2 Kolom */
+    gap: 12px;
+    padding: 5px 0;
+}
+
+/* Tablet & Desktop: Otomatis jadi 3 Kolom */
+@media (min-width: 768px) {
+    #historyGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+/* =========================================
+   5. HISTORY / MATERI CARD (SIMPLE GRID)
+   ========================================= */
+
+/* Grid Container */
+#historyGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* HP: 2 Kolom */
+    gap: 10px;
+    padding: 5px 0;
+}
+
+/* Tablet / Desktop */
+@media (min-width: 768px) {
+    #historyGrid {
+        grid-template-columns: repeat(3, 1fr); /* Tablet: 3 Kolom */
+    }
+}
+
+/* Kartu History Simple */
+.history-card {
+    background: var(--white) !important;
+    border-radius: 8px; /* Radius lebih kecil biar tegas */
+    padding: 12px 15px !important;
+    
+    border: 1px solid #eee;
+    border-left: 4px solid var(--scratch-orange) !important; /* Aksen kiri */
+    
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    transition: transform 0.1s;
+    cursor: pointer;
+    
+    /* Layout Flex agar tanggal & judul sejajar/rapi */
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    min-height: 60px; /* Tinggi proporsional */
+}
+
+/* Teks Tanggal */
+.history-card b {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--scratch-blue); /* Warna biru biar kontras */
+    margin-bottom: 3px;
+    font-weight: 700;
+}
+
+/* Teks Judul */
+.history-card {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.3;
+    
+    /* Truncate jika terlalu panjang */
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Efek Klik */
+.history-card:active {
+    transform: scale(0.97);
+    background-color: #fffbf0 !important;
+}
+
+/* =========================================
+   6. SISWA CARD (MONITORING)
+   ========================================= */
+.student-list { display: grid; gap: 20px; }
 
 .student-card {
     background: white;
     border-radius: 12px;
     padding: 20px;
     box-shadow: var(--shadow);
-    border-top: 6px solid var(--scratch-blue); /* Default */
+    border-top: 6px solid var(--scratch-blue);
+    border-left: 1px solid #eee !important; /* Reset inline style border-left */
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
     animation: fadeIn 0.4s ease;
 }
 
-/* Variasi Warna Card (Cycle) */
+/* Variasi Warna Warni Card */
 .student-card:nth-child(4n+1) { border-top-color: #4d97ff; }
 .student-card:nth-child(4n+2) { border-top-color: #ffab19; }
 .student-card:nth-child(4n+3) { border-top-color: #4caf50; }
@@ -151,17 +274,86 @@ header {
     font-family: var(--font-heading); 
     font-size: 1.2rem; margin-bottom: 15px; 
     display: flex; align-items: center; gap: 10px;
+    color: #444;
 }
 
-.metrics-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-.metrics-row label { display: block; font-size: 0.8rem; font-weight: bold; color: #888; margin-bottom: 5px; }
-.metrics-row select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+/* Area Dropdown Sikap/Fokus */
+.metrics-row { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px; 
+    margin-bottom: 15px; 
+}
+.metrics-row label { 
+    display: block; 
+    font-size: 0.75rem; 
+    font-weight: bold; 
+    color: #999; 
+    margin-bottom: 5px; 
+    text-transform: uppercase;
+}
 
-.stars-wrapper { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
-.star-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-.stars { color: #ddd; font-size: 1.2rem; cursor: pointer; }
-.star-item.active { color: #ffab19; }
+/* Area Penilaian Bintang/Trophy */
+.stars-wrapper { 
+    background: #f8f9fa; 
+    padding: 12px; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+    border: 1px dashed #ddd;
+}
 
-textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: var(--font-body); resize: none; margin-bottom: 10px; box-sizing: border-box;}
+.star-row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+}
+.star-row:last-child { border-bottom: none; }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.stars { color: #ddd; font-size: 1.4rem; cursor: pointer; }
+
+/* Catatan Textarea */
+textarea {
+    background: #fff;
+    min-height: 60px;
+    margin-bottom: 10px;
+}
+
+/* Tombol Simpan Nilai */
+.student-card button {
+    background: var(--scratch-blue) !important;
+    margin-top: 5px !important;
+    font-size: 0.9rem !important;
+    padding: 10px !important;
+}
+
+/* =========================================
+   7. UTILS & ANIMATION
+   ========================================= */
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* CSS untuk Accordion yang diinject JS */
+.section-header-clickable {
+    cursor: pointer;
+    user-select: none;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.section-header-clickable:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+/* Kelas khusus untuk menyembunyikan elemen saat mode "locked" */
+.locked-area {
+    opacity: 0.5;
+    pointer-events: none;
+    filter: grayscale(100%);
+}
