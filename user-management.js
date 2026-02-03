@@ -30,22 +30,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // 2. LOGIKA TAMPILAN & PROTEKSI DROPDOWN (REVISI)
+    // 2. LOGIKA TAMPILAN & PROTEKSI DROPDOWN
     if (loggedInUserRole !== 'super_admin') {
-        // A. Sembunyikan Tab "Level Mengajar" (Ini fitur advance khusus Admin)
         const tabTeacher = document.getElementById('tab-teacher');
         if (tabTeacher) tabTeacher.style.display = 'none';
 
-        // B. FORM INPUT USER TETAP MUNCUL (Sesuai request Bapak)
-        // Teacher boleh tambah user.
-        
-        // C. PROTEKSI DROPDOWN: Hapus Opsi 'Super Admin'
-        // Agar Teacher tidak bisa membuat akun Super Admin
         const roleSelect = document.getElementById('role');
         if (roleSelect) {
             const superAdminOption = roleSelect.querySelector('option[value="super_admin"]');
             if (superAdminOption) {
-                superAdminOption.remove(); // Hapus opsi dari DOM
+                superAdminOption.remove(); 
             }
         }
     }
@@ -54,8 +48,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: { user } } = await supabase.auth.getUser();
     currentUserId = user?.id || null;
 
-    fetchLevels(); 
-    fetchUsers();  
+    await fetchLevels(); 
+    await fetchUsers();  
     setupEventListeners();
 });
 
@@ -88,10 +82,11 @@ async function fetchLevels() {
 async function fetchUsers() {
     console.log("Sinkronisasi data...");
     
+    // UPDATE: Mengambil kolom 'name'
     const { data, error } = await supabase
         .from('user_profiles')
         .select(`
-            id, role, email, is_active, school_id, class_id, group_id, class_private_id, level_id,
+            id, name, role, email, is_active, school_id, class_id, group_id, class_private_id, level_id,
             schools(name), group_private(code), classes(name), class_private(name), levels(kode) 
         `);
 
@@ -139,8 +134,8 @@ function renderRegTable() {
     const filtered = allUsers.filter(u => {
         // LOGIKA PRIVASI (VIEW)
         if (loggedInUserRole === 'teacher') {
-            if (u.role === 'super_admin') return false; // Hide Admin
-            if (u.role === 'teacher' && u.id !== currentUserId) return false; // Hide Guru Lain
+            if (u.role === 'super_admin') return false; 
+            if (u.role === 'teacher' && u.id !== currentUserId) return false; 
         }
         
         const matchesTab = (currentTableTab === 'all' || u.role === currentTableTab);
@@ -152,13 +147,11 @@ function renderRegTable() {
         let actionButtons = '';
         
         if (loggedInUserRole === 'super_admin') {
-            // Admin: Edit & Delete
             actionButtons = `
                 <button class="btn-primary btn-edit" data-id="${u.id}">Edit</button>
                 <button class="logout btn-delete" data-id="${u.id}">Hapus</button>
             `;
         } else {
-            // Teacher: Edit & Disable Only
             const btnLabel = u.is_active ? "Nonaktifkan" : "Aktifkan";
             const btnStyle = u.is_active ? "logout" : "btn-primary";
             actionButtons = `
@@ -172,8 +165,10 @@ function renderRegTable() {
         const emailDisplay = u.is_active ? u.email : `${u.email} <br><span style="color:red; font-size:0.8em; font-weight:bold;">(NON-AKTIF)</span>`;
         const rowStyle = u.is_active ? '' : 'style="background-color: #fff0f0;"';
 
+        // UPDATE: Menampilkan Nama di Kolom Pertama
         return `
             <tr ${rowStyle}>
+                <td><strong>${u.name || '-'}</strong></td>
                 <td>${emailDisplay}</td>
                 <td><span class="badge ${u.role}">${u.role.toUpperCase()}</span></td>
                 <td>${actionButtons}</td>
@@ -186,11 +181,13 @@ function renderScopeTable() {
     if (!tbody) return;
     const scopeUsers = allUsers.filter(u => u.role === 'pic' || u.role === 'student');
     if (scopeUsers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Belum ada data.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data.</td></tr>';
         return;
     }
+    // UPDATE: Menampilkan Nama
     tbody.innerHTML = scopeUsers.map(u => `
         <tr>
+            <td>${u.name || '-'}</td>
             <td>${u.email}</td>
             <td><span class="badge ${u.role}">${u.role.toUpperCase()}</span></td>
             <td>${u.displayScope}</td>
@@ -203,11 +200,13 @@ function renderTeacherTable() {
     if (!tbody) return;
     const teachers = allUsers.filter(u => u.role === 'teacher');
     if (teachers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Tidak ada data Guru.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tidak ada data Guru.</td></tr>';
         return;
     }
+    // UPDATE: Menampilkan Nama
     tbody.innerHTML = teachers.map(u => `
         <tr>
+            <td>${u.name || '-'}</td>
             <td>${u.email}</td>
             <td><span class="badge teacher">TEACHER</span></td>
             <td>${u.levelName}</td>
@@ -256,14 +255,14 @@ function restoreModalHTML() {
     document.getElementById('scope-induk').onchange = (e) => handleScopeIndukChange(e.target.value);
 }
 
-// --- OPEN MODAL SCOPE ---
 async function openScopeModal(userId) {
     const user = allUsers.find(u => u.id === userId);
     if (!user) return;
 
     restoreModalHTML(); 
 
-    document.getElementById('modal-user-email').innerText = `Atur Akses: ${user.email}`;
+    // Tampilkan Nama jika ada
+    document.getElementById('modal-scope-title').innerText = `Atur Akses: ${user.name || user.email}`; 
     document.getElementById('modal-user-id').value = user.id;
     document.getElementById('modal-user-role').value = user.role;
     
@@ -273,14 +272,12 @@ async function openScopeModal(userId) {
     document.getElementById('modal-scope').style.display = 'flex';
 }
 
-// --- OPEN MODAL LEVEL ---
 function openLevelModal(userId) {
     const user = allUsers.find(u => u.id === userId);
     if (!user) return;
 
-    document.getElementById('modal-user-email').innerText = `Atur Level Guru: ${user.email}`;
+    document.getElementById('modal-scope-title').innerText = `Atur Level Guru: ${user.name || user.email}`;
 
-    // Inject Dropdown
     const modalBody = document.querySelector('.modal-body');
     modalBody.innerHTML = `
         <div class="form-group">
@@ -294,7 +291,6 @@ function openLevelModal(userId) {
         </div>
     `;
 
-    // Inject Footer
     const modalFooter = document.querySelector('.modal-footer');
     modalFooter.innerHTML = `
         <button class="btn-secondary" id="btn-cancel-level">Batal</button>
@@ -341,16 +337,23 @@ async function saveScope() {
 
 async function saveUser() {
     const id = document.getElementById('userId').value;
+    
+    // UPDATE: Ambil input Nama
+    const name = document.getElementById('fullName').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
-    if (!email || (!id && !password)) return showToast("Email & Password wajib diisi!", true);
+    
+    // UPDATE: Validasi Nama
+    if (!email || (!id && !password) || !name) return showToast("Nama, Email & Password wajib diisi!", true);
+    
     showToast("Memproses...");
     try {
         const response = await fetch(EDGE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` },
-            body: JSON.stringify({ action: id ? 'UPDATE' : 'CREATE', userId: id, email, password, role })
+            // UPDATE: Kirim 'name' ke backend
+            body: JSON.stringify({ action: id ? 'UPDATE' : 'CREATE', userId: id, name, email, password, role })
         });
         if (response.ok) { showToast("User disimpan"); resetForm(); fetchUsers(); }
         else { showToast("Gagal: " + await response.text(), true); }
@@ -414,7 +417,7 @@ function setupEventListeners() {
     document.getElementById('tab-teacher')?.addEventListener('click', () => switchMainTab('teacher'));
 
     // Form
-    document.getElementById('btn-save')?.addEventListener('click', saveUser);
+    document.getElementById('btn-save-user')?.addEventListener('click', saveUser); 
     document.getElementById('btn-cancel')?.addEventListener('click', resetForm);
     document.getElementById('searchUser')?.addEventListener('input', renderRegTable);
 
@@ -423,7 +426,7 @@ function setupEventListeners() {
         if (e.target.classList.contains('tab-item')) {
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             e.target.classList.add('active');
-            currentTableTab = e.target.dataset.role;
+            currentTableTab = e.target.dataset.filter || e.target.dataset.role; 
             renderRegTable();
         }
     });
@@ -435,11 +438,20 @@ function setupEventListeners() {
             const u = allUsers.find(user => user.id === id);
             if (u) {
                 document.getElementById('userId').value = u.id;
+                
+                // UPDATE: Isi form Nama saat edit
+                document.getElementById('fullName').value = u.name || '';
+                
                 document.getElementById('email').value = u.email;
                 document.getElementById('role').value = u.role;
-                document.getElementById('form-title').innerText = "Edit User";
-                document.getElementById('btn-cancel').style.display = 'inline-block';
-                window.scrollTo(0, 0);
+                document.getElementById('password').placeholder = "(Kosongkan jika tidak ubah password)";
+                
+                // Set UI ke mode Edit
+                document.getElementById('btn-save-user').innerHTML = '<i class="fa-solid fa-save"></i> Update User';
+                document.getElementById('btn-cancel').style.display = 'inline-flex';
+                
+                // Scroll ke atas
+                window.scrollTo({top: 0, behavior: 'smooth'});
             }
         }
         if (e.target.classList.contains('btn-delete')) deleteUser(id);
@@ -464,9 +476,16 @@ function setupEventListeners() {
 }
 
 function resetForm() {
-    ['userId', 'email', 'password'].forEach(f => document.getElementById(f).value = '');
+    // UPDATE: Reset field Nama juga
+    ['userId', 'fullName', 'email', 'password'].forEach(f => {
+        const el = document.getElementById(f);
+        if (el) el.value = '';
+    });
     document.getElementById('role').value = 'student';
-    document.getElementById('form-title').innerText = "Tambah User Baru";
+    document.getElementById('password').placeholder = "(Min. 6 Karakter)";
+    
+    // Reset tombol
+    document.getElementById('btn-save-user').innerHTML = '<i class="fa-solid fa-save"></i> Simpan';
     document.getElementById('btn-cancel').style.display = 'none';
 }
 

@@ -4,138 +4,162 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu Manager - Scratch Management</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style_user.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style_user.css">
   
   <style>
-    /* Style Tambahan untuk Checkbox Group */
-    .checkbox-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 5px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background: #f9f9f9;
-    }
-    .checkbox-item {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 0.9rem;
-    }
-    .modal {
-        display: none; 
-        position: fixed; z-index: 1000; left: 0; top: 0;
-        width: 100%; height: 100%; overflow: auto;
-        background-color: rgba(0,0,0,0.5);
-        justify-content: center; align-items: center;
-    }
-    .modal-content {
-        background-color: #fff; padding: 20px;
-        border-radius: 8px; width: 500px; max-width: 90%;
-    }
-    .badge-level {
-        background: #e0f7fa; color: #006064;
-        padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 3px;
-    }
+    /* CSS Khusus Halaman Ini */
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; }
+    .checkbox-item { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; cursor: pointer; }
+    
+    /* Modal Styling */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+    .modal-content { background-color: #fff; margin: 5vh auto; padding: 25px; border-radius: 10px; width: 500px; max-width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); animation: slideDown 0.3s; }
+    @keyframes slideDown { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+
+    /* List Kategori di Modal */
+    .cat-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+    .cat-list-item:last-child { border-bottom: none; }
+    .cat-badge { background: #e3f2fd; color: #1565c0; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <header class="header">
     <div class="header-text">
-      <h1>Menu Manager</h1>
-      <p>Atur Navigasi Dashboard</p>
+      <h1>Menu Management</h1>
+      <p>Atur Navigasi & Kategori Menu</p>
     </div>
-    <button class="logout" onclick="window.location.href='dashboard.html'">Kembali ke Dashboard</button>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-secondary" onclick="window.location.href='dashboard.html'" style="cursor:pointer;"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+        <button class="logout" id="btn-logout" style="cursor:pointer;"><i class="fa-solid fa-power-off"></i> Logout</button>
+    </div>
   </header>
 
   <main class="container">
     <div class="table-container">
       <div class="table-header">
         <h2>Daftar Menu Aplikasi</h2>
-        <button class="btn-primary" id="btn-add-menu">+ Tambah Menu Baru</button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" id="btn-manage-cat" style="background:#444; color:white;">
+                <i class="fa-solid fa-list"></i> Kelola Kategori
+            </button>
+            <button class="btn-primary" id="btn-add-menu">
+                <i class="fa-solid fa-plus"></i> Tambah Menu
+            </button>
+        </div>
       </div>
 
       <table class="data-table">
         <thead>
           <tr>
-            <th>Judul & Ikon</th>
-            <th>Kategori</th>
+            <th style="width: 50px; text-align: center;">No</th>
+            <th style="width: 50px; text-align: center;">Icon</th>
+            <th>Judul Menu & Route</th>
             <th>Akses Role</th>
-            <th>Filter Level (Guru)</th>
-            <th>Status</th>
-            <th>Aksi</th>
+            <th style="width: 80px;">Status</th>
+            <th style="width: 150px;">Aksi</th>
           </tr>
         </thead>
-        <tbody id="menu-table-body">
-          </tbody>
+        <tbody id="menu-table-body"></tbody>
       </table>
     </div>
   </main>
 
   <div id="modal-menu" class="modal">
     <div class="modal-content">
-      <h2 id="modal-title" style="margin-bottom:15px;">Edit Menu</h2>
+      <h2 id="modal-title" style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">Edit Menu</h2>
       <input type="hidden" id="menu-id">
       
-      <div class="form-group">
-        <label>Judul Menu</label>
-        <input type="text" id="menu-title" placeholder="Contoh: Registrasi Siswa">
-      </div>
+      <div class="form-group"><label>Judul Menu</label><input type="text" id="menu-title" placeholder="Contoh: Registrasi Siswa"></div>
+      <div class="form-group"><label>Route (File HTML)</label><input type="text" id="menu-route" placeholder="Contoh: registrasi.html"></div>
       
       <div class="form-group">
-        <label>Route (File HTML)</label>
-        <input type="text" id="menu-route" placeholder="Contoh: registrasi.html">
-      </div>
-
-      <div class="form-group">
         <label>Kategori</label>
-        <select id="menu-category">
-            <option value="sekolah">Sekolah (Reguler)</option>
-            <option value="private">Private</option>
-            <option value="admin">Sistem & Admin</option>
-        </select>
+        <select id="menu-category"><option value="">-- Memuat Kategori... --</option></select>
       </div>
 
       <div class="form-group">
-        <label>Icon Class (FontAwesome)</label>
-        <input type="text" id="menu-icon" placeholder="fa-solid fa-book">
+        <label>Icon Class</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" id="menu-icon" placeholder="fa-solid fa-book" style="flex:1;">
+            <i class="fa-solid fa-circle-info" title="Cari di fontawesome.com" style="color:#aaa; cursor: help;"></i>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>Urutan (Order Index)</label>
-        <input type="number" id="menu-order" value="1">
-      </div>
+      <div class="form-group"><label>Urutan</label><input type="number" id="menu-order" value="1"></div>
 
       <div class="form-group">
-        <label>Siapa yang boleh akses? (Role)</label>
+        <label>Akses Role</label>
         <div class="checkbox-group">
             <label class="checkbox-item"><input type="checkbox" class="cb-role" value="super_admin"> Super Admin</label>
             <label class="checkbox-item"><input type="checkbox" class="cb-role" value="teacher"> Teacher</label>
-            </div>
+            <label class="checkbox-item"><input type="checkbox" class="cb-role" value="pic"> PIC/Admin</label>
+            <label class="checkbox-item"><input type="checkbox" class="cb-role" value="student"> Student</label>
+        </div>
       </div>
 
       <div class="form-group" id="group-level-filter">
-        <label>Filter Level (Khusus Teacher)</label>
-        <small style="display:block; color:#666; margin-bottom:5px;">Jika kosong, semua level bisa lihat.</small>
-        <div class="checkbox-group" id="container-cb-levels">
-            </div>
+        <label>Filter Level (Opsional)</label>
+        <div class="checkbox-group" id="container-cb-levels"></div>
       </div>
 
       <div class="form-group">
-        <label class="checkbox-item">
-            <input type="checkbox" id="menu-active" checked> Menu Aktif?
-        </label>
+        <label class="checkbox-item" style="font-weight: bold;"><input type="checkbox" id="menu-active" checked> Menu Aktif?</label>
       </div>
 
-      <div class="modal-footer" style="margin-top:20px; text-align:right;">
+      <div class="modal-footer" style="margin-top:20px; text-align:right; border-top: 1px solid #eee; padding-top: 15px;">
         <button class="btn-secondary" id="btn-cancel">Batal</button>
         <button class="btn-primary" id="btn-save">Simpan Menu</button>
       </div>
+    </div>
+  </div>
+
+<div id="modal-categories" class="modal">
+    <div class="modal-content" style="width: 450px;"> <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px;">
+            <h2 style="margin:0;">Kelola Kategori</h2>
+            <span class="close-modal" id="btn-close-cat" style="font-size:1.5rem; cursor:pointer;">&times;</span>
+        </div>
+
+        <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid #eee;">
+            <h4 style="margin-top:0; margin-bottom:10px;" id="cat-form-title">Tambah Baru</h4>
+            
+            <input type="hidden" id="cat-id">
+
+            <div class="form-group" style="margin-bottom:10px;">
+                <label style="font-size:0.8rem; color:#666;">Nama Kategori</label>
+                <input type="text" id="cat-title" placeholder="Contoh: Galeri Public" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px;">
+                <label style="font-size:0.8rem; color:#666;">Tampil di Aplikasi Mana?</label>
+                <select id="cat-target" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; background:white;">
+                    <option value="admin">Dashboard Admin (Internal)</option>
+                    <option value="public">Website Public (Ortu/Umum)</option>
+                    <option value="all">Tampil di Keduanya</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1; margin-bottom:10px;">
+                    <label style="font-size:0.8rem; color:#666;">Key (Unik)</label>
+                    <input type="text" id="cat-key" placeholder="mis: gallery" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                </div>
+                <div class="form-group" style="width:80px; margin-bottom:10px;">
+                    <label style="font-size:0.8rem; color:#666;">Urutan</label>
+                    <input type="number" id="cat-order" value="10" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                </div>
+            </div>
+            
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <button id="btn-cancel-cat" style="display:none; flex:1; background:#ccc; border:none; color:#333; padding:8px; border-radius:4px; cursor:pointer;">Batal</button>
+                <button id="btn-save-cat" class="btn-primary" style="flex:2; padding:8px;">Simpan Kategori</button>
+            </div>
+        </div>
+
+        <div id="category-list-container" style="max-height: 300px; overflow-y: auto;">
+            </div>
     </div>
   </div>
 

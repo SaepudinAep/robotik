@@ -4,61 +4,167 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Manajemen User</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="style_user.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    /* STYLE KHUSUS: Form Compact (Satu Baris) */
+    .form-compact-wrapper {
+        background: #fff;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        border-left: 5px solid var(--scratch-blue);
+    }
+    
+    .form-compact-grid {
+        display: grid;
+        /* Urutan: Nama | Email | Password | Role | Tombol */
+        grid-template-columns: 1.5fr 1.5fr 1.2fr 1fr auto; 
+        gap: 15px;
+        align-items: end; 
+    }
+
+    .form-compact-grid .form-group {
+        margin-bottom: 0; 
+    }
+
+    .form-compact-grid label {
+        font-size: 0.75rem; 
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: block;
+        color: #555;
+    }
+
+    .form-compact-grid input, 
+    .form-compact-grid select {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        height: 40px;
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+
+    .action-group {
+        display: flex;
+        gap: 5px;
+    }
+
+    .btn-compact {
+        height: 40px;
+        padding: 0 20px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        border: none;
+    }
+
+    .btn-compact.save { background: var(--scratch-blue); color: white; }
+    .btn-compact.cancel { background: #e0e0e0; color: #333; }
+
+    /* Responsif Mobile */
+    @media (max-width: 1000px) {
+        .form-compact-grid { grid-template-columns: 1fr 1fr; }
+        .action-group { grid-column: span 2; }
+    }
+    @media (max-width: 600px) {
+        .form-compact-grid { grid-template-columns: 1fr; }
+        .action-group { grid-column: span 1; }
+    }
+  </style>
 </head>
 <body>
 
-  <header class="header">
+<header class="header">
     <div class="header-text">
-      <h1>Menu Manager</h1>
-      <p>Atur Navigasi Dashboard</p>
+      <h1>User Management</h1>
+      <p>Kelola Akun, Hak Akses, dan Level Guru</p>
     </div>
-    <button class="logout" onclick="window.location.href='dashboard.html'">Kembali ke Dashboard</button>
+    
+    <div style="display: flex; gap: 10px;">
+        
+        <button class="btn-secondary" onclick="window.location.href='dashboard.html'" style="cursor:pointer;">
+            <i class="fa-solid fa-arrow-left"></i> Dashboard
+        </button>
+
+        <button class="logout" id="btn-logout" style="cursor:pointer;">
+            <i class="fa-solid fa-power-off"></i> Logout
+        </button>
+        
+    </div>
   </header>
 
   <main>
-    <nav class="main-tabs">
-      <button class="tab-btn active" id="tab-reg">REG User</button>
-      <button class="tab-btn" id="tab-scope">Hak Akses (Scope)</button>
-      <button class="tab-btn" id="tab-teacher">Akses Guru</button>
+    <nav class="main-tabs" style="margin-bottom: 20px;">
+      <button class="tab-btn active" id="tab-reg"><i class="fa-solid fa-user-plus"></i> 1. Registrasi</button>
+      <button class="tab-btn" id="tab-scope"><i class="fa-solid fa-map-location-dot"></i> 2. Mapping Area</button>
+      <button class="tab-btn" id="tab-teacher"><i class="fa-solid fa-chalkboard-user"></i> 3. Level Guru</button>
     </nav>
 
-    <div id="reg-user-content" class="tab-panel">
-      <section class="form-section">
-        <h2 id="form-title">Tambah User Baru</h2>
-        <div class="form-grid">
+    <div id="reg-user-content" class="tab-panel active" style="display:block;">
+      
+      <div class="form-compact-wrapper">
+        <div class="form-compact-grid">
           <input type="hidden" id="userId">
-          <div class="form-group"><label>Email</label><input type="email" id="email"></div>
-          <div class="form-group"><label>Password</label><input type="password" id="password"></div>
+          
           <div class="form-group">
-            <label>Role</label>
+            <label>Nama Lengkap</label>
+            <input type="text" id="fullName" placeholder="Contoh: Budi Santoso">
+          </div>
+
+          <div class="form-group">
+            <label>Email Login</label>
+            <input type="email" id="email" placeholder="nama@email.com">
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="(Min. 6 Karakter)">
+          </div>
+
+          <div class="form-group">
+            <label>Role / Jabatan</label>
             <select id="role">
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
-              <option value="pic">PIC (Institusi)</option>
+              <option value="pic">PIC/Admin</option>
               <option value="super_admin">Super Admin</option>
             </select>
           </div>
-          <div class="form-group btn-container">
-            <button class="btn-primary" id="btn-save">Simpan Akun</button>
-            <button class="btn-secondary" id="btn-cancel" style="display:none;">Batal</button>
+
+          <div class="action-group">
+            <button class="btn-compact save" id="btn-save-user">
+              <i class="fa-solid fa-save" style="margin-right:8px;"></i> Simpan
+            </button>
+            <button class="btn-compact cancel" id="btn-cancel" style="display:none;">
+              Batal
+            </button>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section class="table-section">
-        <input type="text" id="searchUser" class="search-box" placeholder="Cari email user...">
-        <div class="tab-container" id="tab-group">
-          <div class="tab-item active" data-role="all">Semua</div>
-          <div class="tab-item" data-role="pic">PIC</div>
-          <div class="tab-item" data-role="teacher">Guru</div>
-          <div class="tab-item" data-role="student">Siswa</div>
+      <section class="table-container">
+        <div class="table-header">
+            <h3><i class="fa-solid fa-list"></i> Daftar User</h3>
+            <div style="position: relative;">
+                <i class="fa-solid fa-search" style="position:absolute; left:10px; top:10px; color:#aaa;"></i>
+                <input type="text" id="searchUser" placeholder="Cari nama/email..." style="padding-left:30px; border:1px solid #ccc; border-radius:5px; height:35px;">
+            </div>
         </div>
         <table>
           <thead>
             <tr>
-              <th>User</th>
+              <th>Nama</th>
+              <th>Email</th>
               <th>Role</th>
               <th>Aksi</th>
             </tr>
@@ -70,17 +176,18 @@
     </div>
 
     <div id="scope-content" class="tab-panel" style="display:none;">
-      <section class="table-section">
-        <div class="section-header">
-          <h2>Pengaturan Otorisasi Wilayah Data</h2>
-          <p>Tentukan batasan akses PIC (Level Institusi) dan Siswa (Level Unit/Kelas).</p>
+      <section class="table-container">
+        <div class="table-header">
+          <h3><i class="fa-solid fa-map-marked-alt"></i> Status Hak Akses (Mapping)</h3>
+          <p style="font-size:0.9rem; color:#666;">Menentukan sekolah/cabang mana yang dikelola user.</p>
         </div>
         <table>
           <thead>
             <tr>
-              <th>User</th>
+              <th>Nama User</th>
+              <th>Email</th>
               <th>Role</th>
-              <th>Cakupan Akses (Scope)</th>
+              <th>Wilayah/Scope</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -91,16 +198,17 @@
     </div>
 
     <div id="teacher-content" class="tab-panel" style="display:none;">
-      <section class="table-section">
-        <div class="section-header">
-          <h2>Pengaturan Level Mengajar Guru</h2>
-          <p>Tentukan tingkat/jenjang yang diampu oleh Teacher.</p>
+      <section class="table-container">
+        <div class="table-header">
+          <h3><i class="fa-solid fa-layer-group"></i> Level Mengajar Guru</h3>
+          <p style="font-size:0.9rem; color:#666;">Menentukan materi level apa yang bisa diakses guru.</p>
         </div>
         <table>
           <thead>
             <tr>
-              <th>Guru</th>
-              <th>Status</th>
+              <th>Nama Guru</th>
+              <th>Email</th>
+              <th>Role</th>
               <th>Level Mengajar</th>
               <th>Aksi</th>
             </tr>
@@ -113,52 +221,22 @@
 
   </main>
 
-  <div id="modal-scope" class="modal" style="display:none;">
+  <div class="modal" id="modal-scope">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 id="modal-user-email">Atur Hak Akses</h2>
+        <h2 id="modal-scope-title">Atur Akses</h2>
         <span class="close-modal" id="btn-close-modal">&times;</span>
       </div>
-      
       <div class="modal-body">
-        <input type="hidden" id="modal-user-id">
-        <input type="hidden" id="modal-user-role">
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Tipe Program</label>
-            <select id="scope-type">
-              <option value="">-- Pilih Tipe --</option>
-              <option value="sekolah">Jalur Sekolah</option>
-              <option value="private">Jalur Private</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label id="label-scope-induk">Lembaga/Institusi</label>
-            <select id="scope-induk">
-              <option value="">-- Pilih Tipe Dulu --</option>
-            </select>
-          </div>
-
-          <div class="form-group" id="group-scope-anak" style="display:none;">
-            <label id="label-scope-anak">Unit/Kelas</label>
-            <select id="scope-anak">
-              <option value="">-- Pilih Lembaga Dulu --</option>
-            </select>
-          </div>
         </div>
-      </div>
-
       <div class="modal-footer">
-        <button class="btn-secondary" id="btn-cancel-scope">Batal</button>
-        <button class="btn-primary" id="btn-save-scope">Terapkan Hak Akses</button>
-      </div>
+        </div>
     </div>
   </div>
 
   <div id="toast" class="toast" style="display:none;"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="user-management.js"></script>
 </body>
 </html>
