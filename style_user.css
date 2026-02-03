@@ -1,0 +1,509 @@
+/* ==========================
+   Variabel Global (Adaptasi style_harian)
+========================== */
+:root {
+  --scratch-blue: #4d97ff;
+  --scratch-purple: #855cd6;
+  --scratch-orange: #ffab19;
+  --scratch-yellow: #fff3d6;
+  --white: #ffffff;
+  --text: #333;
+  --bg-color: #f9f9f9;
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --font-heading: 'Fredoka One', cursive;
+  --font-body: 'Roboto', sans-serif;
+
+  /* Aksen Warna Role */
+  --color-teacher: #a8e6cf; /* Mint */
+  --color-admin: #e6e6fa;   /* Lavender */
+  --color-student: #ffd9b3; /* Peach */
+  --color-pic: #bae6fd;     /* Light Blue (New for PIC) */
+}
+
+/* ==========================
+   Reset & Body
+========================== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg-color);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ==========================
+   Header (Gaya style_harian)
+========================== */
+.header {
+  background: linear-gradient(90deg, var(--scratch-blue), #6ab0ff);
+  color: var(--white);
+  padding: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+
+.header h1 {
+  font-family: var(--font-heading);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* ==========================
+   Navigasi Tab Utama (Module Switcher)
+========================== */
+.main-tabs {
+  display: flex;
+  gap: 10px;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-bottom: 2px solid #eee;
+  /* Scroll horizontal di mobile jika tab banyak */
+  overflow-x: auto; 
+  white-space: nowrap;
+}
+
+.tab-btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  background: #f0f0f0;
+  border-radius: var(--radius);
+  font-weight: 700;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: var(--scratch-blue);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 #2a75d8;
+}
+
+/* ==========================
+   Sub-Tab Filter (Role Filter di Tabel)
+========================== */
+.tab-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap; /* Agar turun ke bawah di HP */
+}
+
+.tab-item {
+  padding: 0.5rem 1rem;
+  background: #eee;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab-item.active {
+  background: var(--scratch-purple);
+  color: white;
+}
+
+/* ==========================
+   MODAL POPUP (NEW - Menambah fitur baru)
+========================== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Overlay gelap */
+  display: none; /* Dikontrol via JS (flex) */
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px); /* Efek blur estetik */
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  animation: modalPop 0.3s ease-out; /* Animasi pop up */
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* Agar tidak melebihi tinggi layar HP */
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  background: var(--scratch-blue);
+  color: white;
+  padding: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+}
+
+.close-modal {
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto; /* Scrollable area */
+}
+
+.modal-footer {
+  padding: 1rem;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #eee;
+}
+
+/* ==========================
+   Section & Form
+========================== */
+.form-section {
+  background: var(--white);
+  margin: 1.5rem;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.form-section h2 {
+  font-family: var(--font-heading);
+  color: var(--scratch-blue);
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--scratch-blue);
+}
+
+input[type="text"], 
+input[type="number"], 
+input[type="password"], 
+input[type="email"], 
+select {
+  padding: 0.7rem;
+  border: 2px solid #eee;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--scratch-blue);
+}
+
+/* ==========================
+   Tombol
+========================= */
+.btn-primary {
+  background: var(--scratch-orange);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 0 #e69500;
+}
+
+.btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 #e69500; }
+
+.btn-secondary {
+  background: var(--scratch-yellow);
+  border: 1px solid #ccc;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: bold;
+  color: #666;
+}
+
+.logout {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ==========================
+   Tabel
+========================= */
+.table-container {
+    overflow-x: auto; /* Kunci Responsive Tabel di HP */
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 1.5rem;
+    padding: 1rem;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  background: white;
+  min-width: 600px; /* Agar tabel tidak gepeng di HP, user akan scroll horizontal */
+}
+
+table th {
+  background: var(--scratch-yellow);
+  padding: 1rem;
+  text-align: left;
+  font-family: var(--font-heading);
+  border-bottom: 2px solid #eee;
+  color: #555;
+  white-space: nowrap; /* Header jangan turun baris */
+}
+
+table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+table tbody tr:nth-child(even) { background: #fdfdfd; }
+table tbody tr:hover { background: #f5faff; }
+
+/* Badge Role */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge.teacher { background: var(--color-teacher); color: #2d5a4c; }
+.badge.super_admin { background: var(--color-admin); color: #4b4b7a; }
+.badge.student { background: var(--color-student); color: #85532d; }
+.badge.pic { background: var(--color-pic); color: #0369a1; }
+
+.badge.sekolah { background: var(--scratch-blue); color: white; }
+.badge.private { background: var(--scratch-orange); color: white; }
+.badge.admin { background: #555; color: white; }
+
+/* ==========================
+   Toast & Utils
+========================= */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: #4CAF50;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 9999;
+  animation: slideIn 0.3s;
+}
+.toast.error { background: #F44336; }
+
+@keyframes slideIn {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.search-box {
+  width: 100%;
+  margin-bottom: 1rem;
+  background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 15px center;
+  background-size: 18px;
+  padding-left: 45px;
+}
+
+/* ==========================
+   MENU MANAGER SPECIFIC CSS
+   (Tambahan Baru)
+========================== */
+
+/* Wadah Checkbox (Untuk Role & Level) */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: var(--radius);
+    max-height: 150px;
+    overflow-y: auto; 
+}
+
+/* Item Checkbox Individual */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    cursor: pointer;
+    font-size: 0.9rem;
+    background: white;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.checkbox-item:hover {
+    background: #f0f8ff;
+    border-color: var(--scratch-blue);
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+/* Badge Level di Tabel */
+.badge-level {
+    display: inline-block;
+    background: #e0f7fa; 
+    color: #006064;      
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin: 2px;
+    border: 1px solid #b2ebf2;
+    white-space: nowrap;
+}
+
+tr.inactive-row {
+    opacity: 0.6;
+    background-color: #f0f0f0 !important;
+}
+
+tr.inactive-row td {
+    color: #888;
+}
+
+/* ==========================
+   RESPONSIVE DESIGN (TABLET & HP)
+   (Ditambahkan Otomatis oleh AI)
+========================== */
+
+@media screen and (max-width: 768px) {
+  
+  /* 1. HEADER: Stack vertikal agar tidak sempit */
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .header-text h1 {
+      font-size: 1.3rem;
+  }
+
+  /* 2. TABEL: Layout Header Tabel Stack */
+  .table-container {
+    margin: 1rem 0.5rem; /* Kurangi margin di HP */
+    padding: 0.8rem;
+  }
+
+  .table-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch; /* Agar tombol jadi lebar penuh */
+  }
+
+  .table-header h2 {
+      font-size: 1.1rem;
+      text-align: center;
+  }
+
+  .btn-primary {
+      width: 100%; /* Tombol lebar penuh biar gampang ditap jari */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  /* 3. MODAL: Full Screen-ish experience */
+  .modal-content {
+    width: 95%;
+    max-width: none;
+    height: auto;
+    max-height: 95vh;
+  }
+
+  .modal-body {
+      padding: 1rem; /* Hemat space */
+  }
+  
+  .modal-footer {
+      flex-direction: column-reverse; /* Tombol simpan di atas Batal (opsional) atau biarkan row */
+  }
+
+  .modal-footer button {
+      width: 100%; /* Tombol modal full width */
+      padding: 12px; /* Area tap lebih besar */
+  }
+
+  /* 4. FORM: Satu kolom di HP */
+  .form-grid {
+    grid-template-columns: 1fr; /* Paksa 1 kolom vertikal */
+  }
+
+  /* 5. Font Sizes */
+  body {
+      font-size: 14px; /* Sedikit perkecil font body */
+  }
+  
+  table td, table th {
+      padding: 0.8rem 0.5rem;
+      font-size: 0.85rem;
+  }
+}
