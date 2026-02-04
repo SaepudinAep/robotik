@@ -73,7 +73,7 @@
       <input type="hidden" id="menu-id">
       
       <div class="form-group"><label>Judul Menu</label><input type="text" id="menu-title" placeholder="Contoh: Registrasi Siswa"></div>
-      <div class="form-group"><label>Route (File HTML)</label><input type="text" id="menu-route" placeholder="Contoh: registrasi.html"></div>
+      <div class="form-group"><label>Route (Tanpa .html)</label><input type="text" id="menu-route" placeholder="Contoh: registrasi"></div>
       
       <div class="form-group">
         <label>Kategori</label>
@@ -116,8 +116,9 @@
     </div>
   </div>
 
-<div id="modal-categories" class="modal">
-    <div class="modal-content" style="width: 450px;"> <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px;">
+  <div id="modal-categories" class="modal">
+    <div class="modal-content" style="width: 450px;"> 
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px;">
             <h2 style="margin:0;">Kelola Kategori</h2>
             <span class="close-modal" id="btn-close-cat" style="font-size:1.5rem; cursor:pointer;">&times;</span>
         </div>
@@ -135,9 +136,9 @@
             <div class="form-group" style="margin-bottom:10px;">
                 <label style="font-size:0.8rem; color:#666;">Tampil di Aplikasi Mana?</label>
                 <select id="cat-target" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; background:white;">
-                    <option value="admin">Dashboard Admin (Internal)</option>
-                    <option value="public">Website Public (Ortu/Umum)</option>
-                    <option value="all">Tampil di Keduanya</option>
+                    <option value="admin">Dashboard Admin (Lama)</option>
+                    <option value="admin_v2">Admin V2 (Sistem Baru)</option> <option value="public">Website Public (Ortu/Umum)</option>
+                    <option value="all">Tampil di Semua</option>
                 </select>
             </div>
 
@@ -158,8 +159,7 @@
             </div>
         </div>
 
-        <div id="category-list-container" style="max-height: 300px; overflow-y: auto;">
-            </div>
+        <div id="category-list-container" style="max-height: 300px; overflow-y: auto;"></div>
     </div>
   </div>
 

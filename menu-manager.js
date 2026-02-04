@@ -128,9 +128,11 @@ function renderCategoryListModal() {
         // Tentukan Warna Badge Target
         let badgeColor = '#999';
         let badgeText = 'Unknown';
-        if(cat.target_app === 'admin') { badgeColor = '#3f51b5'; badgeText = 'ADMIN'; } 
-        else if(cat.target_app === 'public') { badgeColor = '#4caf50'; badgeText = 'PUBLIC'; } 
-        else if(cat.target_app === 'all') { badgeColor = '#ff9800'; badgeText = 'ALL'; }
+// Di dalam menu-manager.js fungsi renderCategoryListModal()
+      if(cat.target_app === 'admin') { badgeColor = '#3f51b5'; badgeText = 'ADMIN'; } 
+      else if(cat.target_app === 'admin_v2') { badgeColor = '#4d97ff'; badgeText = 'ADMIN V2'; } // Tambah ini
+      else if(cat.target_app === 'public') { badgeColor = '#4caf50'; badgeText = 'PUBLIC'; } 
+      else if(cat.target_app === 'all') { badgeColor = '#ff9800'; badgeText = 'ALL'; }
 
         const div = document.createElement('div');
         div.className = 'cat-list-item';
